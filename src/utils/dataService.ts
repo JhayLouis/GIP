@@ -38,6 +38,7 @@ export interface Applicant {
   relationshipToDependent?: string;
   archived?: boolean;
   archivedDate?: string;
+  interviewed?: boolean;
 }
 
 export interface Statistics {
@@ -48,6 +49,7 @@ export interface Statistics {
   completed: number;
   rejected: number;
   resigned: number;
+  interviewed: number;
   barangaysCovered: number;
   maleCount: number;
   femaleCount: number;
@@ -64,6 +66,8 @@ export interface Statistics {
   rejectedFemale: number;
   resignedMale: number;
   resignedFemale: number;
+  interviewedMale: number;
+  interviewedFemale: number;
 }
 
 export interface BarangayStats {
@@ -147,6 +151,14 @@ export const updateApplicant = (program: 'GIP' | 'TUPAD', updatedApplicant: Appl
   const applicants = getApplicants(program);
   const idx = applicants.findIndex(a => a.id === updatedApplicant.id);
   if (idx !== -1) {
+    const oldApplicant = applicants[idx];
+
+    if (oldApplicant.status === 'PENDING' && updatedApplicant.status !== 'PENDING') {
+      updatedApplicant.interviewed = true;
+    } else if (oldApplicant.status !== 'PENDING' && updatedApplicant.status === 'PENDING') {
+      updatedApplicant.interviewed = false;
+    }
+
     applicants[idx] = updatedApplicant;
     saveApplicants(program, applicants);
   }
@@ -182,6 +194,8 @@ export const getStatistics = (program: 'GIP' | 'TUPAD'): Statistics => {
   const getGenderCount = (status: string, gender: 'MALE' | 'FEMALE') =>
     applicants.filter(a => a.status === status && a.gender === gender).length;
 
+  const interviewed = applicants.filter(a => a.interviewed === true);
+
   const stats: Statistics = {
     totalApplicants: applicants.length,
     pending: applicants.filter(a => a.status === 'PENDING').length,
@@ -190,6 +204,7 @@ export const getStatistics = (program: 'GIP' | 'TUPAD'): Statistics => {
     completed: applicants.filter(a => a.status === 'COMPLETED').length,
     rejected: applicants.filter(a => a.status === 'REJECTED').length,
     resigned: applicants.filter(a => a.status === 'RESIGNED').length,
+    interviewed: interviewed.length,
     barangaysCovered: [...new Set(applicants.map(a => a.barangay))].length,
     maleCount: applicants.filter(a => a.gender === 'MALE').length,
     femaleCount: applicants.filter(a => a.gender === 'FEMALE').length,
@@ -206,7 +221,9 @@ export const getStatistics = (program: 'GIP' | 'TUPAD'): Statistics => {
     rejectedMale: getGenderCount('REJECTED', 'MALE'),
     rejectedFemale: getGenderCount('REJECTED', 'FEMALE'),
     resignedMale: getGenderCount('RESIGNED', 'MALE'),
-    resignedFemale: getGenderCount('RESIGNED', 'FEMALE')
+    resignedFemale: getGenderCount('RESIGNED', 'FEMALE'),
+    interviewedMale: interviewed.filter(a => a.gender === 'MALE').length,
+    interviewedFemale: interviewed.filter(a => a.gender === 'FEMALE').length
   };
 
   return stats;
@@ -374,6 +391,8 @@ export const getStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: number): St
     });
   }
 
+  const interviewed = applicants.filter(a => a.interviewed === true);
+
   const stats: Statistics = {
     totalApplicants: applicants.length,
     pending: applicants.filter(a => a.status === 'PENDING').length,
@@ -382,6 +401,7 @@ export const getStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: number): St
     completed: applicants.filter(a => a.status === 'COMPLETED').length,
     rejected: applicants.filter(a => a.status === 'REJECTED').length,
     resigned: applicants.filter(a => a.status === 'RESIGNED').length,
+    interviewed: interviewed.length,
     barangaysCovered: [...new Set(applicants.map(a => a.barangay))].length,
     maleCount: applicants.filter(a => a.gender === 'MALE').length,
     femaleCount: applicants.filter(a => a.gender === 'FEMALE').length,
@@ -396,7 +416,9 @@ export const getStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: number): St
     rejectedMale: applicants.filter(a => a.status === 'REJECTED' && a.gender === 'MALE').length,
     rejectedFemale: applicants.filter(a => a.status === 'REJECTED' && a.gender === 'FEMALE').length,
     resignedMale: applicants.filter(a => a.status === 'RESIGNED' && a.gender === 'MALE').length,
-    resignedFemale: applicants.filter(a => a.status === 'RESIGNED' && a.gender === 'FEMALE').length
+    resignedFemale: applicants.filter(a => a.status === 'RESIGNED' && a.gender === 'FEMALE').length,
+    interviewedMale: interviewed.filter(a => a.gender === 'MALE').length,
+    interviewedFemale: interviewed.filter(a => a.gender === 'FEMALE').length
   };
 
   return stats;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Users,
   Clock,
@@ -6,7 +6,10 @@ import {
   CheckCircle,
   X,
   UserMinus,
-  MapPin
+  MapPin,
+  ClipboardCheck,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { useData } from '../hooks/useData';
 
@@ -16,13 +19,13 @@ interface StatsGridProps {
 
 const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
   const { statistics, isLoading } = useData(activeProgram);
+  const [showMore, setShowMore] = useState(false);
 
   const primaryColor = activeProgram === 'GIP' ? 'bg-red-500' : 'bg-green-500';
   const primaryDarkColor = activeProgram === 'GIP' ? 'bg-red-600' : 'bg-green-600';
   const secondaryColor = activeProgram === 'GIP' ? 'bg-orange-500' : 'bg-blue-500';
   const secondaryDarkColor = activeProgram === 'GIP' ? 'bg-orange-600' : 'bg-blue-600';
 
-  // 🔹 Show loading skeletons
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -36,8 +39,7 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
     );
   }
 
-  // ✅ Only one declaration of stats
-  const stats = [
+  const mainStats = [
     {
       title: 'TOTAL APPLICANTS',
       value: statistics?.totalApplicants?.toString() ?? '0',
@@ -112,42 +114,74 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
     }
   ];
 
+  const additionalStats = [
+    {
+      title: 'INTERVIEWED',
+      value: statistics?.interviewed?.toString() ?? '0',
+      male: statistics?.interviewedMale?.toString() ?? '0',
+      female: statistics?.interviewedFemale?.toString() ?? '0',
+      icon: ClipboardCheck,
+      bgColor: 'bg-teal-500',
+      iconBg: 'bg-teal-600'
+    }
+  ];
+
+  const displayStats = showMore ? [...mainStats, ...additionalStats] : mainStats;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {stats.map((stat, index) => {
-        const Icon = stat.icon;
-        return (
-          <div
-            key={index}
-            className={`${stat.bgColor} text-white rounded-lg p-6 relative overflow-hidden`}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-sm font-medium opacity-90 mb-1">{stat.title}</h3>
-                <p className="text-3xl font-bold">{stat.value}</p>
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {displayStats.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={index}
+              className={`${stat.bgColor} text-white rounded-lg p-6 relative overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl`}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-sm font-medium opacity-90 mb-1">{stat.title}</h3>
+                  <p className="text-3xl font-bold">{stat.value}</p>
+                </div>
+                <div className={`${stat.iconBg} p-3 rounded-full`}>
+                  <Icon className="w-8 h-8" />
+                </div>
               </div>
-              <div className={`${stat.iconBg} p-3 rounded-full`}>
-                <Icon className="w-8 h-8" />
-              </div>
-            </div>
 
-            <div className="flex items-center space-x-4 text-xs opacity-75">
-              <div className="flex items-center space-x-1">
-                <Users className="w-3 h-3" />
-                <span>{stat.male}</span>
+              <div className="flex items-center space-x-4 text-xs opacity-75">
+                <div className="flex items-center space-x-1">
+                  <Users className="w-3 h-3" />
+                  <span>{stat.male}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Users className="w-3 h-3" />
+                  <span>{stat.female}</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-1">
-                <Users className="w-3 h-3" />
-                <span>{stat.female}</span>
-              </div>
-            </div>
 
-            <div className="absolute -right-4 -bottom-4 opacity-10">
-              <Icon className="w-20 h-20" />
+              <div className="absolute -right-4 -bottom-4 opacity-10">
+                <Icon className="w-20 h-20" />
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
+
+      <div className="flex justify-center">
+        <button
+          onClick={() => setShowMore(!showMore)}
+          className="flex items-center space-x-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-lg shadow-sm border border-gray-200 transition-all duration-200 hover:shadow-md"
+        >
+          <span className="font-medium">
+            {showMore ? 'See Less' : 'See More'}
+          </span>
+          {showMore ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </button>
+      </div>
     </div>
   );
 };
