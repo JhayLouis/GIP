@@ -1,7 +1,7 @@
 import React from "react";
-import { X, Download } from "lucide-react";
+import { X, FileText } from "lucide-react";
 import { Applicant } from "../utils/dataService";
-import * as XLSX from 'xlsx';
+import html2pdf from 'html2pdf.js';
 
 interface ApplicantProfileProps {
   applicant: Applicant;
@@ -11,87 +11,37 @@ interface ApplicantProfileProps {
 const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose }) => {
   const [showImageModal, setShowImageModal] = React.useState(false);
 
-  const handleExportToExcel = () => {
-    const workbook = XLSX.utils.book_new();
+  if (applicant.program !== 'GIP') {
+    return null;
+  }
 
-    const profileData = [
-      ['DOLE REGIONAL OFFICE ____'],
-      ['GOVERNMENT INTERNSHIP PROGRAM (GIP)'],
-      ['APPLICATION FORM'],
-      [''],
-      ['INSTRUCTION TO APPLICANTS:'],
-      ['Please fill out all the required information in this form and attach additional documents, if necessary.'],
-      [''],
-      ['1. NAME OF APPLICANT:'],
-      ['Family Name', 'First Name', 'Middle Name'],
-      [applicant.lastName, applicant.firstName, applicant.middleName || ''],
-      [''],
-      ['2. RESIDENTIAL ADDRESS:'],
-      [applicant.barangay],
-      [''],
-      ['Telephone No.:', applicant.telephoneNumber || '-'],
-      ['Mobile No.:', applicant.contactNumber],
-      ['E-mail Address:', applicant.email || ''],
-      [''],
-      ['3. PLACE OF BIRTH (city/province)', applicant.placeOfBirth || '-'],
-      [''],
-      ['4. DATE OF BIRTH (mm/dd/yyyy)', applicant.birthDate],
-      [''],
-      ['5. GENDER', applicant.gender === 'MALE' ? 'Male' : 'Female'],
-      [''],
-      ['6. CIVIL STATUS', applicant.civilStats || '-'],
-      [''],
-      ['7. EDUCATIONAL ATTAINMENT'],
-      ['NAME OF SCHOOL', 'INCLUSIVE DATES', 'DEGREE OR DIPLOMA'],
-      ['', 'From', 'To', ''],
-      [applicant.school || '', '', '', applicant.educationalAttainment, applicant.course || ''],
-      [''],
-      ['8. DISADVANTAGED GROUP'],
-      [''],
-      ['CERTIFICATION:'],
-      ['Certify that all information provided in this application, including the attached documents, is complete and accurate to the best of my knowledge.'],
-      [''],
-      ['DATE ACCOMPLISHED', applicant.dateSubmitted],
-      [''],
-      ['FOR DOLE-RO/FO Use Only'],
-      [''],
-      ['Interviewed and validated by:'],
-      [''],
-      ['NAME and SIGNATURE/Position', 'DATE'],
-      [''],
-      ['Documents Received:'],
-      ['Birth certificate or equivalent', 'Form 137/138'],
-      ['Transcript of Records', 'Diploma'],
-      ['Barangay Certification', 'Others'],
-    ];
+  const handleExportToPDF = () => {
+    const element = document.getElementById('applicant-profile-content');
+    if (!element) return;
 
-    const worksheet = XLSX.utils.aoa_to_sheet(profileData);
+    const opt = {
+      margin: 10,
+      filename: `${applicant.code}_${applicant.lastName}_${applicant.firstName}_Application.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
 
-    worksheet['!cols'] = [
-      { wch: 30 },
-      { wch: 20 },
-      { wch: 20 },
-      { wch: 20 }
-    ];
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Application Form');
-
-    const fileName = `${applicant.code}_${applicant.lastName}_${applicant.firstName}_Application.xlsx`;
-    XLSX.writeFile(workbook, fileName);
+    html2pdf().set(opt).from(element).save();
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="bg-red-700 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-          <h2 className="text-xl font-bold">APPLICANT PROFILE</h2>
+          <h2 className="text-xl font-bold">DOLE-GIP Application Form</h2>
           <div className="flex items-center space-x-3">
             <button
-              onClick={handleExportToExcel}
-              className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded flex items-center space-x-2 transition-colors duration-200"
+              onClick={handleExportToPDF}
+              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded flex items-center space-x-2 transition-colors duration-200"
             >
-              <Download className="w-4 h-4" />
-              <span className="text-sm font-medium">Export</span>
+              <FileText className="w-4 h-4" />
+              <span className="text-sm font-medium">Export PDF</span>
             </button>
             <button onClick={onClose} className="hover:bg-red-800 p-2 rounded transition-colors">
               <X className="w-5 h-5" />
@@ -99,100 +49,74 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
           </div>
         </div>
 
-        {/* Body */}
-        <div className="p-8 bg-gradient-to-br from-gray-50 to-white">
-          <div className="border-4 border-gray-800 rounded-lg p-8 bg-white shadow-xl">
-            
-            {/* Logos + Title */}
-            <div className="flex justify-between items-center mb-8">
-              {/* Left Logo */}
-              <img
-                src="src/assets/DOLElogo.png"
-                alt="DOLE Logo"
-                className="w-20 h-20 object-contain"
-              />
-
-              {/* Title Section */}
-              <div className="text-center flex-1">
-                <h3 className="font-bold text-xl text-gray-800 mb-1">DOLE REGIONAL OFFICE NO. ____</h3>
-                <h4 className="font-bold text-lg text-red-700">GOVERNMENT INTERNSHIP PROGRAM (GIP)</h4>
-                <h4 className="font-bold text-md text-gray-700 underline">APPLICATION FORM</h4>
-              </div>
-
-              {/* Right Logo */}
-              <img
-                src="src/assets/GIPLogo.png"
-                alt="GIP Logo"
-                className="w-20 h-20 object-contain"
-              />
+        <div className="p-6 bg-white">
+          <div className="border-2 border-black" id="applicant-profile-content">
+            <div className="border-b-2 border-black p-4 text-center">
+              <p className="font-bold text-sm mb-1">DOLE REGIONAL OFFICE NO. ____</p>
+              <p className="font-bold text-sm mb-1">GOVERNMENT INTERNSHIP PROGRAM (GIP)</p>
+              <p className="font-bold text-sm">APPLICATION FORM</p>
             </div>
-
 
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-1">INSTRUCTION TO APPLICANTS:</p>
               <p className="text-xs">Please fill out all the required information in this form and attach additional documents, if necessary.</p>
             </div>
 
-            <div className="grid grid-cols-[2fr_1fr] border-t-2 border-b-2 border-black">
-              {/* LEFT SIDE: NAME + ADDRESS */}
-              <div className="border-r-2 border-black p-3">
-                {/* 1. NAME OF APPLICANT */}
+            <div className="grid grid-cols-3 gap-0">
+              <div className="col-span-2 border-r-2 border-black border-b-2 p-3">
                 <p className="font-bold text-xs mb-2">1. NAME OF APPLICANT:</p>
-                <div className="border-b border-black mb-3 pb-1">
-                  <div className="grid grid-cols-3 text-xs font-semibold">
+                <div className="border-b border-black mb-2 pb-1">
+                  <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
                     <div>Family Name</div>
                     <div>First Name</div>
                     <div>Middle Name</div>
                   </div>
-                  <div className="grid grid-cols-3 text-xs mt-1">
+                  <div className="grid grid-cols-3 gap-2 text-xs mt-1">
                     <div>{applicant.lastName.toUpperCase()}</div>
                     <div>{applicant.firstName.toUpperCase()}</div>
                     <div>{applicant.middleName ? applicant.middleName.toUpperCase() : '-'}</div>
                   </div>
                 </div>
-
-                {/* 2. RESIDENTIAL ADDRESS */}
-                <p className="font-bold text-xs mb-2">2. RESIDENTIAL ADDRESS:</p>
-                <div className="border-b border-black mb-2 pb-2 text-xs">
-                  <p>{applicant.barangay.toUpperCase()}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="border-b border-black pb-1">
-                    <p className="font-semibold">Telephone No.:</p>
-                    <p>{applicant.telephoneNumber || 'N/A'}</p>
-                  </div>
-                  <div className="border-b border-black pb-1">
-                    <p className="font-semibold">Mobile No.:</p>
-                    <p>{applicant.contactNumber}</p>
-                  </div>
-                </div>
-
-                <div className="mt-2 text-xs border-b border-black pb-1">
-                  <p className="font-semibold">E-mail Address:</p>
-                  <p>{(applicant.email || '-').toUpperCase()}</p>
-                </div>
               </div>
 
-             {/* RIGHT SIDE: PHOTO */}
-              <div className="flex flex-col items-center justify-center text-center p-3">
-                {applicant.photoFileData ? (
+              <div className="border-b-2 border-black p-3 flex flex-col items-center justify-center">
+                <p className="text-xs font-bold text-center mb-2">ATTACH 2x2 PHOTO WITH NAME AND SIGNATURE TAKEN WITHIN THE LAST THREE (3) MONTHS</p>
+                {applicant.photoFileData && (
                   <img
                     src={applicant.photoFileData}
                     alt="Applicant Photo"
-                    className="w-[2in] h-[2in] object-cover border border-gray-400 cursor-pointer hover:opacity-80 transition"
+                    className="w-16 h-16 object-cover border border-gray-400 cursor-pointer hover:opacity-80 transition"
                     onClick={() => setShowImageModal(true)}
                   />
-                ) : (
-                  <div className="w-[2in] h-[2in] flex flex-col items-center justify-center bg-gray-200 border border-gray-400 p-2">
-                    <p className="text-xs font-bold text-center leading-tight">
-                      ATTACH 2x2 PHOTO WITH NAME AND SIGNATURE TAKEN WITHIN THE LAST THREE (3) MONTHS
-                    </p>
+                )}
+                {!applicant.photoFileData && (
+                  <div className="w-16 h-16 bg-gray-200 border border-gray-400 flex items-center justify-center text-xs text-gray-500">
+                    No photo
                   </div>
                 )}
               </div>
             </div>
 
+            <div className="border-b-2 border-black p-3">
+              <p className="font-bold text-xs mb-2">2. RESIDENTIAL ADDRESS:</p>
+              <div className="border-b border-black mb-2 pb-2 text-xs">
+                <p>{applicant.barangay.toUpperCase()}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="border-b border-black pb-1">
+                  <p className="font-semibold">Telephone No.:</p>
+                  <p>{applicant.telephoneNumber || '-'}</p>
+                </div>
+                <div className="border-b border-black pb-1">
+                  <p className="font-semibold">Mobile No.:</p>
+                  <p>{applicant.contactNumber}</p>
+                </div>
+              </div>
+              <div className="mt-2 text-xs border-b border-black pb-1">
+                <p className="font-semibold">E-mail Address:</p>
+                <p>{(applicant.email || '-').toUpperCase()}</p>
+              </div>
+            </div>
 
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-1">3. PLACE OF BIRTH (city/province)</p>
