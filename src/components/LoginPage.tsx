@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
-import GIPLogo from "../assets/GIPLogo.png";
+import Logo from "../assets/SantaRosa.png";
+import Arch from "../assets/SantaRosaArch.png";
 
 interface LoginPageProps {
   onLogin: (username: string, password: string) => Promise<boolean>;
@@ -76,19 +77,29 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-red-600 to-orange-700">
+    <div
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${Arch})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
+      {/* Overlay gradient with opacity */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-600/80 to-orange-700/80 backdrop-blur-sm"></div>
+
       {/* Content */}
       <div className="relative w-full max-w-md z-10">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white/95 rounded-2xl shadow-2xl p-8 backdrop-blur-md">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 bg-white shadow-md">
               <img
-                src={GIPLogo}
-                alt="Logo"
-                className="w-15 h-15 object-contain"
+                src={Logo}
+                alt="Santa Rosa Logo"
+                className="w-16 h-16 object-contain"
               />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">SOFT PROJECTS</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">SOFT PROJECTS</h1>
             <p className="text-gray-600 text-sm mb-1">Application Management System</p>
             <p className="text-gray-500 text-xs">City Government of Santa Rosa</p>
           </div>
@@ -100,6 +111,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </div>
             )}
 
+            {/* Username Field */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
                 Username
@@ -127,6 +139,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               )}
             </div>
 
+            {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
