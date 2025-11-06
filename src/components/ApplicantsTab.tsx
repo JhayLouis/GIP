@@ -814,7 +814,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
         onSubmit={handleSubmit}
       />
 
-      {viewingApplicant && (
+      {viewingApplicant && activeProgram === 'GIP' && (
         <ApplicantProfile
           applicant={viewingApplicant}
           onClose={() => setViewingApplicant(null)}
