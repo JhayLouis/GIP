@@ -2,7 +2,7 @@ import React from 'react';
 
 interface SummaryReportProps {
   data: any;
-  onRowClick: () => void;
+  onRowClick: (type: string) => void;
   programName: string;
 }
 
@@ -10,10 +10,10 @@ const SummaryReport: React.FC<SummaryReportProps> = ({ data, onRowClick, program
   if (!data) return <p className="text-center text-gray-500">No summary data available.</p>;
 
   const summary = [
-    { label: 'Total Applicants', value: data.totalApplicants, male: data.maleCount, female: data.femaleCount, color: 'text-blue-600' },
-    { label: 'Approved', value: data.approved, male: data.approvedMale, female: data.approvedFemale, color: 'text-green-600' },
-    { label: 'Deployed', value: data.deployed, male: data.deployedMale, female: data.deployedFemale, color: 'text-orange-600' },
-    { label: 'Completed', value: data.completed, male: data.completedMale, female: data.completedFemale, color: 'text-purple-600' },
+    { label: 'Total Applicants', value: data.totalApplicants, male: data.maleCount, female: data.femaleCount, color: 'text-blue-600', type: 'total' },
+    { label: 'Approved', value: data.approved, male: data.approvedMale, female: data.approvedFemale, color: 'text-green-600', type: 'APPROVED' },
+    { label: 'Deployed', value: data.deployed, male: data.deployedMale, female: data.deployedFemale, color: 'text-orange-600', type: 'DEPLOYED' },
+    { label: 'Completed', value: data.completed, male: data.completedMale, female: data.completedFemale, color: 'text-purple-600', type: 'COMPLETED' },
   ];
 
   return (
@@ -26,7 +26,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({ data, onRowClick, program
           {summary.map((item, index) => (
             <div
               key={index}
-              onClick={onRowClick}
+              onClick={() => onRowClick(item.type)}
               className="text-center p-4 rounded-lg bg-gray-50 cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:shadow-md hover:scale-[1.02] transition-all duration-200"
             >
               <h4 className="text-sm font-medium text-gray-600 mb-2">{item.label}</h4>

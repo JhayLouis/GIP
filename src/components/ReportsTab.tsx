@@ -3,6 +3,7 @@ import { Printer, FileText, Download, Calendar, BarChart3, PieChart } from 'luci
 import { getCurrentUser } from '../utils/auth';
 import { exportStatsToCSV, exportStatsToPDF, printStats } from '../utils/exportUtils';
 import { useReportData } from '../hooks/useReportData';
+import { getApplicantsByType, getApplicantsByStatus, getApplicantsByBarangay, getApplicantsByGenderAndStatus } from '../utils/dataService';
 import SummaryReport from '../components/Reports/SummaryReport';
 import BarangayReport from '../components/Reports/BarangayReport';
 import StatusReport from '../components/Reports/StatusReport';
@@ -18,12 +19,30 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [selectedDetailData, setSelectedDetailData] = useState<any[]>([]);
+  const [modalTitle, setModalTitle] = useState('Details');
   const { availableYears, statistics, barangayStats, statusStats, genderStats, loading } =
     useReportData(activeProgram, selectedYear);
 
   const handleRowClick = (type: string, filterValue?: string) => {
-    // TODO: fetch detailed data based on type/filterValue
-    setSelectedDetailData([]);
+    let data: any[] = [];
+    let title = 'Detailed Report';
+
+    if (selectedReportType === 'summary') {
+      data = getApplicantsByType(activeProgram, type, selectedYear);
+      title = type === 'total' ? 'All Applicants' : `Applicants - ${type}`;
+    } else if (selectedReportType === 'barangay') {
+      data = getApplicantsByBarangay(activeProgram, filterValue || '', selectedYear);
+      title = `Applicants - ${filterValue}`;
+    } else if (selectedReportType === 'status') {
+      data = getApplicantsByStatus(activeProgram, filterValue || '', selectedYear);
+      title = `Applicants - ${filterValue}`;
+    } else if (selectedReportType === 'gender') {
+      data = getApplicantsByGenderAndStatus(activeProgram, type, filterValue || '', selectedYear);
+      title = `Applicants - ${type} (${filterValue})`;
+    }
+
+    setModalTitle(title);
+    setSelectedDetailData(data);
     setShowModal(true);
   };
 
@@ -53,7 +72,7 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
             currentPage={currentPage}
             setEntriesPerPage={setEntriesPerPage}
             setCurrentPage={setCurrentPage}
-            onRowClick={(v) => handleRowClick('barangay', v)}
+            onRowClick={(v) => handleRowClick(v, v)}
             programName={activeProgram}
           />
         );
@@ -65,14 +84,26 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
             currentPage={currentPage}
             setEntriesPerPage={setEntriesPerPage}
             setCurrentPage={setCurrentPage}
-            onRowClick={(v) => handleRowClick('status', v)}
+            onRowClick={(v) => handleRowClick(v, v)}
             programName={activeProgram}
           />
         );
       case 'gender':
-        return <GenderReport data={genderStats} programName={activeProgram} />;
+        return (
+          <GenderReport
+            data={genderStats}
+            programName={activeProgram}
+            onRowClick={(gender, status) => handleRowClick(gender, status)}
+          />
+        );
       default:
-        return <SummaryReport data={statistics} onRowClick={() => handleRowClick('summary')} programName={activeProgram} />;
+        return (
+          <SummaryReport
+            data={statistics}
+            onRowClick={(type) => handleRowClick(type)}
+            programName={activeProgram}
+          />
+        );
     }
   };
 
@@ -182,7 +213,7 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
 
       {showModal && (
         <ReportDetailsModal
-          title="Detailed Report"
+          title={modalTitle}
           data={selectedDetailData}
           onClose={() => setShowModal(false)}
         />

@@ -520,3 +520,60 @@ export const getGenderStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: numbe
     };
   });
 };
+
+// Get applicants by status
+export const getApplicantsByStatus = (program: 'GIP' | 'TUPAD', status: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived && a.status === status);
+
+  if (year) {
+    applicants = applicants.filter(a => {
+      if (!a.dateSubmitted) return false;
+      return new Date(a.dateSubmitted).getFullYear() === year;
+    });
+  }
+
+  return applicants;
+};
+
+// Get applicants by barangay
+export const getApplicantsByBarangay = (program: 'GIP' | 'TUPAD', barangay: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived && a.barangay === barangay);
+
+  if (year) {
+    applicants = applicants.filter(a => {
+      if (!a.dateSubmitted) return false;
+      return new Date(a.dateSubmitted).getFullYear() === year;
+    });
+  }
+
+  return applicants;
+};
+
+// Get applicants by gender and status
+export const getApplicantsByGenderAndStatus = (program: 'GIP' | 'TUPAD', gender: string, status: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived && a.gender === gender && a.status === status);
+
+  if (year) {
+    applicants = applicants.filter(a => {
+      if (!a.dateSubmitted) return false;
+      return new Date(a.dateSubmitted).getFullYear() === year;
+    });
+  }
+
+  return applicants;
+};
+
+// Get all applicants of a program by type (total, or status names)
+export const getApplicantsByType = (program: 'GIP' | 'TUPAD', type: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived);
+
+  if (year) {
+    applicants = applicants.filter(a => {
+      if (!a.dateSubmitted) return false;
+      return new Date(a.dateSubmitted).getFullYear() === year;
+    });
+  }
+
+  if (type === 'total') return applicants;
+  return applicants.filter(a => a.status === type);
+};

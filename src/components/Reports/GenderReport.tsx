@@ -3,9 +3,19 @@ import React from 'react';
 interface GenderReportProps {
   data: any[];
   programName: string;
+  onRowClick?: (gender: string, status: string) => void;
 }
 
-const GenderReport: React.FC<GenderReportProps> = ({ data, programName }) => {
+const GenderReport: React.FC<GenderReportProps> = ({ data, programName, onRowClick }) => {
+  const statusColors: { [key: string]: string } = {
+    'PENDING': 'text-yellow-600 hover:text-yellow-700',
+    'APPROVED': 'text-blue-600 hover:text-blue-700',
+    'DEPLOYED': 'text-green-600 hover:text-green-700',
+    'COMPLETED': 'text-pink-600 hover:text-pink-700',
+    'REJECTED': 'text-orange-600 hover:text-orange-700',
+    'RESIGNED': 'text-gray-600 hover:text-gray-700'
+  };
+
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
       <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
@@ -15,18 +25,28 @@ const GenderReport: React.FC<GenderReportProps> = ({ data, programName }) => {
         {data.map((g, i) => (
           <div
             key={i}
-            className="bg-gray-50 rounded-lg p-6 shadow-sm hover:bg-gradient-to-r hover:from-pink-50 hover:to-red-50 hover:shadow-md transition-all duration-200"
+            className="bg-gray-50 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200"
           >
-            <h4 className="text-xl font-bold text-center mb-4 text-gray-800">
-              {g.gender} ({g.total})
+            <h4 className="text-xl font-bold text-center mb-6 text-gray-800">
+              {g.gender} ({g.total} total)
             </h4>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between"><span className="font-medium">Pending</span><span>{g.pending}</span></div>
-              <div className="flex justify-between"><span className="font-medium">Approved</span><span>{g.approved}</span></div>
-              <div className="flex justify-between"><span className="font-medium">Deployed</span><span>{g.deployed}</span></div>
-              <div className="flex justify-between"><span className="font-medium">Completed</span><span>{g.completed}</span></div>
-              <div className="flex justify-between"><span className="font-medium">Rejected</span><span>{g.rejected}</span></div>
-              <div className="flex justify-between"><span className="font-medium">Resigned</span><span>{g.resigned}</span></div>
+              {['PENDING', 'APPROVED', 'DEPLOYED', 'COMPLETED', 'REJECTED', 'RESIGNED'].map((status) => (
+                <div
+                  key={status}
+                  onClick={() => onRowClick && onRowClick(g.gender, status)}
+                  className={`flex justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                    onRowClick
+                      ? 'hover:bg-white hover:shadow-sm hover:scale-[1.01]'
+                      : ''
+                  }`}
+                >
+                  <span className="font-medium text-gray-700">{status}</span>
+                  <span className={`font-semibold ${statusColors[status] || 'text-gray-700'}`}>
+                    {g[status.toLowerCase()] || 0}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         ))}
