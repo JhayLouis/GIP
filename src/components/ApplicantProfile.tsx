@@ -32,66 +32,60 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             </button>
           </div>
         </div>
-
        <div className="p-6 bg-white">
+        <div className="border-2 border-black border-b-0 p-3 flex justify-between items-center">
+          <div className="flex-1">
+          </div>
+          <div className="border-2 border-black px-4 py-2 text-xs font-bold text-center">
+            DOLE-GIP Application Form
+          </div>
+        </div>
           <div className="border-2 border-black" id="applicant-profile-content">
             <div className="border-b-2 border-black flex items-center justify-center p-2">
-              {/* LEFT LOGO */}
               <img
                 src="src/assets/DOLElogo.png"
                 alt="DOLE Logo"
                 className="w-16 h-16 object-contain mr-4"
               />
-
-              {/* CENTER TEXT */}
-              <div className="text-center">
+                <div className="text-center">
                 <p className="font-bold text-sm mb-1">DOLE REGIONAL OFFICE NO. ___</p>
                 <p className="font-bold text-sm mb-1">GOVERNMENT INTERNSHIP PROGRAM (GIP)</p>
                 <p className="font-bold text-sm underline">APPLICATION FORM</p>
               </div>
-
-              {/* RIGHT LOGO */}
               <img
                 src="src/assets/GIPLogo.png"
                 alt="GIP Logo"
                 className="w-16 h-16 object-contain ml-4"
               />
             </div>
-
-
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-1">INSTRUCTION TO APPLICANTS:</p>
               <p className="text-xs">Please fill out all the required information in this form and attach additional documents, if necessary.</p>
             </div>
-
             <div className="grid grid-cols-[2fr_1fr] border-t-2 border-b-2 border-black">
-              {/* LEFT SIDE: NAME + ADDRESS */}
               <div className="border-r-2 border-black p-3">
-                {/* 1. NAME OF APPLICANT */}
                 <p className="font-bold text-xs mb-2">1. NAME OF APPLICANT:</p>
                 <div className="border-b border-black mb-3 pb-1">
-                  <div className="grid grid-cols-3 text-xs font-semibold">
-                    <div>Family Name</div>
-                    <div>First Name</div>
-                    <div>Middle Name</div>
-                  </div>
-                  <div className="grid grid-cols-3 text-xs mt-1">
+                  <div className="grid grid-cols-3 text-xs  mb-1 text-center">
                     <div>{applicant.lastName.toUpperCase()}</div>
                     <div>{applicant.firstName.toUpperCase()}</div>
                     <div>{applicant.middleName ? applicant.middleName.toUpperCase() : '-'}</div>
                   </div>
+                  <div className="grid grid-cols-3 text-[11px] font-bold text-center">
+                    <div>Family Name</div>
+                    <div>First Name</div>
+                    <div>Middle Name</div>
+                  </div>
                 </div>
-
-                {/* 2. RESIDENTIAL ADDRESS */}
-                <p className="font-bold text-xs mb-2">2. RESIDENTIAL ADDRESS:</p>
-                <div className="border-b border-black mb-2 pb-2 text-xs">
+                  <p className="font-bold text-xs mb-2">2. RESIDENTIAL ADDRESS:</p>
+                <div className="border-b border-black mb-2 pb-2 text-xs text-center">
                   <p>{applicant.barangay.toUpperCase()}</p>
                 </div>
 
                 <div className="text-xs space-y-2">
                 <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
                    <p className="font-bold p-2">Telephone No.:</p>
-                   <span className="p-2"> {applicant.telephoneNumber}</span>
+                   <span className="p-2 "> {applicant.telephoneNumber}</span>
               </div>
 
               <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
@@ -100,8 +94,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                   </div>
                   </div>
                   </div>
-
-             {/* RIGHT SIDE: PHOTO */}
               <div className="flex flex-col items-center justify-center text-center p-3">
                 {applicant.photoFileData ? (
                   <img
@@ -119,25 +111,18 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 )}
               </div>
             </div>
-
             <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
               <p className="font-bold p-2"> E-mail Address:</p>
               <span className="p-2">{(applicant.email || '-').toUpperCase()}</span>
             </div>
-
-           {/* PLACE OF BIRTH */}
             <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
               <p className="font-bold p-2">3. PLACE OF BIRTH (city/province):</p>
               <span className="p-2">{applicant.placeOfBirth ? applicant.placeOfBirth.toUpperCase() : '-'}</span>
             </div>
-
-            {/* DATE OF BIRTH */}
             <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
-              <p className="font-bold p-2">4. DATE OF BIRTH (mm/dd/yyyy):</p>
+              <p className="font-bold p-2">4. DATE OF BIRTH :</p>
               <span className="p-2">{applicant.birthDate}</span>
             </div>
-
-            {/* GENDER */}
             <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
               <p className="font-bold p-2">5. GENDER</p>
               <div className="flex items-center gap-4 p-2">
@@ -151,8 +136,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </label>
               </div>
             </div>
-
-            {/* CIVIL STATUS */}
             <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
               <p className="font-bold p-2">6. CIVIL STATUS</p>
               <div className="flex items-center gap-4 p-2">
@@ -170,7 +153,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </label>
               </div>
             </div>
-
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-2">7. EDUCATIONAL ATTAINMENT</p>
               <table className="w-full border-collapse text-xs">
@@ -197,7 +179,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </tbody>
               </table>
             </div>
-
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-1">8. DISADVANTAGED GROUP</p>
               <div className="text-xs flex flex-wrap gap-4 mt-1">
@@ -228,73 +209,73 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </div>
               </div>
             </div>
-
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-2">CERTIFICATION:</p>
-              <p className="text-xs leading-relaxed mb-3">
-                Certify that all information provided in this application, including the attached documents, is complete and accurate to the best of my knowledge. I attest to the veracity of the attached requirements. I understand and agree that any misrepresentation in this document or its attachments may result in disqualification, cancellation of the service or contract, and the forfeiture of any refunds received or pay damages to DOLE or comply with any other sanctions in accordance with the law.
+              <p className="text-xs leading-relaxed mb-6 text-justify">
+                Certify that all information provided in this application, including the attached documents, is complete and accurate to the best of my knowledge. I attest
+                to the veracity of the attached requirements. I understand and agree that any misrepresentation in this document or its attachments may result in
+                disqualification, cancellation of the service or contract, and the forfeiture of any refunds received or pay damages to DOLE or comply with any other
+                sanctions in accordance with the law.
               </p>
-              <div className="grid grid-cols-2 gap-4 text-xs">
+              <div className="text-center text-xs mt-10 space-y-10">
                 <div>
-                  <p className="font-semibold mb-1">Signature of Applicant</p>
-                  <div className="border-b-2 border-black h-10"></div>
+                  <p className="mb-1">______________________________</p>
+                  <p className="font-semibold">Signature of Applicant</p>
                 </div>
                 <div>
-                  <p className="font-semibold mb-1">Date Accomplished</p>
-                  <p>{applicant.dateSubmitted}</p>
+                  <p className="mb-1">{applicant.dateSubmitted || "____________________"}</p>
+                  <p>______________________________</p>
+                  <p className="font-semibold">Date Accomplished:</p>
                 </div>
               </div>
             </div>
-
-            <div className="border-b-2 border-black p-3">
-              <div className="grid grid-cols-2 gap-4 text-xs">
+            <div className="border-b-2 border-black p-3 text-xs">
+              <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <p className="font-bold mb-2">In case of Emergency, please notify:</p>
+                  <p className="font-bold italic mb-3">In case of Emergency, please notify:</p>
                   <div className="space-y-2">
-                    <div>
-                      <p className="font-semibold">Name:</p>
-                      <div className="border-b border-black h-6"></div>
+                    <div className="flex items-center">
+                      <p className="font-semibold w-32">Name:</p>
+                      <div className="border-b border-black flex-1 h-5"></div>
                     </div>
-                    <div>
-                      <p className="font-semibold">Contact Details:</p>
-                      <div className="border-b border-black h-6"></div>
+                    <div className="flex items-center">
+                      <p className="font-semibold w-32">Contact Details:</p>
+                      <div className="border-b border-black flex-1 h-5"></div>
                     </div>
-                    <div>
-                      <p className="font-semibold">Address:</p>
-                      <div className="border-b border-black h-6"></div>
+                    <div className="flex items-center">
+                      <p className="font-semibold w-32">Address:</p>
+                      <div className="border-b border-black flex-1 h-5"></div>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <p className="font-bold mb-2">GSIS Beneficiary (Parent/Child's Name)</p>
+                  <p className="font-bold mb-3">GSIS Beneficiary (Parent/Child's Name):</p>
                   <div className="space-y-2">
-                    <div>
-                      <p className="font-semibold">Name of Beneficiary:</p>
-                      <div className="border-b border-black h-6"></div>
+                    <div className="flex items-center">
+                      <p className="font-semibold w-40">Name of Beneficiary:</p>
+                      <div className="border-b border-black flex-1 h-5"></div>
                     </div>
-                    <div>
-                      <p className="font-semibold">Relationship:</p>
-                      <div className="border-b border-black h-6"></div>
+                    <div className="flex items-center">
+                      <p className="font-semibold w-40">Relationship:</p>
+                      <div className="border-b border-black flex-1 h-5"></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="border-b-2 border-black p-3">
-              <p className="font-bold text-xs mb-2">FOR DOLE-RO/FO Use Only</p>
+              <p className="font-bold text-xs mb-2 text-center">FOR DOLE-RO/FO Use Only</p>
               <p className="font-bold text-xs mb-2">Interviewed and validated by:</p>
               <div className="border-b-2 border-black h-12 mb-3"></div>
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
-                  <p className="font-semibold">NAME and SIGNATURE/Position</p>
+                  <p className="font-semibold text-center">NAME and SIGNATURE/POSITION</p>
                 </div>
                 <div>
-                  <p className="font-semibold">DATE</p>
+                  <p className="font-semibold text-center">DATE</p>
                 </div>
               </div>
             </div>
-
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-2">Documents Received:</p>
               <div className="grid grid-cols-2 gap-4 text-xs">
@@ -337,7 +318,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
           </div>
         </div>
       </div>
-
       {showImageModal && applicant.photoFileData && (
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60]"
