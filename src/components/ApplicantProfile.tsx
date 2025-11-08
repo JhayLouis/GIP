@@ -1,5 +1,5 @@
 import React from "react";
-import { X } from "lucide-react";
+import { X, Printer } from "lucide-react";
 import { Applicant } from "../utils/dataService";
 
 interface ApplicantProfileProps {
@@ -10,14 +10,27 @@ interface ApplicantProfileProps {
 const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose }) => {
   const [showImageModal, setShowImageModal] = React.useState(false);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <div className="bg-red-700 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+        <div className="bg-red-700 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10 no-print">
           <h2 className="text-xl font-bold">DOLE-GIP Application Form</h2>
-          <button onClick={onClose} className="hover:bg-red-800 p-2 rounded transition-colors">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={handlePrint}
+              className="hover:bg-red-800 p-2 rounded transition-colors"
+              title="Print"
+            >
+              <Printer className="w-5 h-5" />
+            </button>
+            <button onClick={onClose} className="hover:bg-red-800 p-2 rounded transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <div className="p-6 bg-white">

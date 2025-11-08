@@ -42,3 +42,77 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background-color: #9ca3af;
 }
+
+/* Print Styles for DOLE-GIP Application Form */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .fixed {
+    position: static !important;
+  }
+
+  .bg-black {
+    background: transparent !important;
+  }
+
+  .bg-opacity-50 {
+    background-opacity: 1 !important;
+  }
+
+  .rounded-lg,
+  .shadow-2xl {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .max-w-4xl {
+    max-width: 100% !important;
+  }
+
+  .max-h-\[90vh\] {
+    max-height: none !important;
+  }
+
+  .overflow-y-auto {
+    overflow: visible !important;
+  }
+
+  .p-4 {
+    padding: 0 !important;
+  }
+
+  #applicant-profile-content {
+    page-break-inside: avoid;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  input[type="checkbox"] {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .border-black,
+  .border-b-2,
+  .border-r-2,
+  .border-2 {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    border-color: black !important;
+  }
+}
