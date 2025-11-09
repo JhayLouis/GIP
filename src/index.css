@@ -45,13 +45,20 @@
 
 /* Print Styles for DOLE-GIP Application Form */
 @media print {
+  @page {
+    margin: 0.5in;
+    size: letter;
+  }
+
   * {
-    margin: 0;
-    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   body {
     background: white;
+    margin: 0;
+    padding: 0;
   }
 
   html,
@@ -106,24 +113,35 @@
     z-index: auto !important;
   }
 
-  .p-4,
-  .px-6,
-  .py-4 {
-    padding: 0 !important;
-  }
-
-  .p-6 {
+  #print-container {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
     padding: 0 !important;
   }
 
   #applicant-profile-content {
-    page-break-inside: avoid;
+    page-break-inside: auto !important;
     border: 2px solid black !important;
+    width: 100%;
+  }
+
+  #applicant-profile-content > div {
+    page-break-inside: avoid !important;
+  }
+
+  .border-b-2.border-black {
+    border-bottom: 2px solid black !important;
+  }
+
+  .border-r-2.border-black {
+    border-right: 2px solid black !important;
   }
 
   table {
     page-break-inside: auto;
     border-collapse: collapse;
+    width: 100%;
   }
 
   tr {
@@ -147,7 +165,8 @@
   .border-r-2,
   .border-2,
   .border-b,
-  .border {
+  .border,
+  .border-t-2 {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     border-color: black !important;
@@ -157,5 +176,9 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     max-width: 100%;
+  }
+
+  .grid {
+    display: grid !important;
   }
 }
