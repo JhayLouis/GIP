@@ -85,11 +85,14 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                     <div>First Name</div>
                     <div>Middle Name</div>
                   </div>
-                </div>
-                  <p className="font-bold text-xs mb-2">2. RESIDENTIAL ADDRESS:</p>
-                <div className="border-b border-black mb-2 pb-2 text-xs text-center">
-                  <p>{applicant.barangay.toUpperCase()}</p>
-                </div>
+               </div>
+               <p className="font-bold text-xs mb-2">2. RESIDENTIAL ADDRESS:</p>
+              <div className="border-b border-black mb-2 pb-2 text-xs text-center">
+                <p>
+                  {`${(applicant.residentialAddress || '').toUpperCase()}, BRGY. ${(applicant.barangay || '').toUpperCase()}`}
+                </p>
+              </div>
+
 
                 <div className="text-xs space-y-2">
                 <div className="grid grid-cols-[180px_1fr] items-center border-b border-black text-xs">

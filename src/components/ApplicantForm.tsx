@@ -317,49 +317,60 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
           </div>
 
           {activeProgram === 'GIP' && (
-            <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Place of Birth *</label>
-              <input
-                type="text"
-                value={formData.placeOfBirth || ''}
-                onChange={(e) => onInputChange('placeOfBirth', e.target.value)}
-                required
-                placeholder="City/Province"
-                className="w-full border rounded-lg px-3 py-2 uppercase"
-                style={{ textTransform: 'uppercase' }}
-              />
-            </div>
-          )}
-
+              <div>
+                <label className="block text-sm font-bold mb-1 uppercase">Place of Birth *</label>
+                <input
+                  type="text"
+                  value={formData.placeOfBirth || ''}
+                  onChange={(e) => onInputChange('placeOfBirth', e.target.value)}
+                  required
+                  placeholder="City/Province"
+                  className="w-full border rounded-lg px-3 py-2 uppercase"
+                  style={{ textTransform: 'uppercase' }}
+                />
+              </div>
+            )}
           <div>
-            <label className="block text-sm font-bold mb-2 uppercase">Barangay *</label>
-            <select
-              value={formData.barangay}
-              onChange={(e) => onInputChange('barangay', e.target.value)}
+            <label className="block text-sm font-bold mb-1 uppercase">Residential Address *</label>
+            <input
+              type="text"
+              value={formData.residentialAddress || ''}
+              onChange={(e) => onInputChange('residentialAddress', e.target.value)}
               required
-              className="w-full border rounded-lg px-3 py-3"
-            >
-              <option value="">SELECT BARANGAY</option>
-              <option>APLAYA</option>
-              <option>BALIBAGO</option>
-              <option>CAINGIN</option>
-              <option>DITA</option>
-              <option>DILA</option>
-              <option>DON JOSE</option>
-              <option>IBABA</option>
-              <option>KANLURAN</option>
-              <option>LABAS</option>
-              <option>MACABLING</option>
-              <option>MALITLIT</option>
-              <option>MALUSAK</option>
-              <option>MARKET AREA</option>
-              <option>POOC</option>
-              <option>PULONG SANTA CRUZ</option>
-              <option>SANTO DOMINGO</option>
-              <option>SINALHAN</option>
-              <option>TAGAPO</option>
-            </select>
+              placeholder="House No. / Street / Subdivision"
+              className="w-full border rounded-lg px-3 py-2 uppercase placeholder:text-[10px]"
+              style={{ textTransform: 'uppercase' }}
+            />
           </div>
+            <div>
+              <label className="block text-sm font-bold mb-2 uppercase">Barangay *</label>
+              <select
+                value={formData.barangay}
+                onChange={(e) => onInputChange('barangay', e.target.value)}
+                required
+                className="w-full border rounded-lg px-3 py-3"
+              >
+                <option value="">SELECT BARANGAY</option>
+                <option>APLAYA</option>
+                <option>BALIBAGO</option>
+                <option>CAINGIN</option>
+                <option>DITA</option>
+                <option>DILA</option>
+                <option>DON JOSE</option>
+                <option>IBABA</option>
+                <option>KANLURAN</option>
+                <option>LABAS</option>
+                <option>MACABLING</option>
+                <option>MALITLIT</option>
+                <option>MALUSAK</option>
+                <option>MARKET AREA</option>
+                <option>POOC</option>
+                <option>PULONG SANTA CRUZ</option>
+                <option>SANTO DOMINGO</option>
+                <option>SINALHAN</option>
+                <option>TAGAPO</option>
+              </select>
+            </div>
 
           <div>
             <label className="block text-sm font-bold mb-1 uppercase">Mobile Number *</label>

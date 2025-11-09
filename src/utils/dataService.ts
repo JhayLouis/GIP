@@ -9,6 +9,7 @@ export interface Applicant {
   extensionName?: string;
   birthDate: string;
   age: number;
+  residentialAddress?: string;
   barangay: string;
   contactNumber: string;
   telephoneNumber?: string;
@@ -343,7 +344,9 @@ export const initializeSampleData = (): void => {
       educationalAttainment: 'COLLEGE GRADUATE',
       encoder: 'Administrator',
       status: 'PENDING',
-      program: 'GIP'
+      program: 'GIP',
+      civilStats: 'SINGLE', // ✅ add this
+      residentialAddress: '123 MAIN STREET, BALIBAGO, STA. ROSA CITY' // ✅ your new field
     };
 
     const sampleTUPAD: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'> = {
@@ -357,7 +360,8 @@ export const initializeSampleData = (): void => {
       educationalAttainment: 'HIGH SCHOOL GRADUATE',
       encoder: 'Administrator',
       status: 'APPROVED',
-      program: 'TUPAD'
+      program: 'TUPAD',
+      civilStats: 'SINGLE', // ✅ add this
     };
 
     addApplicant(sampleGIP);
