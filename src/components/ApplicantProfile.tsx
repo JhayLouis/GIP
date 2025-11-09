@@ -11,14 +11,23 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
   const [showImageModal, setShowImageModal] = React.useState(false);
 
   const handlePrint = () => {
+  const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
+  const originalContents = document.body.innerHTML;
+
+  if (printContents) {
+    document.body.innerHTML = printContents;
     window.print();
-  };
+    document.body.innerHTML = originalContents;
+    window.location.reload(); // Optional, refresh to restore event listeners
+  }
+};
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="bg-red-700 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10 no-print">
-          <h2 className="text-xl font-bold">DOLE-GIP Application Form</h2>
+          <h2 className="text-xl font-bold">GIP APPLICANT FORM</h2>
           <div className="flex items-center space-x-2">
             <button
               onClick={handlePrint}
@@ -33,6 +42,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
           </div>
         </div>
        <div className="p-6 bg-white">
+        <div className="border-2 border-black" id="applicant-profile-content">
         <div className="border-2 border-black border-b-0 p-3 flex justify-between items-center">
           <div className="flex-1">
           </div>
@@ -40,7 +50,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             DOLE-GIP Application Form
           </div>
         </div>
-          <div className="border-2 border-black" id="applicant-profile-content">
             <div className="border-b-2 border-black flex items-center justify-center p-2">
               <img
                 src="src/assets/DOLElogo.png"
@@ -83,12 +92,12 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </div>
 
                 <div className="text-xs space-y-2">
-                <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
+                <div className="grid grid-cols-[180px_1fr] items-center border-b border-black text-xs">
                    <p className="font-bold p-2">Telephone No.:</p>
                    <span className="p-2 "> {applicant.telephoneNumber}</span>
               </div>
 
-              <div className="grid grid-cols-[180px_1fr] items-center border-b-2 border-black text-xs">
+              <div className="grid grid-cols-[180px_1fr] items-center border-b border-black text-xs">
                   <p className="font-bold p-2">Mobile No.:</p>
                   <span className="p-2"> {applicant.contactNumber}</span>
                   </div>
@@ -266,7 +275,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             <div className="border-b-2 border-black p-3">
               <p className="font-bold text-xs mb-2 text-center">FOR DOLE-RO/FO Use Only</p>
               <p className="font-bold text-xs mb-2">Interviewed and validated by:</p>
-              <div className="border-b-2 border-black h-12 mb-3"></div>
+              <div className="border-b border-black h-12 mb-3"></div>
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <p className="font-semibold text-center">NAME and SIGNATURE/POSITION</p>

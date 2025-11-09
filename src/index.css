@@ -46,9 +46,9 @@
 /* Print Styles for DOLE-GIP Application Form */
 @media print {
   @page {
-    margin: 0.5in;
-    size: letter;
-  }
+  size: 8.5in 13in; /* or simply: size: legal; */
+  margin: 0.5in;
+}
 
   * {
     -webkit-print-color-adjust: exact;
@@ -148,10 +148,12 @@
     page-break-inside: avoid;
     page-break-after: auto;
   }
-
+  
   td,
+  table,
   th {
     border: 1px solid black !important;
+    border-collapse: collapse !important;
   }
 
   input[type="checkbox"] {
@@ -160,16 +162,17 @@
     accent-color: black;
   }
 
-  .border-black,
-  .border-b-2,
-  .border-r-2,
-  .border-2,
-  .border-b,
   .border,
-  .border-t-2 {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-    border-color: black !important;
+  .border-2,
+  .border-b-2,
+  .border-t,
+  .border-t-2,
+  .border-l,
+  .border-l-2,
+  .border-r,
+  .border-r-2 {
+    border-width: 1px !important;
+    border-style: solid !important;
   }
 
   img {
