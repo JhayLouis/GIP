@@ -264,7 +264,6 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
             </table>
           )}
         </div>
-
         {/* Footer */}
         <div className="p-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-600 rounded-b-xl no-print">
           Showing {data.length} record{data.length !== 1 ? 's' : ''} • Generated on{' '}

@@ -88,8 +88,8 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, cancel it",
-        cancelButtonText: "No, stay",
+        confirmButtonText: "Confirm",
+        cancelButtonText: "Cancel",
         reverseButtons: true,
         customClass: {
           popup: "rounded-2xl shadow-lg",

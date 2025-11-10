@@ -659,7 +659,6 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           </select>
           <span className="text-sm text-gray-600">entries</span>
         </div>
-
         <div className="text-sm text-gray-600">
           Showing {startIndex + 1} to {Math.min(endIndex, totalEntries)} of {totalEntries} entries
         </div>
@@ -682,7 +681,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <tbody>
             {currentEntries.length === 0 ? (
               <tr>
-                <td colSpan={isAdmin ? 8 : 7} className="px-6 py-12 text-center text-gray-500">
+                <td colSpan={isAdmin ? 8 : 7} className="px-6 py-2 text-center text-gray-500">
                   <div className="text-lg mb-2">No applicants found.</div>
                 </td>
               </tr>

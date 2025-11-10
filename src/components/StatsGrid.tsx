@@ -91,8 +91,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.rejectedMale?.toString() ?? '0',
       female: statistics?.rejectedFemale?.toString() ?? '0',
       icon: X,
-      bgColor: 'bg-orange-500',
-      iconBg: 'bg-orange-600'
+      bgColor: 'bg-yellow-500',
+      iconBg: 'bg-yellow-600'
     },
     {
       title: 'RESIGNED',
