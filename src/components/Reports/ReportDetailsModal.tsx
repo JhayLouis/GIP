@@ -17,7 +17,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
           <style>
             @page {
               size: A4 landscape;
-              margin: 15mm;
+              margin: 10mm;
             }
 
             * {
@@ -34,33 +34,32 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
 
             .header {
               text-align: center;
-              margin-bottom: 20px;
-              padding-bottom: 10px;
+              margin-bottom: 15px;
+              padding-bottom: 8px;
               border-bottom: 2px solid #333;
             }
 
             .header h1 {
               font-size: 16pt;
               font-weight: bold;
-              margin-bottom: 5px;
+              margin-bottom: 3px;
               color: #dc2626;
             }
 
             .header p {
               font-size: 9pt;
               color: #666;
-              margin: 2px 0;
+              margin: 1px 0;
             }
 
             table {
               width: 100%;
               border-collapse: collapse;
-              margin-top: 10px;
             }
 
             th, td {
               border: 1px solid #000;
-              padding: 8px 6px;
+              padding: 7px 5px;
               text-align: left;
             }
 
@@ -81,15 +80,6 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
 
             .text-center {
               text-align: center;
-            }
-
-            .footer {
-              margin-top: 15px;
-              padding-top: 10px;
-              border-top: 1px solid #ccc;
-              text-align: center;
-              font-size: 8pt;
-              color: #666;
             }
 
             .no-data {
@@ -151,10 +141,6 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
               </tbody>
             </table>
           `}
-
-          <div class="footer">
-            <p>Total Records: ${data.length} | © ${new Date().getFullYear()} City Government of Santa Rosa</p>
-          </div>
         </body>
       </html>
     `;
@@ -177,9 +163,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
     const headers = ['Code', 'Name', 'Gender', 'Age', 'Barangay', 'Contact', 'Educational Attainment'];
     const rows = data.map(p => [
       p.code || '',
-      `${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}${
-        p.extensionName ? ' ' + p.extensionName : ''
-      }`,
+      `${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}`,
       p.gender || '',
       p.age || '',
       p.barangay || '',
@@ -265,9 +249,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
                   >
                     <td className="px-4 py-3 font-medium text-gray-900">{p.code || '-'}</td>
                     <td className="px-4 py-3 text-gray-800">
-                      {`${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}${
-                        p.extensionName ? ' ' + p.extensionName : ''
-                      }`}
+                      {`${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}`}
                     </td>
                     <td className="px-4 py-3 text-center text-gray-700">{p.gender || '-'}</td>
                     <td className="px-4 py-3 text-center text-gray-700">{p.age || '-'}</td>
