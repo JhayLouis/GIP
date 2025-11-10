@@ -9,7 +9,166 @@ interface ReportDetailsModalProps {
 
 const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, onClose }) => {
   const handlePrint = () => {
-    window.print();
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${title}</title>
+          <style>
+            @page {
+              size: A4 landscape;
+              margin: 15mm;
+            }
+
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+
+            body {
+              font-family: Arial, sans-serif;
+              font-size: 10pt;
+              color: #000;
+            }
+
+            .header {
+              text-align: center;
+              margin-bottom: 20px;
+              padding-bottom: 10px;
+              border-bottom: 2px solid #333;
+            }
+
+            .header h1 {
+              font-size: 16pt;
+              font-weight: bold;
+              margin-bottom: 5px;
+              color: #dc2626;
+            }
+
+            .header p {
+              font-size: 9pt;
+              color: #666;
+              margin: 2px 0;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 10px;
+            }
+
+            th, td {
+              border: 1px solid #000;
+              padding: 8px 6px;
+              text-align: left;
+            }
+
+            th {
+              background-color: #dc2626;
+              color: white;
+              font-weight: bold;
+              font-size: 10pt;
+            }
+
+            td {
+              font-size: 9pt;
+            }
+
+            tr:nth-child(even) {
+              background-color: #f9f9f9;
+            }
+
+            .text-center {
+              text-align: center;
+            }
+
+            .footer {
+              margin-top: 15px;
+              padding-top: 10px;
+              border-top: 1px solid #ccc;
+              text-align: center;
+              font-size: 8pt;
+              color: #666;
+            }
+
+            .no-data {
+              text-align: center;
+              padding: 40px;
+              color: #999;
+              font-style: italic;
+            }
+
+            @media print {
+              body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>${title}</h1>
+            <p>City Government of Santa Rosa - Office of the City Mayor</p>
+            <p>Soft Projects Management System</p>
+            <p>Generated on: ${new Date().toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}</p>
+          </div>
+
+          ${data.length === 0 ? `
+            <div class="no-data">
+              No applicants found matching the selected criteria.
+            </div>
+          ` : `
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 12%;">Code</th>
+                  <th style="width: 25%;">Full Name</th>
+                  <th style="width: 8%;" class="text-center">Gender</th>
+                  <th style="width: 6%;" class="text-center">Age</th>
+                  <th style="width: 15%;">Barangay</th>
+                  <th style="width: 12%;">Contact</th>
+                  <th style="width: 22%;">Education</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.map((p, index) => `
+                  <tr>
+                    <td>${p.code || '-'}</td>
+                    <td>${p.firstName || ''} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName || ''}${p.extensionName ? ' ' + p.extensionName : ''}</td>
+                    <td class="text-center">${p.gender || '-'}</td>
+                    <td class="text-center">${p.age || '-'}</td>
+                    <td>${p.barangay || '-'}</td>
+                    <td>${p.contactNumber || '-'}</td>
+                    <td style="font-size: 8pt;">${p.educationalAttainment || '-'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `}
+
+          <div class="footer">
+            <p>Total Records: ${data.length} | © ${new Date().getFullYear()} City Government of Santa Rosa</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.focus();
+
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    }
   };
 
   const handleExportCSV = () => {
@@ -42,10 +201,10 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4 no-print">
       <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 no-print">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           <div className="flex items-center space-x-2">
             {data.length > 0 && (
@@ -125,7 +284,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-600 rounded-b-xl">
+        <div className="p-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-600 rounded-b-xl no-print">
           Showing {data.length} record{data.length !== 1 ? 's' : ''} • Generated on{' '}
           {new Date().toLocaleDateString()}
         </div>
