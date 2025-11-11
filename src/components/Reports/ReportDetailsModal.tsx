@@ -1,5 +1,5 @@
 import React from 'react';
-import { Printer, X, Download } from 'lucide-react';
+import { Printer, X } from 'lucide-react';
 
 interface ReportDetailsModalProps {
   title: string;
@@ -157,33 +157,6 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
     }
   };
 
-  const handleExportCSV = () => {
-    if (data.length === 0) return;
-
-    const headers = ['Code', 'Name', 'Gender', 'Age', 'Barangay', 'Contact', 'Educational Attainment'];
-    const rows = data.map(p => [
-      p.code || '',
-      `${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}`,
-      p.gender || '',
-      p.age || '',
-      p.barangay || '',
-      p.contactNumber || '',
-      p.educationalAttainment || ''
-    ]);
-
-    const csv = [headers, ...rows]
-      .map(row => row.map(cell => `"${cell}"`).join(','))
-      .join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${title.replace(/\s+/g, '_')}_${new Date()
-      .toISOString()
-      .split('T')[0]}.csv`;
-    a.click();
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4 no-print">
       <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
@@ -192,22 +165,13 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           <div className="flex items-center space-x-2">
             {data.length > 0 && (
-              <>
-                <button
-                  onClick={handlePrint}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
-                  title="Print"
-                >
-                  <Printer className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={handleExportCSV}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
-                  title="Export CSV"
-                >
-                  <Download className="w-5 h-5" />
-                </button>
-              </>
+              <button
+                onClick={handlePrint}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-700"
+                title="Print"
+              >
+                <Printer className="w-5 h-5" />
+              </button>
             )}
             <button
               onClick={onClose}
