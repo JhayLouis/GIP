@@ -18,18 +18,18 @@ const StatusReport: React.FC<StatusReportProps> = ({
   const statusColors: { [key: string]: string } = {
     'PENDING': 'bg-yellow-50 border-yellow-200 hover:from-yellow-50 hover:to-yellow-100',
     'APPROVED': 'bg-blue-50 border-blue-200 hover:from-blue-50 hover:to-blue-100',
+    'REJECTED': 'bg-orange-50 border-orange-200 hover:from-orange-50 hover:to-orange-100',
     'DEPLOYED': 'bg-green-50 border-green-200 hover:from-green-50 hover:to-green-100',
     'COMPLETED': 'bg-pink-50 border-pink-200 hover:from-pink-50 hover:to-pink-100',
-    'REJECTED': 'bg-orange-50 border-orange-200 hover:from-orange-50 hover:to-orange-100',
     'RESIGNED': 'bg-gray-50 border-gray-200 hover:from-gray-50 hover:to-gray-100'
   };
 
   const statusTextColors: { [key: string]: string } = {
     'PENDING': 'text-yellow-700',
     'APPROVED': 'text-blue-700',
+    'REJECTED': 'text-orange-700',
     'DEPLOYED': 'text-green-700',
     'COMPLETED': 'text-pink-700',
-    'REJECTED': 'text-orange-700',
     'RESIGNED': 'text-gray-700'
   };
 

@@ -86,7 +86,7 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, Send Emails',
+      confirmButtonText: 'Confirm',
       cancelButtonText: 'Cancel',
       reverseButtons: true,
       customClass: {
