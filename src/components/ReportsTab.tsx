@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Printer, FileText, Download, Calendar, BarChart3, PieChart } from 'lucide-react';
+import Swal from 'sweetalert2';
 import { getCurrentUser } from '../utils/auth';
 import { exportStatsToCSV, exportStatsToPDF, printStats } from '../utils/exportUtils';
+import { sendBulkEmails } from '../utils/emailService';
 import { useReportData } from '../hooks/useReportData';
 import { getApplicantsByType, getApplicantsByStatus, getApplicantsByBarangay, getApplicantsByGenderAndStatus } from '../utils/dataService';
 import SummaryReport from '../components/Reports/SummaryReport';
@@ -55,6 +57,116 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
 
   const handlePrint = () => statistics && printStats(statistics, activeProgram);
 
+  const handleSendEmails = async (status: string) => {
+    const applicants = getApplicantsByStatus(activeProgram, status, selectedYear);
+    const emailableApplicants = applicants.filter(a => a.email);
+
+    if (emailableApplicants.length === 0) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'No Email Addresses',
+        text: `No ${status.toLowerCase()} applicants have email addresses on file.`,
+        confirmButtonColor: '#3085d6',
+        customClass: {
+          popup: 'rounded-2xl shadow-lg',
+          confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
+        }
+      });
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: 'Send Email Notifications?',
+      html: `
+        <p>You are about to send email notifications to <strong>${emailableApplicants.length}</strong> ${status.toLowerCase()} applicant(s).</p>
+        ${applicants.length !== emailableApplicants.length ? `<p class="text-sm text-orange-600 mt-2">${applicants.length - emailableApplicants.length} applicant(s) will be skipped (no email address).</p>` : ''}
+        <p class="text-sm text-gray-600 mt-2">This action cannot be undone.</p>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, Send Emails',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      customClass: {
+        popup: 'rounded-2xl shadow-lg',
+        confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold',
+        cancelButton: 'px-5 py-2 rounded-lg text-white font-semibold'
+      }
+    });
+
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: 'Sending Emails...',
+        html: 'Please wait while we send the emails.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        customClass: {
+          popup: 'rounded-2xl shadow-lg'
+        }
+      });
+
+      try {
+        const emailData = emailableApplicants.map(a => ({
+          email: a.email!,
+          firstName: a.firstName,
+          lastName: a.lastName,
+          code: a.code,
+          status: status as 'APPROVED' | 'REJECTED'
+        }));
+
+        const emailResult = await sendBulkEmails(emailData, activeProgram);
+
+        if (emailResult.sent > 0) {
+          await Swal.fire({
+            icon: 'success',
+            title: 'Emails Sent Successfully',
+            html: `
+              <p><strong>${emailResult.sent}</strong> email(s) sent successfully.</p>
+              ${emailResult.failed > 0 ? `<p class="text-orange-600 mt-2"><strong>${emailResult.failed}</strong> email(s) failed to send.</p>` : ''}
+              ${emailResult.errors.length > 0 ? `<details class="mt-3 text-left text-sm"><summary class="cursor-pointer font-semibold">View Errors</summary><ul class="mt-2 ml-4 list-disc">${emailResult.errors.map(e => `<li>${e}</li>`).join('')}</ul></details>` : ''}
+            `,
+            confirmButtonColor: '#3085d6',
+            customClass: {
+              popup: 'rounded-2xl shadow-lg',
+              confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
+            }
+          });
+        } else {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Failed to Send Emails',
+            html: `
+              <p>All email attempts failed.</p>
+              ${emailResult.errors.length > 0 ? `<details class="mt-3 text-left text-sm"><summary class="cursor-pointer font-semibold">View Errors</summary><ul class="mt-2 ml-4 list-disc">${emailResult.errors.map(e => `<li>${e}</li>`).join('')}</ul></details>` : ''}
+            `,
+            confirmButtonColor: '#3085d6',
+            customClass: {
+              popup: 'rounded-2xl shadow-lg',
+              confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error sending emails:', error);
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An unexpected error occurred while sending emails. Please try again.',
+          confirmButtonColor: '#3085d6',
+          customClass: {
+            popup: 'rounded-2xl shadow-lg',
+            confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
+          }
+        });
+      }
+    }
+  };
+
   const reportTypes = [
     { id: 'summary', label: 'Summary Report', icon: BarChart3, color: 'border-blue-500 bg-blue-50 text-blue-600' },
     { id: 'barangay', label: 'By Barangay', icon: PieChart, color: 'border-green-500 bg-green-50 text-green-600' },
@@ -85,6 +197,7 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
             setEntriesPerPage={setEntriesPerPage}
             setCurrentPage={setCurrentPage}
             onRowClick={(v) => handleRowClick(v, v)}
+            onSendEmails={isAdmin ? handleSendEmails : undefined}
             programName={activeProgram}
           />
         );

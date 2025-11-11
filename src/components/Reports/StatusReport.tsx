@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Mail } from 'lucide-react';
 
 interface StatusReportProps {
   data: any[];
@@ -8,11 +8,12 @@ interface StatusReportProps {
   setEntriesPerPage: (n: number) => void;
   setCurrentPage: (n: number) => void;
   onRowClick: (status: string) => void;
+  onSendEmails?: (status: string) => void;
   programName: string;
 }
 
 const StatusReport: React.FC<StatusReportProps> = ({
-  data, entriesPerPage, currentPage, setEntriesPerPage, setCurrentPage, onRowClick, programName
+  data, entriesPerPage, currentPage, setEntriesPerPage, setCurrentPage, onRowClick, onSendEmails, programName
 }) => {
   const statusColors: { [key: string]: string } = {
     'PENDING': 'bg-yellow-50 border-yellow-200 hover:from-yellow-50 hover:to-yellow-100',
@@ -46,14 +47,31 @@ const StatusReport: React.FC<StatusReportProps> = ({
           {currentEntries.map((s, i) => (
             <div
               key={i}
-              onClick={() => onRowClick(s.status)}
-              className={`text-center p-6 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-[1.02] hover:bg-gradient-to-r ${statusColors[s.status] || statusColors['PENDING']}`}
+              className={`relative text-center p-6 rounded-lg border-2 transition-all duration-200 hover:shadow-lg ${statusColors[s.status] || statusColors['PENDING']}`}
             >
-              <div className={`text-lg font-semibold mb-1 ${statusTextColors[s.status] || statusTextColors['PENDING']}`}>
-                {s.status}
+              <div
+                onClick={() => onRowClick(s.status)}
+                className="cursor-pointer hover:scale-[1.02]"
+              >
+                <div className={`text-lg font-semibold mb-1 ${statusTextColors[s.status] || statusTextColors['PENDING']}`}>
+                  {s.status}
+                </div>
+                <div className="text-3xl font-bold text-gray-900 mb-2">{s.total}</div>
+                <div className="text-sm text-gray-600">Applicants</div>
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-2">{s.total}</div>
-              <div className="text-sm text-gray-600">Applicants</div>
+              {onSendEmails && (s.status === 'APPROVED' || s.status === 'REJECTED') && s.total > 0 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSendEmails(s.status);
+                  }}
+                  className="mt-3 w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+                  title={`Send emails to ${s.status.toLowerCase()} applicants`}
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Send Emails</span>
+                </button>
+              )}
             </div>
           ))}
         </div>
