@@ -106,8 +106,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
     {
       title: 'BARANGAYS COVERED',
       value: statistics?.barangaysCovered?.toString() ?? '0',
-      male: '0',
-      female: '0',
+      male: statistics?.maleCount?.toString() ?? '0',
+      female: statistics?.femaleCount?.toString() ?? '0',
       icon: MapPin,
       bgColor: 'bg-gray-600',
       iconBg: 'bg-gray-700'
