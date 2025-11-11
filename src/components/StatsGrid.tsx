@@ -9,7 +9,9 @@ import {
   MapPin,
   ClipboardCheck,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  UserPlus,
+  User
 } from 'lucide-react';
 import { useData } from '../hooks/useData';
 
@@ -150,11 +152,11 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
 
               <div className="flex items-center space-x-4 text-xs opacity-75">
                 <div className="flex items-center space-x-1">
-                  <Users className="w-3 h-3" />
+                  <UserPlus className="w-3 h-3" />
                   <span>{stat.male}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Users className="w-3 h-3" />
+                  <User className="w-3 h-3" />
                   <span>{stat.female}</span>
                 </div>
               </div>
