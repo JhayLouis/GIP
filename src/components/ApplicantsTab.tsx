@@ -363,7 +363,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           course: formData.course || '',
           beneficiaryName: formData.beneficiaryName || undefined,
           code: applicantCode,
-          encoder: 'Administrator',
+          encoder: 'Administrator', 
           status: formData.status,
           program: activeProgram,
           resumeFileName,
