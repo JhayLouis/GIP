@@ -426,12 +426,13 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
 
   const filteredApplicants = getFilteredApplicants({
     searchTerm,
-    status: statusFilter,
-    barangay: barangayFilter,
-    gender: genderFilter,
-    ageRange: ageFilter,
-    education: educationFilter
+    status: statusFilter === 'All Status' ? '' : statusFilter,
+    barangay: barangayFilter === 'All Barangays' ? '' : barangayFilter,
+    gender: genderFilter === 'All Genders' ? '' : genderFilter,
+    ageRange: ageFilter === 'All Ages' ? '' : ageFilter,
+    education: educationFilter === 'All Education' || educationFilter === 'All Education Levels' ? '' : educationFilter
   }).filter(applicant => showArchived ? applicant.archived : !applicant.archived);
+
 
   const totalEntries = filteredApplicants.length;
   const totalPages = Math.ceil(totalEntries / entriesPerPage);
@@ -491,39 +492,60 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{programName} APPLICANTS{showArchived ? ' - ARCHIVE' : ''}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {programName} APPLICANTS{showArchived ? ' - ARCHIVE' : ''}
+          </h1>
         </div>
+
         <div className="flex items-center space-x-3">
           {isAdmin && (
-            <button
-              onClick={() => setShowArchived(!showArchived)}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
-            >
-              {showArchived ? (
-                <>
-                  <ArchiveRestore className="w-4 h-4" />
-                  <span>View Active</span>
-                </>
-              ) : (
-                <>
-                  <Archive className="w-4 h-4" />
-                  <span>Archive</span>
-                </>
+            <>
+              <button
+                onClick={() => setShowArchived(!showArchived)}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+              >
+                {showArchived ? (
+                  <>
+                    <ArchiveRestore className="w-4 h-4" />
+                    <span>View Active</span>
+                  </>
+                ) : (
+                  <>
+                    <Archive className="w-4 h-4" />
+                    <span>Archive</span>
+                  </>
+                )}
+              </button>
+
+              {!showArchived && (
+                <button
+                  onClick={openModal}
+                  className={`${primaryColor} text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200`}
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add New Applicant</span>
+                </button>
               )}
-            </button>
-          )}
-          {!showArchived && isAdmin && (
-            <button
-              onClick={openModal}
-              className={`${primaryColor} text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200`}
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Applicant</span>
-            </button>
+
+              {/* ✅ Moved CSV and PDF buttons here */}
+              <button
+                onClick={handleExportCSV}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
+              >
+                <Download className="w-4 h-4" />
+                <span>CSV</span>
+              </button>
+              <button
+                onClick={handlePrint}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Print</span>
+              </button>
+            </>
           )}
         </div>
       </div>
-
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
         <div className="flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-[200px]">
@@ -613,25 +635,6 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             <option>ALS SECONDARY GRADUATE</option>
             <option>COLLEGE UNDERGRADUATE</option>
           </select>
-
-          {isAdmin && (
-            <div className="flex space-x-2 ml-auto">
-              <button
-                onClick={handleExportCSV}
-                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
-              >
-                <Download className="w-4 h-4" />
-                <span>CSV</span>
-              </button>
-              <button
-                onClick={handleExportPDF}
-                className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                <span>PDF</span>
-              </button>
-            </div>
-          )}
         </div>
       </div>
 

@@ -109,12 +109,6 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
               >
                 <Download className="w-4 h-4" /><span>CSV</span>
               </button>
-              <button
-                onClick={() => handleExport('pdf')}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition"
-              >
-                <FileText className="w-4 h-4" /><span>PDF</span>
-              </button>
             </>
           )}
         </div>
