@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  role      String
+  name      String
+  createdAt DateTime @default(now())
+}
+
+model Applicant {
+  id                   String   @id @default(uuid())
+  program              String
+  code                 String   @unique
+  firstName            String
+  middleName           String?
+  lastName             String
+  extensionName        String?
+  birthDate            DateTime
+  age                  Int
+  residentialAddress   String?
+  barangay             String
+  contactNumber        String
+  telephoneNumber      String?
+  email                String?
+  placeOfBirth         String?
+  school               String?
+  gender               String
+  civilStatus          String?
+  educationalAttainment String
+  course               String?
+  beneficiaryName      String?
+  photoFileName        String?
+  photoFileData        String?
+  resumeFileName       String?
+  resumeFileData       String?
+  encoder              String
+  status               String
+  dateSubmitted        DateTime @default(now())
+  idType               String?
+  idNumber             String?
+  occupation           String?
+  averageMonthlyIncome String?
+  dependentName        String?
+  relationshipToDependent String?
+  archived             Boolean  @default(false)
+  archivedDate         DateTime?
+  interviewed          Boolean  @default(false)
+}
