@@ -130,7 +130,6 @@ export const exportApplicantsToPDF = (applicants: ApplicantData[], program: 'GIP
         </table>
         <div class="footer">
           <p>© 2025 City Government of Santa Rosa - Office of the City Mayor</p>
-          <p>Total Records: ${applicants.length}</p>
         </div>
       </body>
     </html>
@@ -285,7 +284,6 @@ export const printApplicants = (applicants: ApplicantData[], program: 'GIP' | 'T
         </table>
         <div class="footer">
           <p>© 2025 City Government of Santa Rosa - Office of the City Mayor</p>
-          <p>Total Records: ${applicants.length}</p>
         </div>
       </body>
     </html>
