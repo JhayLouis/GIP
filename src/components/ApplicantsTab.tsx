@@ -124,8 +124,8 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
       relationshipToDependent: applicant.relationshipToDependent || '',
       resumeFile: null,
       photoFile: null,
-      photoFileName: '',
-      photoFileData: ''
+      photoFileName: applicant.photoFileName || '',
+      photoFileData: applicant.photoFileData || ''
     });
     setShowModal(true);
   };
@@ -525,8 +525,8 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
       </div>
 
       <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-          <div className="relative">
+        <div className="flex flex-wrap gap-3 items-center">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
@@ -540,7 +540,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className={`px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor}`}
+            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>All Status</option>
             <option>PENDING</option>
@@ -554,7 +554,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <select
             value={barangayFilter}
             onChange={(e) => setBarangayFilter(e.target.value)}
-            className={`px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor}`}
+            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>All Barangays</option>
             <option>APLAYA</option>
@@ -580,19 +580,17 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <select
             value={genderFilter}
             onChange={(e) => setGenderFilter(e.target.value)}
-            className={`px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor}`}
+            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>All Genders</option>
             <option>MALE</option>
             <option>FEMALE</option>
           </select>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
           <select
             value={ageFilter}
             onChange={(e) => setAgeFilter(e.target.value)}
-            className={`px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor}`}
+            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>All Ages</option>
             <option>18-25</option>
@@ -604,9 +602,9 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <select
             value={educationFilter}
             onChange={(e) => setEducationFilter(e.target.value)}
-            className={`px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor}`}
+            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
-            <option>All Education Levels</option>
+            <option>All Education</option>
             <option>JUNIOR HIGH SCHOOL GRADUATE</option>
             <option>SENIOR HIGH SCHOOL GRADUATE</option>
             <option>HIGH SCHOOL GRADUATE</option>
@@ -616,28 +614,24 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             <option>COLLEGE UNDERGRADUATE</option>
           </select>
 
-          <div></div>
-
-          <div className="md:col-span-2 flex space-x-2 justify-end">
-            {isAdmin && (
-              <>
-                <button
-                  onClick={handleExportCSV}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>CSV</span>
-                </button>
-                <button
-                  onClick={handleExportPDF}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
-                >
-                  <FileText className="w-4 h-4" />
-                  <span>PDF</span>
-                </button>
-              </>
-            )}
-          </div>
+          {isAdmin && (
+            <div className="flex space-x-2 ml-auto">
+              <button
+                onClick={handleExportCSV}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
+              >
+                <Download className="w-4 h-4" />
+                <span>CSV</span>
+              </button>
+              <button
+                onClick={handleExportPDF}
+                className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
+              >
+                <FileText className="w-4 h-4" />
+                <span>PDF</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
