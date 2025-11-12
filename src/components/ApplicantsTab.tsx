@@ -502,7 +502,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             <>
               <button
                 onClick={() => setShowArchived(!showArchived)}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
               >
                 {showArchived ? (
                   <>
@@ -526,18 +526,16 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
                   <span>Add New Applicant</span>
                 </button>
               )}
-
-              {/* ✅ Moved CSV and PDF buttons here */}
               <button
                 onClick={handleExportCSV}
-                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
               >
                 <Download className="w-4 h-4" />
                 <span>CSV</span>
               </button>
               <button
                 onClick={handlePrint}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 text-sm"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
               >
                 <FileText className="w-4 h-4" />
                 <span>Print</span>
@@ -554,7 +552,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search applicants..."
+              placeholder="Search Applicants..."
               className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor}`}
             />
           </div>
@@ -564,7 +562,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
-            <option>All Status</option>
+            <option>ALL STATUS</option>
             <option>PENDING</option>
             <option>APPROVED</option>
             <option>DEPLOYED</option>
@@ -578,7 +576,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             onChange={(e) => setBarangayFilter(e.target.value)}
             className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
-            <option>All Barangays</option>
+            <option>ALL BARANGAYS</option>
             <option>APLAYA</option>
             <option>BALIBAGO</option>
             <option>CAINGIN</option>
@@ -604,7 +602,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             onChange={(e) => setGenderFilter(e.target.value)}
             className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
-            <option>All Genders</option>
+            <option>ALL GENDERS</option>
             <option>MALE</option>
             <option>FEMALE</option>
           </select>
@@ -614,7 +612,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             onChange={(e) => setAgeFilter(e.target.value)}
             className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
-            <option>All Ages</option>
+            <option>ALL AGES</option>
             <option>18-25</option>
             <option>26-35</option>
             <option>36-45</option>
@@ -626,7 +624,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             onChange={(e) => setEducationFilter(e.target.value)}
             className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
-            <option>All Education</option>
+            <option>ALL EDUCATION</option>
             <option>JUNIOR HIGH SCHOOL GRADUATE</option>
             <option>SENIOR HIGH SCHOOL GRADUATE</option>
             <option>HIGH SCHOOL GRADUATE</option>
