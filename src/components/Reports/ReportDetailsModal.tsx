@@ -192,7 +192,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
           </div>
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-3">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Filter by Course (Editable)
+              Filter by Course
             </label>
             <input
               type="text"
