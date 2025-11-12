@@ -1,46 +1,39 @@
 import React, { useState } from 'react';
-import { Printer, FileText, Download, Calendar, BarChart3, PieChart } from 'lucide-react';
+import { Printer, FileText, Download, Calendar } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { getCurrentUser } from '../utils/auth';
 import { exportStatsToCSV, exportStatsToPDF, printStats } from '../utils/exportUtils';
-import { sendBulkEmails } from '../utils/emailService';
 import { useReportData } from '../hooks/useReportData';
 import { getApplicantsByType, getApplicantsByStatus, getApplicantsByBarangay, getApplicantsByGenderAndStatus } from '../utils/dataService';
 import SummaryReport from '../components/Reports/SummaryReport';
-import BarangayReport from '../components/Reports/BarangayReport';
-import StatusReport from '../components/Reports/StatusReport';
-import GenderReport from '../components/Reports/GenderReport';
 import ReportDetailsModal from '../components/Reports/ReportDetailsModal';
 
 const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
   const currentUser = getCurrentUser();
   const isAdmin = currentUser?.role === 'admin';
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
-  const [selectedReportType, setSelectedReportType] = useState('summary');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [selectedDetailData, setSelectedDetailData] = useState<any[]>([]);
   const [modalTitle, setModalTitle] = useState('Details');
   const { availableYears, statistics, barangayStats, statusStats, genderStats, loading } =
     useReportData(activeProgram, selectedYear);
 
-  const handleRowClick = (type: string, filterValue?: string) => {
+  const handleRowClick = (type: string, filterValue?: string, filterType?: string) => {
     let data: any[] = [];
     let title = 'Detailed Report';
 
-    if (selectedReportType === 'summary') {
-      data = getApplicantsByType(activeProgram, type, selectedYear);
-      title = type === 'total' ? 'All Applicants' : `Applicants - ${type}`;
-    } else if (selectedReportType === 'barangay') {
+    if (filterType === 'barangay') {
       data = getApplicantsByBarangay(activeProgram, filterValue || '', selectedYear);
       title = `Applicants - ${filterValue}`;
-    } else if (selectedReportType === 'status') {
+    } else if (filterType === 'status') {
       data = getApplicantsByStatus(activeProgram, filterValue || '', selectedYear);
       title = `Applicants - ${filterValue}`;
-    } else if (selectedReportType === 'gender') {
+    } else if (filterType === 'gender') {
       data = getApplicantsByGenderAndStatus(activeProgram, type, filterValue || '', selectedYear);
       title = `Applicants - ${type} (${filterValue})`;
+    } else {
+      data = getApplicantsByType(activeProgram, type, selectedYear);
+      title = type === 'total' ? 'All Applicants' : `Applicants - ${type}`;
     }
 
     setModalTitle(title);
@@ -57,168 +50,6 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
 
   const handlePrint = () => statistics && printStats(statistics, activeProgram);
 
-  const handleSendEmails = async (status: string) => {
-    const applicants = getApplicantsByStatus(activeProgram, status, selectedYear);
-    const emailableApplicants = applicants.filter(a => a.email);
-
-    if (emailableApplicants.length === 0) {
-      await Swal.fire({
-        icon: 'warning',
-        title: 'No Email Addresses',
-        text: `No ${status.toLowerCase()} applicants have email addresses on file.`,
-        confirmButtonColor: '#3085d6',
-        customClass: {
-          popup: 'rounded-2xl shadow-lg',
-          confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
-        }
-      });
-      return;
-    }
-
-    const result = await Swal.fire({
-      title: 'Send Email Notifications?',
-      html: `
-        <p>You are about to send email notifications to <strong>${emailableApplicants.length}</strong> ${status.toLowerCase()} applicant(s).</p>
-        ${applicants.length !== emailableApplicants.length ? `<p class="text-sm text-orange-600 mt-2">${applicants.length - emailableApplicants.length} applicant(s) will be skipped (no email address).</p>` : ''}
-        <p class="text-sm text-gray-600 mt-2">This action cannot be undone.</p>
-      `,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
-      reverseButtons: true,
-      customClass: {
-        popup: 'rounded-2xl shadow-lg',
-        confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold',
-        cancelButton: 'px-5 py-2 rounded-lg text-white font-semibold'
-      }
-    });
-
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Sending Emails...',
-        html: 'Please wait while we send the emails.',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-        customClass: {
-          popup: 'rounded-2xl shadow-lg'
-        }
-      });
-
-      try {
-        const emailData = emailableApplicants.map(a => ({
-          email: a.email!,
-          firstName: a.firstName,
-          lastName: a.lastName,
-          code: a.code,
-          status: status as 'APPROVED' | 'REJECTED'
-        }));
-
-        const emailResult = await sendBulkEmails(emailData, activeProgram);
-
-        if (emailResult.sent > 0) {
-          await Swal.fire({
-            icon: 'success',
-            title: 'Emails Sent Successfully',
-            html: `
-              <p><strong>${emailResult.sent}</strong> email(s) sent successfully.</p>
-              ${emailResult.failed > 0 ? `<p class="text-orange-600 mt-2"><strong>${emailResult.failed}</strong> email(s) failed to send.</p>` : ''}
-              ${emailResult.errors.length > 0 ? `<details class="mt-3 text-left text-sm"><summary class="cursor-pointer font-semibold">View Errors</summary><ul class="mt-2 ml-4 list-disc">${emailResult.errors.map(e => `<li>${e}</li>`).join('')}</ul></details>` : ''}
-            `,
-            confirmButtonColor: '#3085d6',
-            customClass: {
-              popup: 'rounded-2xl shadow-lg',
-              confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
-            }
-          });
-        } else {
-          await Swal.fire({
-            icon: 'error',
-            title: 'Failed to Send Emails',
-            html: `
-              <p>All email attempts failed.</p>
-              ${emailResult.errors.length > 0 ? `<details class="mt-3 text-left text-sm"><summary class="cursor-pointer font-semibold">View Errors</summary><ul class="mt-2 ml-4 list-disc">${emailResult.errors.map(e => `<li>${e}</li>`).join('')}</ul></details>` : ''}
-            `,
-            confirmButtonColor: '#3085d6',
-            customClass: {
-              popup: 'rounded-2xl shadow-lg',
-              confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error sending emails:', error);
-        await Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred while sending emails. Please try again.',
-          confirmButtonColor: '#3085d6',
-          customClass: {
-            popup: 'rounded-2xl shadow-lg',
-            confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
-          }
-        });
-      }
-    }
-  };
-
-  const reportTypes = [
-    { id: 'summary', label: 'Summary Report', icon: BarChart3, color: 'border-blue-500 bg-blue-50 text-blue-600' },
-    { id: 'barangay', label: 'By Barangay', icon: PieChart, color: 'border-green-500 bg-green-50 text-green-600' },
-    { id: 'status', label: 'By Status', icon: BarChart3, color: 'border-purple-500 bg-purple-50 text-purple-600' },
-    { id: 'gender', label: 'By Gender', icon: PieChart, color: 'border-pink-500 bg-pink-50 text-pink-600' },
-  ];
-
-  const renderReport = () => {
-    switch (selectedReportType) {
-      case 'barangay':
-        return (
-          <BarangayReport
-            data={barangayStats}
-            entriesPerPage={entriesPerPage}
-            currentPage={currentPage}
-            setEntriesPerPage={setEntriesPerPage}
-            setCurrentPage={setCurrentPage}
-            onRowClick={(v) => handleRowClick(v, v)}
-            programName={activeProgram}
-          />
-        );
-      case 'status':
-        return (
-          <StatusReport
-            data={statusStats}
-            entriesPerPage={entriesPerPage}
-            currentPage={currentPage}
-            setEntriesPerPage={setEntriesPerPage}
-            setCurrentPage={setCurrentPage}
-            onRowClick={(v) => handleRowClick(v, v)}
-            onSendEmails={isAdmin ? handleSendEmails : undefined}
-            programName={activeProgram}
-          />
-        );
-      case 'gender':
-        return (
-          <GenderReport
-            data={genderStats}
-            programName={activeProgram}
-            onRowClick={(gender, status) => handleRowClick(gender, status)}
-          />
-        );
-      default:
-        return (
-          <SummaryReport
-            data={statistics}
-            onRowClick={(type) => handleRowClick(type)}
-            programName={activeProgram}
-          />
-        );
-    }
-  };
 
   if (loading) {
     return (
@@ -289,40 +120,14 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Report Type</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {reportTypes.map((type) => {
-            const Icon = type.icon;
-            return (
-              <button
-                key={type.id}
-                onClick={() => setSelectedReportType(type.id)}
-                className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                  selectedReportType === type.id
-                    ? type.color
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <div className="flex flex-col items-center space-y-2">
-                  <Icon className={`w-8 h-8 ${
-                    selectedReportType === type.id
-                      ? type.color.split(' ')[2]
-                      : 'text-gray-400'
-                  }`} />
-                  <span className={`text-sm font-medium ${
-                    selectedReportType === type.id ? 'text-gray-900' : 'text-gray-600'
-                  }`}>
-                    {type.label}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {renderReport()}
+      <SummaryReport
+        data={statistics}
+        barangayStats={barangayStats}
+        statusStats={statusStats}
+        genderStats={genderStats}
+        onRowClick={handleRowClick}
+        programName={activeProgram}
+      />
 
       {showModal && (
         <ReportDetailsModal
