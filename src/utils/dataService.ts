@@ -18,7 +18,13 @@ export interface Applicant {
   school?: string;
   gender: 'MALE' | 'FEMALE';
   civilStatus?: string;
-  primaryEducation: string;
+  primaryEducation?: string;
+  primarySchoolName?: string;
+  secondaryEducation?: string;
+  secondarySchoolName?: string;
+  tertiaryEducation?: string;
+  tertiarySchoolName?: string;
+  educationalAttainment?: string;
   course?: string;
   beneficiaryName?: string;
   photoFile?: File;
