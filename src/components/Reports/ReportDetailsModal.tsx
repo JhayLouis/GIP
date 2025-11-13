@@ -9,7 +9,12 @@ interface ReportDetailsModalProps {
   program?: 'GIP' | 'TUPAD';
 }
 
-const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, onClose, program = 'GIP' }) => {
+const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
+  title,
+  data,
+  onClose,
+  program = 'GIP',
+}) => {
   const [courseFilter, setCourseFilter] = useState('');
   const [emailComposerOpen, setEmailComposerOpen] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
@@ -17,7 +22,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
 
   const filteredData = useMemo(() => {
     if (!courseFilter.trim()) return data;
-    return data.filter(item =>
+    return data.filter((item) =>
       item.course?.toLowerCase().includes(courseFilter.toLowerCase())
     );
   }, [data, courseFilter]);
@@ -28,8 +33,9 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
   };
 
   const handleSendEmailSuccess = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
+
   const handlePrint = () => {
     const printContent = `
       <!DOCTYPE html>
@@ -38,131 +44,168 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
           <title>${title}</title>
           <style>
             @page {
-              size: A4 landscape;
-              margin: 10mm;
+              size: legal portrait;
+              margin: 5mm;
             }
 
             * {
+              box-sizing: border-box;
               margin: 0;
               padding: 0;
-              box-sizing: border-box;
             }
 
             body {
-              font-family: Arial, sans-serif;
+              font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
               font-size: 10pt;
-              color: #000;
+              color: #1f2937;
+              background-color: #fff;
+              line-height: 1.5;
+            }
+
+            .document {
+              max-width: 100%;
             }
 
             .header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 3px solid #dc2626;
+              padding-bottom: 10px;
+              margin-bottom: 25px;
+            }
+
+            .header img {
+              height: 80px;
+              width: auto;
+              object-fit: contain;
+            }
+
+            .header-center {
               text-align: center;
-              margin-bottom: 15px;
-              padding-bottom: 8px;
-              border-bottom: 2px solid #333;
+              flex: 1;
             }
 
-            .header h1 {
-              font-size: 16pt;
-              font-weight: bold;
-              margin-bottom: 3px;
+            .header-center h1 {
+              font-size: 18pt;
+              font-weight: 700;
               color: #dc2626;
+              margin-bottom: 5px;
             }
 
-            .header p {
+            .header-center p {
               font-size: 9pt;
-              color: #666;
-              margin: 1px 0;
+              color: #555;
+              margin: 2px 0;
             }
 
             table {
               width: 100%;
               border-collapse: collapse;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
 
             th, td {
-              border: 1px solid #000;
-              padding: 7px 5px;
-              text-align: left;
+              border: 1px solid #e5e7eb;
+              padding: 3px 4px;
+              text-align: center;
+              vertical-align: middle;
             }
 
             th {
-              background-color: #dc2626;
-              color: white;
-              font-weight: bold;
-              font-size: 10pt;
+              background-color: #f3f4f6;
+              font-weight: 600;
+              color: #111827;
+              font-size: 8.5pt;
             }
 
             td {
-              font-size: 9pt;
-            }
-
-            tr:nth-child(even) {
-              background-color: #f9f9f9;
-            }
-
-            .text-center {
-              text-align: center;
+              font-size: 8pt;
+              color: #374151;
             }
 
             .no-data {
               text-align: center;
               padding: 40px;
-              color: #999;
               font-style: italic;
+              color: #999;
             }
 
             @media print {
               body {
-                print-color-adjust: exact;
                 -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              .no-print {
+                display: none !important;
               }
             }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h1>${title}</h1>
-            <p>City Government of Santa Rosa - Office of the City Mayor</p>
-            <p>Soft Projects Management System</p>
-            <p>Generated on: ${new Date().toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}</p>
-          </div>
-
-          ${filteredData.length === 0 ? `
-            <div class="no-data">
-              No applicants found matching the selected criteria.
+          <div class="document">
+            <div class="header">
+              <img src="src/assets/GIPlogo.png" alt="GIP Logo" />
+              <div class="header-center">
+                <h1>${title}</h1>
+                <p>City Government of Santa Rosa - Office of the City Mayor</p>
+                <p>Soft Projects Management System</p>
+                <p>Generated on: ${new Date().toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}</p>
+              </div>
+              <img src="src/assets/DOLElogo.png" alt="DOLE Logo" />
             </div>
-          ` : `
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 12%;">Code</th>
-                  <th style="width: 25%;">Full Name</th>
-                  <th style="width: 8%;" class="text-center">Gender</th>
-                  <th style="width: 6%;" class="text-center">Age</th>
-                  <th style="width: 15%;">Barangay</th>
-                  <th style="width: 12%;">Contact</th>
-                  <th style="width: 22%;">Education</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${filteredData.map((p, index) => `
+
+            ${
+              filteredData.length === 0
+                ? `
+              <div class="no-data">
+                No applicants found matching the selected criteria.
+              </div>
+            `
+                : `
+              <table>
+                <thead>
                   <tr>
-                    <td>${p.code || '-'}</td>
-                    <td>${p.firstName || ''} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName || ''}${p.extensionName ? ' ' + p.extensionName : ''}</td>
-                    <td class="text-center">${p.gender || '-'}</td>
-                    <td class="text-center">${p.age || '-'}</td>
-                    <td>${p.barangay || '-'}</td>
-                    <td>${p.contactNumber || '-'}</td>
-                    <td style="font-size: 8pt;">${p.educationalAttainment || '-'}</td>
+                    <th style="width: 12%;">Code</th>
+                    <th style="width: 25%;">Full Name</th>
+                    <th style="width: 8%;">Gender</th>
+                    <th style="width: 6%;">Age</th>
+                    <th style="width: 15%;">Barangay</th>
+                    <th style="width: 12%;">Contact</th>
+                    <th style="width: 22%;">Education</th>
+                    <th style="width: 22%;">Course</th>
                   </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          `}
+                </thead>
+                <tbody>
+                  ${filteredData
+                    .map(
+                      (p) => `
+                    <tr>
+                      <td>${p.code || '-'}</td>
+                      <td>${p.firstName || ''} ${
+                        p.middleName ? p.middleName + ' ' : ''
+                      }${p.lastName || ''}${
+                        p.extensionName ? ' ' + p.extensionName : ''
+                      }</td>
+                      <td>${p.gender || '-'}</td>
+                      <td>${p.age || '-'}</td>
+                      <td>${p.barangay || '-'}</td>
+                      <td>${p.contactNumber || '-'}</td>
+                      <td>${p.educationalAttainment || '-'}</td>
+                      <td>${p.course || '-'}</td>
+                    </tr>
+                  `
+                    )
+                    .join('')}
+                </tbody>
+              </table>
+            `
+            }
+          </div>
         </body>
       </html>
     `;
@@ -172,10 +215,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
       printWindow.document.write(printContent);
       printWindow.document.close();
       printWindow.focus();
-
-      setTimeout(() => {
-        printWindow.print();
-      }, 500);
+      setTimeout(() => printWindow.print(), 500);
     }
   };
 
@@ -223,15 +263,15 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
           </div>
         </div>
 
-        {/* Scrollable content */}
+        {/* Table content */}
         <div className="flex-1 overflow-y-auto">
           {filteredData.length === 0 ? (
             <div className="flex items-center justify-center h-500 p-6">
-              <div className="text-center">
-                <p className="text-gray-400 text-sm">
-                  {courseFilter ? 'No applicants match the course filter' : 'No applicants match the selected criteria'}
-                </p>
-              </div>
+              <p className="text-gray-400 text-sm">
+                {courseFilter
+                  ? 'No applicants match the course filter'
+                  : 'No applicants match the selected criteria'}
+              </p>
             </div>
           ) : (
             <table className="w-full text-sm">
@@ -244,6 +284,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Barangay</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Contact</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Education</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Course</th>
                   <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
                 </tr>
               </thead>
@@ -261,9 +302,8 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
                     <td className="px-4 py-3 text-center text-gray-700">{p.age || '-'}</td>
                     <td className="px-4 py-3 text-gray-700">{p.barangay || '-'}</td>
                     <td className="px-4 py-3 text-gray-700">{p.contactNumber || '-'}</td>
-                    <td className="px-4 py-3 text-gray-700 text-xs">
-                      {p.educationalAttainment || '-'}
-                    </td>
+                    <td className="px-4 py-3 text-gray-700 text-xs">{p.educationalAttainment || '-'}</td>
+                    <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => handleEmailClick(p)}
@@ -284,10 +324,11 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
             </table>
           )}
         </div>
+
         {/* Footer */}
         <div className="p-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-600 rounded-b-xl no-print">
-          Showing {filteredData.length} of {data.length} record{data.length !== 1 ? 's' : ''} • Generated on{' '}
-          {new Date().toLocaleDateString()}
+          Showing {filteredData.length} of {data.length} record
+          {data.length !== 1 ? 's' : ''} • Generated on {new Date().toLocaleDateString()}
         </div>
       </div>
 
