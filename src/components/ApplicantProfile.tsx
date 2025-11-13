@@ -171,7 +171,9 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 <thead>
                   <tr>
                     <th className="border border-black p-1 text-left font-bold">NAME OF SCHOOL</th>
-                    <th className="border border-black p-1 text-center font-bold" colSpan={2}>INCLUSIVE DATES</th>
+                    <th className="border border-black p-1 text-center font-bold" colSpan={2}>
+                      INCLUSIVE DATES
+                    </th>
                     <th className="border border-black p-1 text-left font-bold">DEGREE OR DIPLOMA</th>
                   </tr>
                   <tr>
@@ -181,16 +183,59 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                     <th className="border border-black p-0.5"></th>
                   </tr>
                 </thead>
+
                 <tbody>
+                  {/* PRIMARY EDUCATION */}
                   <tr>
-                    <td className="border border-black p-1">{applicant.school ? applicant.school.toUpperCase() : '-'}</td>
+                    <td className="border border-black p-1">
+                      {applicant.primarySchoolName
+                        ? applicant.primarySchoolName.toUpperCase()
+                        : '-'}
+                    </td>
                     <td className="border border-black p-1 text-center">-</td>
                     <td className="border border-black p-1 text-center">-</td>
-                    <td className="border border-black p-1">{applicant.educationalAttainment.toUpperCase()}</td>
+                    <td className="border border-black p-1">
+                      {applicant.primaryEducation
+                        ? applicant.primaryEducation.toUpperCase()
+                        : '-'}
+                    </td>
+                  </tr>
+
+                  {/* SECONDARY EDUCATION */}
+                  <tr>
+                    <td className="border border-black p-1">
+                      {applicant.secondarySchoolName
+                        ? applicant.secondarySchoolName.toUpperCase()
+                        : '-'}
+                    </td>
+                    <td className="border border-black p-1 text-center">-</td>
+                    <td className="border border-black p-1 text-center">-</td>
+                    <td className="border border-black p-1">
+                      {applicant.secondaryEducation
+                        ? applicant.secondaryEducation.toUpperCase()
+                        : '-'}
+                    </td>
+                  </tr>
+
+                  {/* TERTIARY EDUCATION */}
+                  <tr>
+                    <td className="border border-black p-1">
+                      {applicant.tertiarySchoolName
+                        ? applicant.tertiarySchoolName.toUpperCase()
+                        : '-'}
+                    </td>
+                    <td className="border border-black p-1 text-center">-</td>
+                    <td className="border border-black p-1 text-center">-</td>
+                    <td className="border border-black p-1">
+                      {applicant.tertiaryEducation
+                        ? applicant.tertiaryEducation.toUpperCase()
+                        : '-'}
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
+
             <div className="border-b-2 border-black p-2">
               <p className="font-bold text-[10px] mb-0.5">8. DISADVANTAGED GROUP</p>
               <div className="text-[10px] flex flex-wrap gap-2 mt-0.5">

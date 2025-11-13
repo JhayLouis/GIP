@@ -565,31 +565,98 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
             </>
           )}
 
-          {activeProgram === 'GIP' && (
+         {activeProgram === 'GIP' && (
             <>
+              {/* PRIMARY EDUCATION */}
               <div>
-                <label className="block text-sm font-bold mb-2 uppercase">Educational Attainment *</label>
+                <label className="block text-sm font-bold mb-2 uppercase">Primary Education *</label>
                 <select
-                  value={formData.educationalAttainment}
-                  onChange={(e) => {
-                    onInputChange('educationalAttainment', e.target.value);
-                    onInputChange('course', '');
-                    setCustomCourse('');
-                    setShowCustomCourse(false);
-                  }}
+                  value={formData.primaryEducation || ''}
+                  onChange={(e) => onInputChange('primaryEducation', e.target.value)}
                   required
                   className="w-full border rounded-lg px-3 py-3"
                 >
-                  <option value="">Select</option>
-                  <option>JUNIOR HIGH SCHOOL GRADUATE</option>
-                  <option>SENIOR HIGH SCHOOL GRADUATE</option>
-                  <option>HIGH SCHOOL GRADUATE</option>
-                  <option>COLLEGE GRADUATE</option>
-                  <option>TECHNICAL/VOCATIONAL COURSE GRADUATE</option>
-                  <option>ALS SECONDARY GRADUATE</option>
-                  <option>COLLEGE UNDERGRADUATE</option>
+                  <option value="">SELECT PRIMARY EDUCATION</option>
+                  <option>ELEMENTARY GRADUATE</option>
                 </select>
               </div>
+
+              {/* Show input for primary school name if education is selected */}
+              {formData.primaryEducation && (
+                <div className="mt-2">
+                  <label className="block text-sm font-bold mb-2 uppercase">Primary School Name *</label>
+                  <input
+                    type="text"
+                    value={formData.primarySchoolName || ''}
+                    onChange={(e) => onInputChange('primarySchoolName', e.target.value)}
+                    required
+                    placeholder="Enter school name"
+                    className="w-full border rounded-lg px-3 py-3"
+                  />
+                </div>
+              )}
+
+              {/* SECONDARY EDUCATION */}
+              <div className="mt-4">
+                <label className="block text-sm font-bold mb-2 uppercase">Secondary Education *</label>
+                <select
+                  value={formData.secondaryEducation || ''}
+                  onChange={(e) => onInputChange('secondaryEducation', e.target.value)}
+                  required
+                  className="w-full border rounded-lg px-3 py-3"
+                >
+                  <option value="">SELECT SECONDARY EDUCATION</option>
+                  <option>JUNIOR HIGH SCHOOL GRADUATE</option>
+                  <option>SENIOR HIGH SCHOOL GRADUATE</option>
+                </select>
+              </div>
+
+              {/* Show input for secondary school name if education is selected */}
+              {formData.secondaryEducation && (
+                <div className="mt-2">
+                  <label className="block text-sm font-bold mb-2 uppercase">Secondary School Name *</label>
+                  <input
+                    type="text"
+                    value={formData.secondarySchoolName || ''}
+                    onChange={(e) => onInputChange('secondarySchoolName', e.target.value)}
+                    required
+                    placeholder="Enter school name"
+                    className="w-full border rounded-lg px-3 py-3"
+                  />
+                </div>
+              )}
+
+              {/* TERTIARY EDUCATION */}
+              <div className="mt-4">
+                <label className="block text-sm font-bold mb-2 uppercase">Tertiary Education *</label>
+                <select
+                  value={formData.tertiaryEducation || ''}
+                  onChange={(e) => onInputChange('tertiaryEducation', e.target.value)}
+                  className="w-full border rounded-lg px-3 py-3"
+                >
+                  <option value="">SELECT TERTIARY EDUCATION</option>
+                  <option>ALS SECONDARY GRADUATE</option>
+                  <option>TECHNICAL/VOCATIONAL COURSE GRADUATE</option>
+                  <option>COLLEGE UNDERGRADUATE</option>
+                  <option>COLLEGE GRADUATE</option>
+                </select>
+              </div>
+
+              {/* Show input for tertiary school name if education is selected */}
+              {formData.tertiaryEducation && (
+                <div className="mt-2">
+                  <label className="block text-sm font-bold mb-2 uppercase">Tertiary School Name *</label>
+                  <input
+                    type="text"
+                    value={formData.tertiarySchoolName || ''}
+                    onChange={(e) => onInputChange('tertiarySchoolName', e.target.value)}
+                    required
+                    placeholder="Enter school name"
+                    className="w-full border rounded-lg px-3 py-3"
+                  />
+                </div>
+              )}
+
 
               {isCourseFieldActive && (
               <div>
