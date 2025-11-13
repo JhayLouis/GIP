@@ -122,12 +122,12 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
           }
 
           .footer {
-            background-color: #f3f4f6;
+            background-color: #dc2626;
             text-align: center;
             font-size: 9pt;
-            color: #6b7280;
+            color: #fff;
             padding: 18px;
-            border-top: 1px solid #e5e7eb;
+            border-top: 6px solid #facc15;
           }
         </style>
       </head>
