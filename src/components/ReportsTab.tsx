@@ -128,6 +128,7 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
           title={modalTitle}
           data={selectedDetailData}
           onClose={() => setShowModal(false)}
+          program={activeProgram}
         />
       )}
     </div>

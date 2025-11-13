@@ -1,14 +1,19 @@
 import React, { useState, useMemo } from 'react';
-import { Printer, X } from 'lucide-react';
+import { Printer, X, Mail } from 'lucide-react';
+import EmailComposer from './EmailComposer';
 
 interface ReportDetailsModalProps {
   title: string;
   data: any[];
   onClose: () => void;
+  program?: 'GIP' | 'TUPAD';
 }
 
-const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, onClose }) => {
+const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, onClose, program = 'GIP' }) => {
   const [courseFilter, setCourseFilter] = useState('');
+  const [emailComposerOpen, setEmailComposerOpen] = useState(false);
+  const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const filteredData = useMemo(() => {
     if (!courseFilter.trim()) return data;
@@ -16,6 +21,15 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
       item.course?.toLowerCase().includes(courseFilter.toLowerCase())
     );
   }, [data, courseFilter]);
+
+  const handleEmailClick = (applicant: any) => {
+    setSelectedApplicant(applicant);
+    setEmailComposerOpen(true);
+  };
+
+  const handleSendEmailSuccess = () => {
+    setRefreshKey(prev => prev + 1);
+  };
   const handlePrint = () => {
     const printContent = `
       <!DOCTYPE html>
@@ -230,12 +244,13 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Barangay</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Contact</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Education</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredData.map((p, i) => (
                   <tr
-                    key={i}
+                    key={`${refreshKey}-${i}`}
                     className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-4 py-3 font-medium text-gray-900">{p.code || '-'}</td>
@@ -249,6 +264,20 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
                     <td className="px-4 py-3 text-gray-700 text-xs">
                       {p.educationalAttainment || '-'}
                     </td>
+                    <td className="px-4 py-3 text-center">
+                      <button
+                        onClick={() => handleEmailClick(p)}
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all ${
+                          p.email
+                            ? 'bg-blue-100 hover:bg-blue-200 text-blue-700'
+                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        }`}
+                        title={p.email ? 'Send email' : 'No email address'}
+                      >
+                        <Mail className="w-4 h-4" />
+                        <span className="text-xs font-medium">Email</span>
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -261,6 +290,18 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({ title, data, on
           {new Date().toLocaleDateString()}
         </div>
       </div>
+
+      {emailComposerOpen && selectedApplicant && (
+        <EmailComposer
+          applicant={selectedApplicant}
+          program={program}
+          onClose={() => {
+            setEmailComposerOpen(false);
+            setSelectedApplicant(null);
+          }}
+          onSendSuccess={handleSendEmailSuccess}
+        />
+      )}
     </div>
   );
 };
