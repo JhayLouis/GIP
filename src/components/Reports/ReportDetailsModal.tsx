@@ -27,6 +27,12 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
     );
   }, [data, courseFilter]);
 
+  const applicantStatus = useMemo<'APPROVED' | 'REJECTED' | null>(() => {
+    if (data.length === 0) return null;
+    const status = data[0]?.status;
+    return status === 'APPROVED' || status === 'REJECTED' ? status : null;
+  }, [data]);
+
   const handleEmailClick = (applicant: any) => {
     setSelectedApplicant(applicant);
     setEmailComposerOpen(true);
@@ -305,18 +311,25 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                     <td className="px-4 py-3 text-gray-700 text-xs">{p.educationalAttainment || '-'}</td>
                     <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
                     <td className="px-4 py-3 text-center">
-                      <button
-                        onClick={() => handleEmailClick(p)}
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all ${
-                          p.email
-                            ? 'bg-blue-100 hover:bg-blue-200 text-blue-700'
-                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        }`}
-                        title={p.email ? 'Send email' : 'No email address'}
-                      >
-                        <Mail className="w-4 h-4" />
-                        <span className="text-xs font-medium">Email</span>
-                      </button>
+                      {applicantStatus && p.email ? (
+                        <button
+                          onClick={() => handleEmailClick(p)}
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all bg-blue-100 hover:bg-blue-200 text-blue-700"
+                          title="Send email"
+                        >
+                          <Mail className="w-4 h-4" />
+                          <span className="text-xs font-medium">Email</span>
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed"
+                          title={!applicantStatus ? 'Email only available for APPROVED/REJECTED' : 'No email address'}
+                        >
+                          <Mail className="w-4 h-4" />
+                          <span className="text-xs font-medium">Email</span>
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -332,10 +345,11 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
         </div>
       </div>
 
-      {emailComposerOpen && selectedApplicant && (
+      {emailComposerOpen && selectedApplicant && applicantStatus && (
         <EmailComposer
           applicant={selectedApplicant}
           program={program}
+          status={applicantStatus}
           onClose={() => {
             setEmailComposerOpen(false);
             setSelectedApplicant(null);

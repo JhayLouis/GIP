@@ -14,6 +14,7 @@ interface Applicant {
 interface EmailComposerProps {
   applicant: Applicant;
   program: 'GIP' | 'TUPAD';
+  status: 'APPROVED' | 'REJECTED';
   onClose: () => void;
   onSendSuccess: () => void;
 }
@@ -21,10 +22,10 @@ interface EmailComposerProps {
 const EmailComposer: React.FC<EmailComposerProps> = ({
   applicant,
   program,
+  status,
   onClose,
   onSendSuccess
 }) => {
-  const [status, setStatus] = useState<'APPROVED' | 'REJECTED'>('APPROVED');
   const [customizeMode, setCustomizeMode] = useState(false);
   const [htmlContent, setHtmlContent] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -197,13 +198,6 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
     return customizeMode ? htmlContent : getEmailTemplate(status);
   }, [customizeMode, htmlContent, status]);
 
-  const handleStatusChange = (newStatus: 'APPROVED' | 'REJECTED') => {
-    setStatus(newStatus);
-    if (!customizeMode) {
-      setHtmlContent(getEmailTemplate(newStatus));
-    }
-  };
-
   const handleSendEmail = async () => {
     if (!applicant.email) {
       await Swal.fire({
@@ -289,30 +283,24 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
 
         {/* Email Editor */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Email Status</label>
-            <div className="flex gap-3">
-              <button
-                onClick={() => handleStatusChange('APPROVED')}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                  status === 'APPROVED'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-white border border-green-300 text-green-700 hover:bg-green-50'
-                }`}
-              >
-                Approved
-              </button>
-              <button
-                onClick={() => handleStatusChange('REJECTED')}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                  status === 'REJECTED'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-white border border-red-300 text-red-700 hover:bg-red-50'
-                }`}
-              >
-                Rejected
-              </button>
+          <div className={`border rounded-lg p-4 ${
+            status === 'APPROVED'
+              ? 'bg-green-50 border-green-200'
+              : 'bg-red-50 border-red-200'
+          }`}>
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-semibold text-gray-700">Email Status</label>
+              <span className={`px-4 py-1 rounded-full font-semibold text-sm ${
+                status === 'APPROVED'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-red-600 text-white'
+              }`}>
+                {status}
+              </span>
             </div>
+            <p className="text-xs text-gray-600 mt-2">
+              This email will be sent as an {status.toLowerCase()} notification to the applicant.
+            </p>
           </div>
 
           <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
