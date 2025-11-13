@@ -426,11 +426,11 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
 
   const filteredApplicants = getFilteredApplicants({
     searchTerm,
-    status: statusFilter === 'All Status' ? '' : statusFilter,
-    barangay: barangayFilter === 'All Barangays' ? '' : barangayFilter,
-    gender: genderFilter === 'All Genders' ? '' : genderFilter,
-    ageRange: ageFilter === 'All Ages' ? '' : ageFilter,
-    education: educationFilter === 'All Education' || educationFilter === 'All Education Levels' ? '' : educationFilter
+    status: statusFilter === 'ALL STATUS' ? '' : statusFilter,
+    barangay: barangayFilter === 'ALL BARANGAYS' ? '' : barangayFilter,
+    gender: genderFilter === 'ALL GENDERS' ? '' : genderFilter,
+    ageRange: ageFilter === 'ALL AGES' ? '' : ageFilter,
+    education: educationFilter === 'ALL EDUCATION' || educationFilter === 'All Education Levels' ? '' : educationFilter
   }).filter(applicant => showArchived ? applicant.archived : !applicant.archived);
 
 
@@ -526,19 +526,19 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
                   <span>Add New Applicant</span>
                 </button>
               )}
+                <button
+                onClick={handlePrint}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Print</span>
+              </button>
               <button
                 onClick={handleExportCSV}
                 className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
               >
                 <Download className="w-4 h-4" />
                 <span>CSV</span>
-              </button>
-              <button
-                onClick={handlePrint}
-                className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Print</span>
               </button>
             </>
           )}

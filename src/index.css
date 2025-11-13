@@ -46,8 +46,8 @@
 /* Print Styles for DOLE-GIP Application Form */
 @media print {
   @page {
-  size: 8.5in 11in; /* letter size */
-  margin: 0.3in 0.4in;
+  size: 8.5in 13in;
+  margin: 0.1in 0.4in;
 }
 
   * {
