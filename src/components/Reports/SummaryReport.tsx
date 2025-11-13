@@ -44,9 +44,9 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white cursor-pointer"
             >
               <option value="summary">Summary View</option>
-              <option value="barangay">Filter by Barangay</option>
-              <option value="status">Filter by Status</option>
-              <option value="gender">Filter by Gender</option>
+              <option value="barangay">By Barangay</option>
+              <option value="status">By Status</option>
+              <option value="gender">By Gender</option>
             </select>
           </div>
         </div>
@@ -135,24 +135,44 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
         )}
 
         {selectedFilter === 'gender' && (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {genderStats.map((genderGroup, index) => (
-              <div key={index} className="border border-pink-200 rounded-lg p-4 bg-gradient-to-r from-pink-50 to-pink-100">
-                <div className="font-semibold text-pink-700 text-lg mb-3">
-                  {genderGroup.gender === 'MALE' ? '♂ Male' : '♀ Female'} - Total: {genderGroup.total}
+              <div
+                key={index}
+                className="border border-pink-200 rounded-xl p-6 bg-gradient-to-br from-pink-50 to-white shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <div className="font-semibold text-pink-700 text-lg mb-4 text-center">
+                  {genderGroup.gender === 'MALE' ? '♂ Male' : '♀ Female'} — 
+                  <span className="ml-1 text-pink-600 font-bold">Total: {genderGroup.total}</span>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+
+                {/* Status Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {['PENDING', 'APPROVED', 'DEPLOYED', 'COMPLETED', 'REJECTED', 'RESIGNED'].map((status) => (
-                    genderGroup[status.toLowerCase()] > 0 && (
-                      <button
-                        key={status}
-                        onClick={() => onRowClick(genderGroup.gender, status, 'gender')}
-                        className="text-xs p-3 bg-white hover:bg-pink-100 rounded-lg border border-pink-200 transition-all text-pink-700 font-medium hover:shadow-md"
+                    <button
+                      key={status}
+                      onClick={() => onRowClick(genderGroup.gender, status, 'gender')}
+                      className="flex flex-col items-center justify-center p-4 rounded-lg border border-pink-200 bg-white hover:bg-pink-50 hover:shadow-sm transition-all duration-200"
+                    >
+                      <span className="text-sm font-medium text-gray-700">{status}</span>
+                      <span
+                        className={`text-lg font-bold ${
+                          status === 'APPROVED'
+                            ? 'text-green-600'
+                            : status === 'REJECTED'
+                            ? 'text-red-600'
+                            : status === 'DEPLOYED'
+                            ? 'text-orange-600'
+                            : status === 'COMPLETED'
+                            ? 'text-purple-600'
+                            : status === 'RESIGNED'
+                            ? 'text-gray-600'
+                            : 'text-yellow-600'
+                        }`}
                       >
-                        <div className="font-semibold">{status}</div>
-                        <div className="text-lg font-bold mt-1">{genderGroup[status.toLowerCase()]}</div>
-                      </button>
-                    )
+                        {genderGroup[status.toLowerCase()] ?? 0}
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>

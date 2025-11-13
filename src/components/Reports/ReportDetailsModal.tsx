@@ -20,12 +20,21 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // ✅ Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const filteredData = useMemo(() => {
     if (!courseFilter.trim()) return data;
     return data.filter((item) =>
       item.course?.toLowerCase().includes(courseFilter.toLowerCase())
     );
   }, [data, courseFilter]);
+
+  // ✅ Paginated data
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   const applicantStatus = useMemo<'APPROVED' | 'REJECTED' | null>(() => {
     if (data.length === 0) return null;
@@ -42,6 +51,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
     setRefreshKey((prev) => prev + 1);
   };
 
+  // ✅ Your original print function (unchanged)
   const handlePrint = () => {
     const printContent = `
       <!DOCTYPE html>
@@ -182,7 +192,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                     <th style="width: 6%;">Age</th>
                     <th style="width: 15%;">Barangay</th>
                     <th style="width: 12%;">Contact</th>
-                    <th style="width: 22%;">Education</th>
+                    <th style="width: 22%;">Educational Attainment</th>
                     <th style="width: 22%;">Course</th>
                   </tr>
                 </thead>
@@ -257,7 +267,10 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
             <input
               type="text"
               value={courseFilter}
-              onChange={(e) => setCourseFilter(e.target.value)}
+              onChange={(e) => {
+                setCourseFilter(e.target.value);
+                setCurrentPage(1);
+              }}
               placeholder="Type course name to filter..."
               className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
             />
@@ -280,65 +293,108 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
               </p>
             </div>
           ) : (
-            <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Code</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Full Name</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Gender</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Age</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Barangay</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Contact</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Education</th>
-                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Course</th>
-                  {applicantStatus && (
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((p, i) => (
-                  <tr
-                    key={`${refreshKey}-${i}`}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-4 py-3 font-medium text-gray-900">{p.code || '-'}</td>
-                    <td className="px-4 py-3 text-gray-800">
-                      {`${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}`}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-700">{p.gender || '-'}</td>
-                    <td className="px-4 py-3 text-center text-gray-700">{p.age || '-'}</td>
-                    <td className="px-4 py-3 text-gray-700">{p.barangay || '-'}</td>
-                    <td className="px-4 py-3 text-gray-700">{p.contactNumber || '-'}</td>
-                    <td className="px-4 py-3 text-gray-700 text-xs">{p.educationalAttainment || '-'}</td>
-                    <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
+            <>
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Code</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Full Name</th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">Gender</th>
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">Age</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Barangay</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Contact</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Education</th>
+                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Course</th>
                     {applicantStatus && (
-                      <td className="px-4 py-3 text-center">
-                        {p.email ? (
-                          <button
-                            onClick={() => handleEmailClick(p)}
-                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all bg-blue-100 hover:bg-blue-200 text-blue-700"
-                            title="Send email"
-                          >
-                            <Mail className="w-4 h-4" />
-                            <span className="text-xs font-medium">Email</span>
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed"
-                            title="No email address"
-                          >
-                            <Mail className="w-4 h-4" />
-                            <span className="text-xs font-medium">Email</span>
-                          </button>
-                        )}
-                      </td>
+                      <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
                     )}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedData.map((p, i) => (
+                    <tr
+                      key={`${refreshKey}-${i}`}
+                      className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-medium text-gray-900">{p.code || '-'}</td>
+                      <td className="px-4 py-3 text-gray-800">
+                        {`${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}`}
+                      </td>
+                      <td className="px-4 py-3 text-center text-gray-700">{p.gender || '-'}</td>
+                      <td className="px-4 py-3 text-center text-gray-700">{p.age || '-'}</td>
+                      <td className="px-4 py-3 text-gray-700">{p.barangay || '-'}</td>
+                      <td className="px-4 py-3 text-gray-700">{p.contactNumber || '-'}</td>
+                      <td className="px-4 py-3 text-gray-700 text-xs">{p.educationalAttainment || '-'}</td>
+                      <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
+                      {applicantStatus && (
+                        <td className="px-4 py-3 text-center">
+                          {p.email ? (
+                            <button
+                              onClick={() => handleEmailClick(p)}
+                              className="inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all bg-blue-100 hover:bg-blue-200 text-blue-700"
+                              title="Send email"
+                            >
+                              <Mail className="w-4 h-4" />
+                              <span className="text-xs font-medium">Email</span>
+                            </button>
+                          ) : (
+                            <button
+                              disabled
+                              className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed"
+                              title="No email address"
+                            >
+                              <Mail className="w-4 h-4" />
+                              <span className="text-xs font-medium">Email</span>
+                            </button>
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* ✅ Pagination controls */}
+              <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-t border-gray-200 text-sm">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border rounded-lg disabled:opacity-40 hover:bg-gray-100"
+                  >
+                    Previous
+                  </button>
+                  <span>
+                    Page {currentPage} of {totalPages || 1}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="px-3 py-1 border rounded-lg disabled:opacity-40 hover:bg-gray-100"
+                  >
+                    Next
+                  </button>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <span>Rows per page:</span>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => {
+                      setItemsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="border rounded-lg px-2 py-1"
+                  >
+                    {[5, 10, 20, 50].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </>
           )}
         </div>
 
