@@ -291,7 +291,9 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Contact</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Education</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Course</th>
-                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
+                  {applicantStatus && (
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -310,27 +312,29 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                     <td className="px-4 py-3 text-gray-700">{p.contactNumber || '-'}</td>
                     <td className="px-4 py-3 text-gray-700 text-xs">{p.educationalAttainment || '-'}</td>
                     <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
-                    <td className="px-4 py-3 text-center">
-                      {applicantStatus && p.email ? (
-                        <button
-                          onClick={() => handleEmailClick(p)}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all bg-blue-100 hover:bg-blue-200 text-blue-700"
-                          title="Send email"
-                        >
-                          <Mail className="w-4 h-4" />
-                          <span className="text-xs font-medium">Email</span>
-                        </button>
-                      ) : (
-                        <button
-                          disabled
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed"
-                          title={!applicantStatus ? 'Email only available for APPROVED/REJECTED' : 'No email address'}
-                        >
-                          <Mail className="w-4 h-4" />
-                          <span className="text-xs font-medium">Email</span>
-                        </button>
-                      )}
-                    </td>
+                    {applicantStatus && (
+                      <td className="px-4 py-3 text-center">
+                        {p.email ? (
+                          <button
+                            onClick={() => handleEmailClick(p)}
+                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all bg-blue-100 hover:bg-blue-200 text-blue-700"
+                            title="Send email"
+                          >
+                            <Mail className="w-4 h-4" />
+                            <span className="text-xs font-medium">Email</span>
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed"
+                            title="No email address"
+                          >
+                            <Mail className="w-4 h-4" />
+                            <span className="text-xs font-medium">Email</span>
+                          </button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
