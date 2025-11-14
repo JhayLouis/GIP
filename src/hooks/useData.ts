@@ -29,7 +29,22 @@ const defaultStats: Statistics = {
   resigned: 0,
   barangaysCovered: 0,
   maleCount: 0,
-  femaleCount: 0
+  femaleCount: 0,
+  pendingMale: 0,
+  pendingFemale: 0,
+  approvedMale: 0,
+  approvedFemale: 0,
+  deployedMale: 0,
+  deployedFemale: 0,
+  completedMale: 0,
+  completedFemale: 0,
+  rejectedMale: 0,
+  rejectedFemale: 0,
+  resignedMale: 0,
+  resignedFemale: 0,
+  interviewed: 0,
+  interviewedMale: 0,
+  interviewedFemale: 0
 };
 
 export const useData = (program: 'GIP' | 'TUPAD') => {
@@ -40,20 +55,28 @@ export const useData = (program: 'GIP' | 'TUPAD') => {
   const [genderStats, setGenderStats] = useState<GenderStats[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const refreshData = useCallback(() => {
+  const refreshData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allApplicants = getApplicants(program) || [];
-      const stats = getStatistics(program) || defaultStats;
-      const barangayData = getBarangayStatistics(program) || [];
-      const statusData = getStatusStatistics(program) || [];
-      const genderData = getGenderStatistics(program) || [];
+      const [
+        allApplicants,
+        stats,
+        barangayData,
+        statusData,
+        genderData
+      ] = await Promise.all([
+        getApplicants(program),
+        getStatistics(program),
+        getBarangayStatistics(program),
+        getStatusStatistics(program),
+        getGenderStatistics(program)
+      ]);
 
-      setApplicants(allApplicants);
-      setStatistics(stats);
-      setBarangayStats(barangayData);
-      setStatusStats(statusData);
-      setGenderStats(genderData);
+      setApplicants(allApplicants || []);
+      setStatistics(stats || defaultStats);
+      setBarangayStats(barangayData || []);
+      setStatusStats(statusData || []);
+      setGenderStats(genderData || []);
     } catch (error) {
       console.error('Error refreshing data:', error);
       setStatistics(defaultStats);
@@ -63,19 +86,23 @@ export const useData = (program: 'GIP' | 'TUPAD') => {
   }, [program]);
 
   useEffect(() => {
-    try {
-      initializeSampleData();
-      refreshData();
-    } catch (error) {
-      console.error('Error initializing data:', error);
-    }
+    const initialize = async () => {
+      try {
+        await initializeSampleData();
+        await refreshData();
+      } catch (error) {
+        console.error('Error initializing data:', error);
+      }
+    };
+
+    initialize();
   }, [program, refreshData]);
 
   const handleAddApplicant = useCallback(
-    (applicantData: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'>) => {
+    async (applicantData: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'>) => {
       try {
-        const newApplicant = addApplicant(applicantData);
-        refreshData();
+        const newApplicant = await addApplicant(applicantData);
+        await refreshData();
         return newApplicant;
       } catch (error) {
         console.error('Error adding applicant:', error);
@@ -86,10 +113,10 @@ export const useData = (program: 'GIP' | 'TUPAD') => {
   );
 
   const handleUpdateApplicant = useCallback(
-    (updatedApplicant: Applicant) => {
+    async (updatedApplicant: Applicant) => {
       try {
-        updateApplicant(program, updatedApplicant);
-        refreshData();
+        await updateApplicant(program, updatedApplicant);
+        await refreshData();
       } catch (error) {
         console.error('Error updating applicant:', error);
         throw error;
@@ -99,10 +126,10 @@ export const useData = (program: 'GIP' | 'TUPAD') => {
   );
 
   const handleArchiveApplicant = useCallback(
-    (applicantId: string) => {
+    async (applicantId: string) => {
       try {
-        archiveApplicant(program, applicantId);
-        refreshData();
+        await archiveApplicant(program, applicantId);
+        await refreshData();
       } catch (error) {
         console.error('Error archiving applicant:', error);
         throw error;
@@ -112,10 +139,10 @@ export const useData = (program: 'GIP' | 'TUPAD') => {
   );
 
   const handleUnarchiveApplicant = useCallback(
-    (applicantId: string) => {
+    async (applicantId: string) => {
       try {
-        unarchiveApplicant(program, applicantId);
-        refreshData();
+        await unarchiveApplicant(program, applicantId);
+        await refreshData();
       } catch (error) {
         console.error('Error unarchiving applicant:', error);
         throw error;
@@ -125,10 +152,10 @@ export const useData = (program: 'GIP' | 'TUPAD') => {
   );
 
   const handleDeleteApplicant = useCallback(
-    (applicantId: string) => {
+    async (applicantId: string) => {
       try {
-        deleteApplicant(program, applicantId);
-        refreshData();
+        await deleteApplicant(program, applicantId);
+        await refreshData();
       } catch (error) {
         console.error('Error deleting applicant:', error);
         throw error;
@@ -138,14 +165,21 @@ export const useData = (program: 'GIP' | 'TUPAD') => {
   );
 
   const getFilteredApplicants = useCallback(
-    (filters: {
+    async (filters: {
       searchTerm?: string;
       status?: string;
       barangay?: string;
       gender?: string;
       ageRange?: string;
       education?: string;
-    }) => filterApplicants(program, filters),
+    }) => {
+      try {
+        return await filterApplicants(program, filters);
+      } catch (error) {
+        console.error('Error filtering applicants:', error);
+        return [];
+      }
+    },
     [program]
   );
 
