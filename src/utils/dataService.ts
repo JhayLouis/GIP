@@ -1,3 +1,4 @@
+// Data service for managing applicants and statistics
 export interface Applicant {
   civilStats: string;
   id: string;
@@ -335,48 +336,41 @@ export const calculateAge = (birthDate: string): number => {
 };
 
 // ---------- Initialize Sample Data ----------
-export const initializeSampleData = async (): Promise<void> => {
-  try {
-    const gipApplicants = await getApplicants('GIP');
-    const tupadApplicants = await getApplicants('TUPAD');
+export const initializeSampleData = (): void => {
+  if (getApplicants('GIP').length === 0 && getApplicants('TUPAD').length === 0) {
+    const sampleGIP: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'> = {
+      firstName: 'JUAN',
+      lastName: 'DELA CRUZ',
+      birthDate: '2000-01-15',
+      age: 24,
+      barangay: 'BALIBAGO',
+      contactNumber: '09123456789',
+      gender: 'MALE',
+      educationalAttainment: 'COLLEGE GRADUATE',
+      encoder: 'Administrator',
+      status: 'PENDING',
+      program: 'GIP',
+      civilStats: 'SINGLE', // ✅ add this
+      residentialAddress: '123 MAIN STREET, BALIBAGO, STA. ROSA CITY' // ✅ your new field
+    };
 
-    if (gipApplicants.length === 0 && tupadApplicants.length === 0) {
-      const sampleGIP: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'> = {
-        firstName: 'JUAN',
-        lastName: 'DELA CRUZ',
-        birthDate: '2000-01-15',
-        age: 24,
-        barangay: 'BALIBAGO',
-        contactNumber: '09123456789',
-        gender: 'MALE',
-        tertiaryEducation: 'COLLEGE GRADUATE',
-        encoder: 'Administrator',
-        status: 'PENDING',
-        program: 'GIP',
-        civilStats: 'SINGLE',
-        residentialAddress: '123 MAIN STREET, BALIBAGO, STA. ROSA CITY'
-      };
+    const sampleTUPAD: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'> = {
+      firstName: 'MARIA',
+      lastName: 'SANTOS',
+      birthDate: '1995-05-20',
+      age: 29,
+      barangay: 'DITA',
+      contactNumber: '09987654321',
+      gender: 'FEMALE',
+      educationalAttainment: 'HIGH SCHOOL GRADUATE',
+      encoder: 'Administrator',
+      status: 'APPROVED',
+      program: 'TUPAD',
+      civilStats: 'SINGLE', // ✅ add this
+    };
 
-      const sampleTUPAD: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'> = {
-        firstName: 'MARIA',
-        lastName: 'SANTOS',
-        birthDate: '1995-05-20',
-        age: 29,
-        barangay: 'DITA',
-        contactNumber: '09987654321',
-        gender: 'FEMALE',
-        tertiaryEducation: 'HIGH SCHOOL GRADUATE',
-        encoder: 'Administrator',
-        status: 'APPROVED',
-        program: 'TUPAD',
-        civilStats: 'SINGLE'
-      };
-
-      await addApplicant(sampleGIP);
-      await addApplicant(sampleTUPAD);
-    }
-  } catch (error) {
-    console.error('Error initializing sample data:', error);
+    addApplicant(sampleGIP);
+    addApplicant(sampleTUPAD);
   }
 };
 
