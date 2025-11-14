@@ -1,5 +1,3 @@
-import { supabase } from './supabaseClient';
-
 export interface Applicant {
   civilStats: string;
   id: string;
