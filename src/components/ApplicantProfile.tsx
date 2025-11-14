@@ -181,18 +181,24 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </thead>
 
                 <tbody>
-                  {/* PRIMARY EDUCATION */}
+
+                   {/* TERTIARY EDUCATION */}
                   <tr>
                     <td className="border border-black p-1">
-                      {applicant.primarySchoolName
-                        ? applicant.primarySchoolName.toUpperCase()
+                      {applicant.tertiarySchoolName
+                        ? applicant.tertiarySchoolName.toUpperCase()
                         : '-'}
                     </td>
-                    <td className="border border-black p-1 text-center">-</td>
-                    <td className="border border-black p-1 text-center">-</td>
+                    <td className="border border-black p-1 text-center">
+                      {applicant.tertiaryFrom || "-"}
+                    </td>
+
+                    <td className="border border-black p-1 text-center">
+                      {applicant.tertiaryTo || "-"}
+                    </td>
                     <td className="border border-black p-1">
-                      {applicant.primaryEducation
-                        ? applicant.primaryEducation.toUpperCase()
+                      {applicant.tertiaryEducation
+                        ? applicant.tertiaryEducation.toUpperCase()
                         : '-'}
                     </td>
                   </tr>
@@ -204,8 +210,13 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                         ? applicant.secondarySchoolName.toUpperCase()
                         : '-'}
                     </td>
-                    <td className="border border-black p-1 text-center">-</td>
-                    <td className="border border-black p-1 text-center">-</td>
+                    <td className="border border-black p-1 text-center">
+                      {applicant.secondaryFrom || "-"}
+                    </td>
+
+                    <td className="border border-black p-1 text-center">
+                      {applicant.secondaryTo || "-"}
+                    </td>
                     <td className="border border-black p-1">
                       {applicant.secondaryEducation
                         ? applicant.secondaryEducation.toUpperCase()
@@ -213,18 +224,23 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                     </td>
                   </tr>
 
-                  {/* TERTIARY EDUCATION */}
+                  {/* PRIMARY EDUCATION */}
                   <tr>
                     <td className="border border-black p-1">
-                      {applicant.tertiarySchoolName
-                        ? applicant.tertiarySchoolName.toUpperCase()
+                      {applicant.primarySchoolName
+                        ? applicant.primarySchoolName.toUpperCase()
                         : '-'}
                     </td>
-                    <td className="border border-black p-1 text-center">-</td>
-                    <td className="border border-black p-1 text-center">-</td>
+                    <td className="border border-black p-1 text-center">
+                      {applicant.primaryFrom || "-"}
+                    </td>
+
+                    <td className="border border-black p-1 text-center">
+                      {applicant.primaryTo || "-"}
+                    </td>
                     <td className="border border-black p-1">
-                      {applicant.tertiaryEducation
-                        ? applicant.tertiaryEducation.toUpperCase()
+                      {applicant.primaryEducation
+                        ? applicant.primaryEducation.toUpperCase()
                         : '-'}
                     </td>
                   </tr>

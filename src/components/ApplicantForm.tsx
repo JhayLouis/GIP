@@ -535,7 +535,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 <input
                   type="text"
                   value={formData.dependentName}
-                  onChange={(e) => onInputChange('dependentName', e.target.value)}
+                  onChange={(e) => onInputChange('dependentName', e.target.value.toUpperCase())}
                   className="w-full border rounded-lg px-3 py-2 uppercase"
                   style={{ textTransform: 'uppercase' }}
                 />
@@ -553,7 +553,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               </div>
             </>
           )}
-
          {activeProgram === 'GIP' && (
             <>
               {/* PRIMARY EDUCATION */}
@@ -561,7 +560,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 <label className="block text-sm font-bold mb-2 uppercase">Primary Education *</label>
                 <select
                   value={formData.primaryEducation || ''}
-                  onChange={(e) => onInputChange('primaryEducation', e.target.value)}
+                  onChange={(e) => onInputChange('primaryEducation', e.target.value.toUpperCase())}
                   required
                   className="w-full border rounded-lg px-3 py-3"
                 >
@@ -569,28 +568,56 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   <option>ELEMENTARY GRADUATE</option>
                 </select>
               </div>
-
-              {/* Show input for primary school name if education is selected */}
+              {/* Show Primary School Name */}
               {formData.primaryEducation && (
                 <div className="mt-2">
-                  <label className="block text-sm font-bold mb-2 uppercase">Primary School Name *</label>
+                  <label className="block text-sm font-bold mb-2 uppercase">
+                    Primary School Name *
+                  </label>
                   <input
                     type="text"
                     value={formData.primarySchoolName || ''}
-                    onChange={(e) => onInputChange('primarySchoolName', e.target.value)}
+                    onChange={(e) => onInputChange('primarySchoolName', e.target.value.toUpperCase())}
                     required
                     placeholder="Enter school name"
                     className="w-full border rounded-lg px-3 py-3"
                   />
                 </div>
               )}
+              {/* Show FROM / TO only when School Name is filled */}
+              {formData.primarySchoolName && formData.primarySchoolName.trim() !== '' && (
+                <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div>
+                    <label className="block text-sm font-bold mb-2 uppercase">From *</label>
+                    <input
+                      type="text"
+                      value={formData.primaryFrom || ''}
+                      onChange={(e) => onInputChange('primaryFrom', e.target.value)}
+                      required
+                      placeholder="Year started"
+                      className="w-full border rounded-lg px-3 py-3"
+                    />
+                  </div>
 
+                  <div>
+                    <label className="block text-sm font-bold mb-2 uppercase">To *</label>
+                    <input
+                      type="text"
+                      value={formData.primaryTo || ''}
+                      onChange={(e) => onInputChange('primaryTo', e.target.value.toUpperCase())}
+                      required
+                      placeholder="Year graduated"
+                      className="w-full border rounded-lg px-3 py-3"
+                    />
+                  </div>
+                </div>
+              )}
               {/* SECONDARY EDUCATION */}
               <div className="mt-4">
                 <label className="block text-sm font-bold mb-2 uppercase">Secondary Education *</label>
                 <select
                   value={formData.secondaryEducation || ''}
-                  onChange={(e) => onInputChange('secondaryEducation', e.target.value)}
+                  onChange={(e) => onInputChange('secondaryEducation', e.target.value.toUpperCase())}
                   required
                   className="w-full border rounded-lg px-3 py-3"
                 >
@@ -599,22 +626,50 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   <option>SENIOR HIGH SCHOOL GRADUATE</option>
                 </select>
               </div>
-
-              {/* Show input for secondary school name if education is selected */}
+              {/* Show Secondary School Name */}
               {formData.secondaryEducation && (
                 <div className="mt-2">
-                  <label className="block text-sm font-bold mb-2 uppercase">Secondary School Name *</label>
+                  <label className="block text-sm font-bold mb-2 uppercase">
+                    Secondary School Name *
+                  </label>
                   <input
                     type="text"
                     value={formData.secondarySchoolName || ''}
-                    onChange={(e) => onInputChange('secondarySchoolName', e.target.value)}
+                    onChange={(e) => onInputChange('secondarySchoolName', e.target.value.toUpperCase())}
                     required
                     placeholder="Enter school name"
                     className="w-full border rounded-lg px-3 py-3"
                   />
                 </div>
               )}
+              {/* Show FROM / TO only when Secondary School Name is filled */}
+              {formData.secondarySchoolName && formData.secondarySchoolName.trim() !== '' && (
+                <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div>
+                    <label className="block text-sm font-bold mb-2 uppercase">From *</label>
+                    <input
+                      type="text"
+                      value={formData.secondaryFrom || ''}
+                      onChange={(e) => onInputChange('secondaryFrom', e.target.value.toUpperCase())}
+                      required
+                      placeholder="Year started"
+                      className="w-full border rounded-lg px-3 py-3"
+                    />
+                  </div>
 
+                  <div>
+                    <label className="block text-sm font-bold mb-2 uppercase">To *</label>
+                    <input
+                      type="text"
+                      value={formData.secondaryTo || ''}
+                      onChange={(e) => onInputChange('secondaryTo', e.target.value.toUpperCase())}
+                      required
+                      placeholder="Year graduated"
+                      className="w-full border rounded-lg px-3 py-3"
+                    />
+                  </div>
+                </div>
+              )}
               {/* TERTIARY EDUCATION */}
               <div className="mt-4">
                 <label className="block text-sm font-bold mb-2 uppercase">
@@ -640,21 +695,52 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 </select>
               </div>
 
-
-              {/* Show input for tertiary school name if education is selected */}
+              {/* Show Tertiary School Name */}
               {formData.tertiaryEducation && (
                 <div className="mt-2">
-                  <label className="block text-sm font-bold mb-2 uppercase">Tertiary School Name *</label>
+                  <label className="block text-sm font-bold mb-2 uppercase">
+                    Tertiary School Name *
+                  </label>
                   <input
                     type="text"
                     value={formData.tertiarySchoolName || ''}
-                    onChange={(e) => onInputChange('tertiarySchoolName', e.target.value)}
+                    onChange={(e) => onInputChange('tertiarySchoolName', e.target.value.toUpperCase())}
                     required
                     placeholder="Enter school name"
                     className="w-full border rounded-lg px-3 py-3"
                   />
                 </div>
               )}
+
+              {/* Show FROM / TO only when Tertiary School Name is filled */}
+              {formData.tertiarySchoolName && formData.tertiarySchoolName.trim() !== '' && (
+                <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div>
+                    <label className="block text-sm font-bold mb-2 uppercase">From *</label>
+                    <input
+                      type="text"
+                      value={formData.tertiaryFrom || ''}
+                      onChange={(e) => onInputChange('tertiaryFrom', e.target.value.toUpperCase())}
+                      required
+                      placeholder="Year started"
+                      className="w-full border rounded-lg px-3 py-3"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold mb-2 uppercase">To *</label>
+                    <input
+                      type="text"
+                      value={formData.tertiaryTo || ''}
+                      onChange={(e) => onInputChange('tertiaryTo', e.target.value.toUpperCase())}
+                      required
+                      placeholder="Year graduated"
+                      className="w-full border rounded-lg px-3 py-3"
+                    />
+                  </div>
+                </div>
+              )}
+
 
 
               {isCourseFieldActive && (

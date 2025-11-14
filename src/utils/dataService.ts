@@ -20,10 +20,16 @@ export interface Applicant {
   civilStatus?: string;
   primaryEducation?: string;
   primarySchoolName?: string;
+  primaryTo?: string;
+  primaryFrom?: string;
   secondaryEducation?: string;
   secondarySchoolName?: string;
+  secondaryFrom?: string;
+  secondaryTo?: string;
   tertiarySchoolName?: string;
   tertiaryEducation?: string;
+  tertiaryFrom?: string;
+  tertiaryTo?: string;
   course?: string;
   beneficiaryName?: string;
   photoFile?: File;
@@ -346,7 +352,6 @@ export const initializeSampleData = (): void => {
       barangay: 'BALIBAGO',
       contactNumber: '09123456789',
       gender: 'MALE',
-      educationalAttainment: 'COLLEGE GRADUATE',
       encoder: 'Administrator',
       status: 'PENDING',
       program: 'GIP',
@@ -362,7 +367,6 @@ export const initializeSampleData = (): void => {
       barangay: 'DITA',
       contactNumber: '09987654321',
       gender: 'FEMALE',
-      educationalAttainment: 'HIGH SCHOOL GRADUATE',
       encoder: 'Administrator',
       status: 'APPROVED',
       program: 'TUPAD',
