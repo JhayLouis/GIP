@@ -61,19 +61,20 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
     formData.tertiaryEducation === 'COLLEGE UNDERGRADUATE';
 
   const getCourseOptions = () => {
-    switch (formData.educationalAttainment) {
-      case 'COLLEGE GRADUATE':
-        return COLLEGE_COURSES;
-      case 'TECHNICAL/VOCATIONAL COURSE GRADUATE':
-        return TECHNICAL_VOCATIONAL_COURSES;
-      case 'ALS SECONDARY GRADUATE':
-        return ALS_SECONDARY_COURSES;
-      case 'COLLEGE UNDERGRADUATE':
-        return COLLEGE_UNDERGRADUATE_COURSES;
-      default:
-        return [];
-    }
-  };
+  switch (formData.tertiaryEducation) {
+    case 'COLLEGE GRADUATE':
+      return COLLEGE_COURSES;
+    case 'TECHNICAL/VOCATIONAL COURSE GRADUATE':
+      return TECHNICAL_VOCATIONAL_COURSES;
+    case 'ALS SECONDARY GRADUATE':
+      return ALS_SECONDARY_COURSES;
+    case 'COLLEGE UNDERGRADUATE':
+      return COLLEGE_UNDERGRADUATE_COURSES;
+    default:
+      return [];
+  }
+};
+
 
   const courseOptions = getCourseOptions();
 
