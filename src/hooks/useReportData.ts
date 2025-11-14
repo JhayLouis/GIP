@@ -16,15 +16,20 @@ export const useReportData = (activeProgram: 'GIP' | 'TUPAD', selectedYear?: num
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const years = getAvailableYears(activeProgram);
-    setAvailableYears(years);
-
     const load = async () => {
       setLoading(true);
-      setStatistics(getStatisticsByYear(activeProgram, selectedYear));
-      setBarangayStats(getBarangayStatisticsByYear(activeProgram, selectedYear));
-      setStatusStats(getStatusStatisticsByYear(activeProgram, selectedYear));
-      setGenderStats(getGenderStatisticsByYear(activeProgram, selectedYear));
+      const [years, stats, barangay, status, gender] = await Promise.all([
+        getAvailableYears(activeProgram),
+        getStatisticsByYear(activeProgram, selectedYear),
+        getBarangayStatisticsByYear(activeProgram, selectedYear),
+        getStatusStatisticsByYear(activeProgram, selectedYear),
+        getGenderStatisticsByYear(activeProgram, selectedYear)
+      ]);
+      setAvailableYears(years);
+      setStatistics(stats);
+      setBarangayStats(barangay);
+      setStatusStats(status);
+      setGenderStats(gender);
       setLoading(false);
     };
 
