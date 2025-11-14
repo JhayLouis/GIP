@@ -125,7 +125,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
             background-color: #dc2626;
             text-align: center;
             font-size: 9pt;
-            color: #fff;
+            color: #fff  ;
             padding: 18px;
             border-top: 6px solid #facc15;
           }

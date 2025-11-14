@@ -139,11 +139,11 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
             {genderStats.map((genderGroup, index) => (
               <div
                 key={index}
-                className="border border-pink-200 rounded-xl p-6 bg-gradient-to-br from-pink-50 to-white shadow-sm hover:shadow-md transition-all duration-200"
+                className="border border-gray-200 rounded-xl p-6 bg-gradient-to-br from-pink-50 to-white shadow-sm hover:shadow-md transition-all duration-200"
               >
-                <div className="font-semibold text-pink-700 text-lg mb-4 text-center">
+                <div className="font-semibold text-gray-700 text-lg mb-4 text-center">
                   {genderGroup.gender === 'MALE' ? '♂ Male' : '♀ Female'} — 
-                  <span className="ml-1 text-pink-600 font-bold">Total: {genderGroup.total}</span>
+                  <span className="ml-1 text-gray-600 font-bold">Total: {genderGroup.total}</span>
                 </div>
 
                 {/* Status Grid */}
@@ -158,16 +158,16 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                       <span
                         className={`text-lg font-bold ${
                           status === 'APPROVED'
-                            ? 'text-green-600'
+                            ? 'text-gray-600'
                             : status === 'REJECTED'
-                            ? 'text-red-600'
+                            ? 'text-gray-600'
                             : status === 'DEPLOYED'
-                            ? 'text-orange-600'
+                            ? 'text-gray-600'
                             : status === 'COMPLETED'
-                            ? 'text-purple-600'
+                            ? 'text-gray-600'
                             : status === 'RESIGNED'
                             ? 'text-gray-600'
-                            : 'text-yellow-600'
+                            : 'text-gray-600'
                         }`}
                       >
                         {genderGroup[status.toLowerCase()] ?? 0}
