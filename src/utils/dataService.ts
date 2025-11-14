@@ -107,264 +107,143 @@ export interface GenderStats {
   resigned: number;
 }
 
-const toSnakeCase = (str: string): string => {
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+const STORAGE_KEYS = {
+  GIP_APPLICANTS: 'gip_applicants',
+  TUPAD_APPLICANTS: 'tupad_applicants'
 };
 
-const toCamelCase = (str: string): string => {
-  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+// ---------- Utility Functions ----------
+
+export const getApplicants = (program: 'GIP' | 'TUPAD'): Applicant[] => {
+  const key = program === 'GIP' ? STORAGE_KEYS.GIP_APPLICANTS : STORAGE_KEYS.TUPAD_APPLICANTS;
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : [];
 };
 
-const convertToDbFormat = (applicant: any): any => {
-  const dbApplicant: any = {};
-  for (const key in applicant) {
-    if (key === 'photoFile' || key === 'resumeFile') continue;
-    const snakeKey = toSnakeCase(key);
-    dbApplicant[snakeKey] = applicant[key] === undefined ? null : applicant[key];
-  }
-  return dbApplicant;
+export const saveApplicants = (program: 'GIP' | 'TUPAD', applicants: Applicant[]): void => {
+  const key = program === 'GIP' ? STORAGE_KEYS.GIP_APPLICANTS : STORAGE_KEYS.TUPAD_APPLICANTS;
+  localStorage.setItem(key, JSON.stringify(applicants));
 };
 
-const convertFromDbFormat = (dbApplicant: any): Applicant => {
-  const applicant: any = {};
-  for (const key in dbApplicant) {
-    const camelKey = toCamelCase(key);
-    applicant[camelKey] = dbApplicant[key];
-  }
-  return applicant as Applicant;
-};
-
-export const getApplicants = async (program: 'GIP' | 'TUPAD'): Promise<Applicant[]> => {
-  try {
-    const { data, error } = await supabase
-      .from('applicants')
-      .select('*')
-      .eq('program', program)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return (data || []).map(convertFromDbFormat);
-  } catch (error) {
-    console.error('Error fetching applicants:', error);
-    return [];
-  }
-};
-
-export const generateApplicantCode = async (program: 'GIP' | 'TUPAD'): Promise<string> => {
-  try {
-    const { data, error } = await supabase
-      .from('applicants')
-      .select('code')
-      .eq('program', program)
-      .like('code', `${program}-%`)
-      .order('code', { ascending: false })
-      .limit(1);
-
-    if (error) throw error;
-
-    let maxNumber = 0;
-    if (data && data.length > 0) {
-      const match = data[0].code.match(new RegExp(`${program}-(\\d+)`));
-      if (match) {
-        maxNumber = parseInt(match[1], 10);
-      }
+export const generateApplicantCode = (program: 'GIP' | 'TUPAD'): string => {
+  const existingApplicants = getApplicants(program);
+  let maxNumber = 0;
+  existingApplicants.forEach(a => {
+    const match = a.code.match(new RegExp(`${program}-(\\d+)`));
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (num > maxNumber) maxNumber = num;
     }
-
-    const next = (maxNumber + 1).toString().padStart(6, '0');
-    return `${program}-${next}`;
-  } catch (error) {
-    console.error('Error generating applicant code:', error);
-    return `${program}-000001`;
-  }
+  });
+  const next = (maxNumber + 1).toString().padStart(6, '0');
+  return `${program}-${next}`;
 };
 
-export const addApplicant = async (applicantData: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'>): Promise<Applicant> => {
-  try {
-    const code = await generateApplicantCode(applicantData.program);
-    const dbApplicant = convertToDbFormat({
-      ...applicantData,
-      code,
-      dateSubmitted: new Date().toISOString().split('T')[0]
-    });
-
-    const { data, error } = await supabase
-      .from('applicants')
-      .insert([dbApplicant])
-      .select()
-      .single();
-
-    if (error) throw error;
-    return convertFromDbFormat(data);
-  } catch (error) {
-    console.error('Error adding applicant:', error);
-    throw error;
-  }
+export const addApplicant = (applicantData: Omit<Applicant, 'id' | 'code' | 'dateSubmitted'>): Applicant => {
+  const applicants = getApplicants(applicantData.program);
+  const newApplicant: Applicant = {
+    ...applicantData,
+    id: Date.now().toString(),
+    code: generateApplicantCode(applicantData.program),
+    dateSubmitted: new Date().toISOString().split('T')[0]
+  };
+  applicants.push(newApplicant);
+  saveApplicants(applicantData.program, applicants);
+  return newApplicant;
 };
 
-export const updateApplicant = async (program: 'GIP' | 'TUPAD', updatedApplicant: Applicant): Promise<void> => {
-  try {
-    const { data: existingData, error: fetchError } = await supabase
-      .from('applicants')
-      .select('status')
-      .eq('id', updatedApplicant.id)
-      .single();
+export const updateApplicant = (program: 'GIP' | 'TUPAD', updatedApplicant: Applicant): void => {
+  const applicants = getApplicants(program);
+  const idx = applicants.findIndex(a => a.id === updatedApplicant.id);
+  if (idx !== -1) {
+    const oldApplicant = applicants[idx];
 
-    if (fetchError) throw fetchError;
-
-    const oldStatus = existingData?.status;
-    const newStatus = updatedApplicant.status;
-
-    if (oldStatus === 'PENDING' && newStatus !== 'PENDING') {
+    if (oldApplicant.status === 'PENDING' && updatedApplicant.status !== 'PENDING') {
       updatedApplicant.interviewed = true;
-    } else if (oldStatus !== 'PENDING' && newStatus === 'PENDING') {
+    } else if (oldApplicant.status !== 'PENDING' && updatedApplicant.status === 'PENDING') {
       updatedApplicant.interviewed = false;
     }
 
-    const dbApplicant = convertToDbFormat(updatedApplicant);
-    delete dbApplicant.id;
-
-    const { error } = await supabase
-      .from('applicants')
-      .update(dbApplicant)
-      .eq('id', updatedApplicant.id);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error updating applicant:', error);
-    throw error;
+    applicants[idx] = updatedApplicant;
+    saveApplicants(program, applicants);
   }
 };
 
-export const archiveApplicant = async (program: 'GIP' | 'TUPAD', applicantId: string): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('applicants')
-      .update({
-        archived: true,
-        archived_date: new Date().toISOString().split('T')[0]
-      })
-      .eq('id', applicantId);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error archiving applicant:', error);
-    throw error;
+export const archiveApplicant = (program: 'GIP' | 'TUPAD', applicantId: string): void => {
+  const applicants = getApplicants(program);
+  const idx = applicants.findIndex(a => a.id === applicantId);
+  if (idx !== -1) {
+    applicants[idx] = { ...applicants[idx], archived: true, archivedDate: new Date().toISOString().split('T')[0] };
+    saveApplicants(program, applicants);
   }
 };
 
-export const unarchiveApplicant = async (program: 'GIP' | 'TUPAD', applicantId: string): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('applicants')
-      .update({
-        archived: false,
-        archived_date: null
-      })
-      .eq('id', applicantId);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error unarchiving applicant:', error);
-    throw error;
+export const unarchiveApplicant = (program: 'GIP' | 'TUPAD', applicantId: string): void => {
+  const applicants = getApplicants(program);
+  const idx = applicants.findIndex(a => a.id === applicantId);
+  if (idx !== -1) {
+    applicants[idx] = { ...applicants[idx], archived: false, archivedDate: undefined };
+    saveApplicants(program, applicants);
   }
 };
 
-export const deleteApplicant = async (program: 'GIP' | 'TUPAD', applicantId: string): Promise<void> => {
-  try {
-    const { error } = await supabase
-      .from('applicants')
-      .delete()
-      .eq('id', applicantId);
-
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error deleting applicant:', error);
-    throw error;
-  }
+export const deleteApplicant = (program: 'GIP' | 'TUPAD', applicantId: string): void => {
+  const applicants = getApplicants(program).filter(a => a.id !== applicantId);
+  saveApplicants(program, applicants);
 };
 
-export const getStatistics = async (program: 'GIP' | 'TUPAD'): Promise<Statistics> => {
-  try {
-    const applicants = await getApplicants(program);
-    const activeApplicants = applicants.filter(a => !a.archived);
+// ---------- Fixed getStatistics() with Gender Counts ----------
+export const getStatistics = (program: 'GIP' | 'TUPAD'): Statistics => {
+  const applicants = getApplicants(program).filter(a => !a.archived);
 
-    const getGenderCount = (status: string, gender: 'MALE' | 'FEMALE') =>
-      activeApplicants.filter(a => a.status === status && a.gender === gender).length;
+  const getGenderCount = (status: string, gender: 'MALE' | 'FEMALE') =>
+    applicants.filter(a => a.status === status && a.gender === gender).length;
 
-    const interviewed = activeApplicants.filter(a => a.interviewed === true);
+  const interviewed = applicants.filter(a => a.interviewed === true);
 
-    const stats: Statistics = {
-      totalApplicants: activeApplicants.length,
-      pending: activeApplicants.filter(a => a.status === 'PENDING').length,
-      approved: activeApplicants.filter(a => a.status === 'APPROVED').length,
-      deployed: activeApplicants.filter(a => a.status === 'DEPLOYED').length,
-      completed: activeApplicants.filter(a => a.status === 'COMPLETED').length,
-      rejected: activeApplicants.filter(a => a.status === 'REJECTED').length,
-      resigned: activeApplicants.filter(a => a.status === 'RESIGNED').length,
-      interviewed: interviewed.length,
-      barangaysCovered: [...new Set(activeApplicants.map(a => a.barangay))].length,
-      maleCount: activeApplicants.filter(a => a.gender === 'MALE').length,
-      femaleCount: activeApplicants.filter(a => a.gender === 'FEMALE').length,
+  const stats: Statistics = {
+    totalApplicants: applicants.length,
+    pending: applicants.filter(a => a.status === 'PENDING').length,
+    approved: applicants.filter(a => a.status === 'APPROVED').length,
+    deployed: applicants.filter(a => a.status === 'DEPLOYED').length,
+    completed: applicants.filter(a => a.status === 'COMPLETED').length,
+    rejected: applicants.filter(a => a.status === 'REJECTED').length,
+    resigned: applicants.filter(a => a.status === 'RESIGNED').length,
+    interviewed: interviewed.length,
+    barangaysCovered: [...new Set(applicants.map(a => a.barangay))].length,
+    maleCount: applicants.filter(a => a.gender === 'MALE').length,
+    femaleCount: applicants.filter(a => a.gender === 'FEMALE').length,
 
-      pendingMale: getGenderCount('PENDING', 'MALE'),
-      pendingFemale: getGenderCount('PENDING', 'FEMALE'),
-      approvedMale: getGenderCount('APPROVED', 'MALE'),
-      approvedFemale: getGenderCount('APPROVED', 'FEMALE'),
-      deployedMale: getGenderCount('DEPLOYED', 'MALE'),
-      deployedFemale: getGenderCount('DEPLOYED', 'FEMALE'),
-      completedMale: getGenderCount('COMPLETED', 'MALE'),
-      completedFemale: getGenderCount('COMPLETED', 'FEMALE'),
-      rejectedMale: getGenderCount('REJECTED', 'MALE'),
-      rejectedFemale: getGenderCount('REJECTED', 'FEMALE'),
-      resignedMale: getGenderCount('RESIGNED', 'MALE'),
-      resignedFemale: getGenderCount('RESIGNED', 'FEMALE'),
-      interviewedMale: interviewed.filter(a => a.gender === 'MALE').length,
-      interviewedFemale: interviewed.filter(a => a.gender === 'FEMALE').length
-    };
+    // Gender-by-status counts
+    pendingMale: getGenderCount('PENDING', 'MALE'),
+    pendingFemale: getGenderCount('PENDING', 'FEMALE'),
+    approvedMale: getGenderCount('APPROVED', 'MALE'),
+    approvedFemale: getGenderCount('APPROVED', 'FEMALE'),
+    deployedMale: getGenderCount('DEPLOYED', 'MALE'),
+    deployedFemale: getGenderCount('DEPLOYED', 'FEMALE'),
+    completedMale: getGenderCount('COMPLETED', 'MALE'),
+    completedFemale: getGenderCount('COMPLETED', 'FEMALE'),
+    rejectedMale: getGenderCount('REJECTED', 'MALE'),
+    rejectedFemale: getGenderCount('REJECTED', 'FEMALE'),
+    resignedMale: getGenderCount('RESIGNED', 'MALE'),
+    resignedFemale: getGenderCount('RESIGNED', 'FEMALE'),
+    interviewedMale: interviewed.filter(a => a.gender === 'MALE').length,
+    interviewedFemale: interviewed.filter(a => a.gender === 'FEMALE').length
+  };
 
-    return stats;
-  } catch (error) {
-    console.error('Error getting statistics:', error);
-    return {
-      totalApplicants: 0,
-      pending: 0,
-      approved: 0,
-      deployed: 0,
-      completed: 0,
-      rejected: 0,
-      resigned: 0,
-      interviewed: 0,
-      barangaysCovered: 0,
-      maleCount: 0,
-      femaleCount: 0,
-      pendingMale: 0,
-      pendingFemale: 0,
-      approvedMale: 0,
-      approvedFemale: 0,
-      deployedMale: 0,
-      deployedFemale: 0,
-      completedMale: 0,
-      completedFemale: 0,
-      rejectedMale: 0,
-      rejectedFemale: 0,
-      resignedMale: 0,
-      resignedFemale: 0,
-      interviewedMale: 0,
-      interviewedFemale: 0
-    };
-  }
+  return stats;
 };
 
-export const getBarangayStatistics = async (program: 'GIP' | 'TUPAD'): Promise<BarangayStats[]> => {
-  const applicants = await getApplicants(program);
-  const activeApplicants = applicants.filter(a => !a.archived);
+// ---------- Barangay / Status / Gender Stats ----------
+export const getBarangayStatistics = (program: 'GIP' | 'TUPAD'): BarangayStats[] => {
+  const applicants = getApplicants(program).filter(a => !a.archived);
   const barangays = [
     'APLAYA', 'BALIBAGO', 'CAINGIN', 'DILA', 'DITA', 'DON JOSE', 'IBABA',
     'KANLURAN', 'LABAS', 'MACABLING', 'MALITLIT', 'MALUSAK', 'MARKET AREA',
     'POOC', 'PULONG SANTA CRUZ', 'SANTO DOMINGO', 'SINALHAN', 'TAGAPO'
   ];
   return barangays.map(barangay => {
-    const list = activeApplicants.filter(a => a.barangay === barangay);
+    const list = applicants.filter(a => a.barangay === barangay);
     return {
       barangay,
       total: list.length,
@@ -380,9 +259,8 @@ export const getBarangayStatistics = async (program: 'GIP' | 'TUPAD'): Promise<B
   });
 };
 
-export const getStatusStatistics = async (program: 'GIP' | 'TUPAD'): Promise<StatusStats[]> => {
-  const applicants = await getApplicants(program);
-  const activeApplicants = applicants.filter(a => !a.archived);
+export const getStatusStatistics = (program: 'GIP' | 'TUPAD'): StatusStats[] => {
+  const applicants = getApplicants(program).filter(a => !a.archived);
   const statuses = [
     { name: 'PENDING', color: 'bg-yellow-100 text-yellow-800' },
     { name: 'APPROVED', color: 'bg-blue-100 text-blue-800' },
@@ -392,7 +270,7 @@ export const getStatusStatistics = async (program: 'GIP' | 'TUPAD'): Promise<Sta
     { name: 'RESIGNED', color: 'bg-gray-100 text-gray-800' }
   ];
   return statuses.map(status => {
-    const list = activeApplicants.filter(a => a.status === status.name);
+    const list = applicants.filter(a => a.status === status.name);
     return {
       status: status.name,
       total: list.length,
@@ -403,11 +281,10 @@ export const getStatusStatistics = async (program: 'GIP' | 'TUPAD'): Promise<Sta
   });
 };
 
-export const getGenderStatistics = async (program: 'GIP' | 'TUPAD'): Promise<GenderStats[]> => {
-  const applicants = await getApplicants(program);
-  const activeApplicants = applicants.filter(a => !a.archived);
+export const getGenderStatistics = (program: 'GIP' | 'TUPAD'): GenderStats[] => {
+  const applicants = getApplicants(program).filter(a => !a.archived);
   return ['MALE', 'FEMALE'].map(g => {
-    const list = activeApplicants.filter(a => a.gender === g);
+    const list = applicants.filter(a => a.gender === g);
     return {
       gender: g as 'MALE' | 'FEMALE',
       total: list.length,
@@ -421,11 +298,12 @@ export const getGenderStatistics = async (program: 'GIP' | 'TUPAD'): Promise<Gen
   });
 };
 
-export const filterApplicants = async (
+// ---------- Filter & Helpers ----------
+export const filterApplicants = (
   program: 'GIP' | 'TUPAD',
   filters: { searchTerm?: string; status?: string; barangay?: string; gender?: string; ageRange?: string; education?: string; }
-): Promise<Applicant[]> => {
-  let list = await getApplicants(program);
+): Applicant[] => {
+  let list = getApplicants(program);
   if (filters.searchTerm) {
     const s = filters.searchTerm.toLowerCase();
     list = list.filter(a =>
@@ -502,8 +380,9 @@ export const initializeSampleData = async (): Promise<void> => {
   }
 };
 
-export const getAvailableYears = async (program: 'GIP' | 'TUPAD'): Promise<number[]> => {
-  const applicants = await getApplicants(program);
+// Get available years from applicants
+export const getAvailableYears = (program: 'GIP' | 'TUPAD'): number[] => {
+  const applicants = getApplicants(program);
   const years = new Set<number>();
 
   applicants.forEach(applicant => {
@@ -516,9 +395,9 @@ export const getAvailableYears = async (program: 'GIP' | 'TUPAD'): Promise<numbe
   return Array.from(years).sort((a, b) => b - a);
 };
 
-export const getStatisticsByYear = async (program: 'GIP' | 'TUPAD', year?: number): Promise<Statistics> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived);
+// Get statistics filtered by year
+export const getStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: number): Statistics => {
+  let applicants = getApplicants(program).filter(a => !a.archived);
 
   if (year) {
     applicants = applicants.filter(a => {
@@ -560,9 +439,9 @@ export const getStatisticsByYear = async (program: 'GIP' | 'TUPAD', year?: numbe
   return stats;
 };
 
-export const getBarangayStatisticsByYear = async (program: 'GIP' | 'TUPAD', year?: number): Promise<BarangayStats[]> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived);
+// Get barangay statistics filtered by year
+export const getBarangayStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: number): BarangayStats[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived);
 
   if (year) {
     applicants = applicants.filter(a => {
@@ -595,9 +474,9 @@ export const getBarangayStatisticsByYear = async (program: 'GIP' | 'TUPAD', year
   });
 };
 
-export const getStatusStatisticsByYear = async (program: 'GIP' | 'TUPAD', year?: number): Promise<StatusStats[]> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived);
+// Get status statistics filtered by year
+export const getStatusStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: number): StatusStats[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived);
 
   if (year) {
     applicants = applicants.filter(a => {
@@ -628,9 +507,9 @@ export const getStatusStatisticsByYear = async (program: 'GIP' | 'TUPAD', year?:
   });
 };
 
-export const getGenderStatisticsByYear = async (program: 'GIP' | 'TUPAD', year?: number): Promise<GenderStats[]> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived);
+// Get gender statistics filtered by year
+export const getGenderStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: number): GenderStats[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived);
 
   if (year) {
     applicants = applicants.filter(a => {
@@ -657,9 +536,9 @@ export const getGenderStatisticsByYear = async (program: 'GIP' | 'TUPAD', year?:
   });
 };
 
-export const getApplicantsByStatus = async (program: 'GIP' | 'TUPAD', status: string, year?: number): Promise<Applicant[]> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived && a.status === status);
+// Get applicants by status
+export const getApplicantsByStatus = (program: 'GIP' | 'TUPAD', status: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived && a.status === status);
 
   if (year) {
     applicants = applicants.filter(a => {
@@ -671,9 +550,9 @@ export const getApplicantsByStatus = async (program: 'GIP' | 'TUPAD', status: st
   return applicants;
 };
 
-export const getApplicantsByBarangay = async (program: 'GIP' | 'TUPAD', barangay: string, year?: number): Promise<Applicant[]> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived && a.barangay === barangay);
+// Get applicants by barangay
+export const getApplicantsByBarangay = (program: 'GIP' | 'TUPAD', barangay: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived && a.barangay === barangay);
 
   if (year) {
     applicants = applicants.filter(a => {
@@ -685,9 +564,9 @@ export const getApplicantsByBarangay = async (program: 'GIP' | 'TUPAD', barangay
   return applicants;
 };
 
-export const getApplicantsByGenderAndStatus = async (program: 'GIP' | 'TUPAD', gender: string, status: string, year?: number): Promise<Applicant[]> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived && a.gender === gender && a.status === status);
+// Get applicants by gender and status
+export const getApplicantsByGenderAndStatus = (program: 'GIP' | 'TUPAD', gender: string, status: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived && a.gender === gender && a.status === status);
 
   if (year) {
     applicants = applicants.filter(a => {
@@ -699,9 +578,9 @@ export const getApplicantsByGenderAndStatus = async (program: 'GIP' | 'TUPAD', g
   return applicants;
 };
 
-export const getApplicantsByType = async (program: 'GIP' | 'TUPAD', type: string, year?: number): Promise<Applicant[]> => {
-  let applicants = await getApplicants(program);
-  applicants = applicants.filter(a => !a.archived);
+// Get all applicants of a program by type (total, or status names)
+export const getApplicantsByType = (program: 'GIP' | 'TUPAD', type: string, year?: number): Applicant[] => {
+  let applicants = getApplicants(program).filter(a => !a.archived);
 
   if (year) {
     applicants = applicants.filter(a => {

@@ -27,7 +27,7 @@ export const handleArchive = async (
 
   if (result.isConfirmed) {
     try {
-      const applicants = await getFilteredApplicants({});
+      const applicants = getFilteredApplicants({});
       const applicant = applicants.find((a: Applicant) => a.id === applicantId);
       if (applicant) {
         await updateApplicant({
@@ -89,7 +89,7 @@ export const handleUnarchive = async (
 
   if (result.isConfirmed) {
     try {
-      const applicants = await getFilteredApplicants({});
+      const applicants = getFilteredApplicants({});
       const applicant = applicants.find((a: Applicant) => a.id === applicantId);
       if (applicant) {
         await updateApplicant({

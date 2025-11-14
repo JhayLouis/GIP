@@ -71,9 +71,29 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
     photoFileData: ''
   });
 
+  const generateApplicantCode = () => {
+    const existingApplicants = getFilteredApplicants({});
+    const prefix = activeProgram === 'GIP' ? 'GIP' : 'TPD';
+
+    let maxNumber = 0;
+    existingApplicants.forEach(applicant => {
+      const codeMatch = applicant.code.match(new RegExp(`${prefix}-(\\d+)`));
+      if (codeMatch) {
+        const number = parseInt(codeMatch[1], 10);
+        if (number > maxNumber) {
+          maxNumber = number;
+        }
+      }
+    });
+
+    const nextNumber = maxNumber + 1;
+    const paddedNumber = nextNumber.toString().padStart(6, '0');
+    return `${prefix}-${paddedNumber}`;
+  };
+
   const openModal = () => {
     setEditingApplicant(null);
-    setApplicantCode('');
+    setApplicantCode(generateApplicantCode());
     setShowModal(true);
   };
 
@@ -444,30 +464,25 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const [filteredApplicants, setFilteredApplicants] = React.useState<Applicant[]>([]);
+  const filteredApplicants = getFilteredApplicants({
+    searchTerm,
+    status: statusFilter === 'ALL STATUS' ? '' : statusFilter,
+    barangay: barangayFilter === 'ALL BARANGAYS' ? '' : barangayFilter,
+    gender: genderFilter === 'ALL GENDERS' ? '' : genderFilter,
+    ageRange: ageFilter === 'ALL AGES' ? '' : ageFilter,
+    education: educationFilter === 'ALL EDUCATION' || educationFilter === 'All Education Levels' ? '' : educationFilter
+  }).filter(applicant => showArchived ? applicant.archived : !applicant.archived);
 
-  React.useEffect(() => {
-    const loadFilteredApplicants = async () => {
-      const results = await getFilteredApplicants({
-        searchTerm,
-        status: statusFilter === 'ALL STATUS' ? '' : statusFilter,
-        barangay: barangayFilter === 'ALL BARANGAYS' ? '' : barangayFilter,
-        gender: genderFilter === 'ALL GENDERS' ? '' : genderFilter,
-        ageRange: ageFilter === 'ALL AGES' ? '' : ageFilter,
-        education: educationFilter === 'ALL EDUCATION' || educationFilter === 'All Education Levels' ? '' : educationFilter
-      });
-      setFilteredApplicants(results.filter(applicant => showArchived ? applicant.archived : !applicant.archived));
-    };
-
-    loadFilteredApplicants();
-    setCurrentPage(1);
-  }, [searchTerm, statusFilter, barangayFilter, genderFilter, ageFilter, educationFilter, showArchived, getFilteredApplicants]);
 
   const totalEntries = filteredApplicants.length;
   const totalPages = Math.ceil(totalEntries / entriesPerPage);
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = startIndex + entriesPerPage;
   const currentEntries = filteredApplicants.slice(startIndex, endIndex);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, barangayFilter, genderFilter, ageFilter, educationFilter, showArchived]);
 
   const handleExportCSV = () => {
     const exportData = filteredApplicants.map(applicant => ({
