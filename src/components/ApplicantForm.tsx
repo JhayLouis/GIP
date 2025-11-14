@@ -55,10 +55,10 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
   const primaryColor = activeProgram === 'GIP' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700';
   const programName = activeProgram === 'GIP' ? 'GIP' : 'TUPAD';
 
-  const isCourseFieldActive = formData.educationalAttainment === 'COLLEGE GRADUATE' ||
-    formData.educationalAttainment === 'TECHNICAL/VOCATIONAL COURSE GRADUATE' ||
-    formData.educationalAttainment === 'ALS SECONDARY GRADUATE' ||
-    formData.educationalAttainment === 'COLLEGE UNDERGRADUATE';
+  const isCourseFieldActive = formData.tertiaryEducation === 'COLLEGE GRADUATE' ||
+    formData.tertiaryEducation === 'TECHNICAL/VOCATIONAL COURSE GRADUATE' ||
+    formData.tertiaryEducation === 'ALS SECONDARY GRADUATE' ||
+    formData.tertiaryEducation === 'COLLEGE UNDERGRADUATE';
 
   const getCourseOptions = () => {
     switch (formData.educationalAttainment) {
@@ -330,6 +330,8 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 />
               </div>
             )}
+
+          {activeProgram === 'GIP' && (
           <div>
             <label className="block text-sm font-bold mb-1 uppercase">Residential Address *</label>
             <input
@@ -342,6 +344,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               style={{ textTransform: 'uppercase' }}
             />
           </div>
+          )}
             <div>
               <label className="block text-sm font-bold mb-2 uppercase">Barangay *</label>
               <select
@@ -452,21 +455,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               </select>
             </div>
           )}
-          
-          {activeProgram === 'GIP' && (
-          <div>
-            <label className="block text-sm font-bold mb-1 uppercase">School</label>
-            <input
-              type="text"
-              value={formData.school}
-              onChange={(e) => onInputChange('school', e.target.value)}
-              placeholder="Enter school name"
-              className="w-full border rounded-lg px-3 py-2 uppercase"
-              style={{ textTransform: 'uppercase' }}
-            />
-          </div>
-          )}
-
 
           {activeProgram === 'TUPAD' && (
             <>
@@ -628,19 +616,29 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
               {/* TERTIARY EDUCATION */}
               <div className="mt-4">
-                <label className="block text-sm font-bold mb-2 uppercase">Tertiary Education *</label>
+                <label className="block text-sm font-bold mb-2 uppercase">
+                  Tertiary Education *
+                </label>
                 <select
                   value={formData.tertiaryEducation || ''}
-                  onChange={(e) => onInputChange('tertiaryEducation', e.target.value)}
-                  className="w-full border rounded-lg px-3 py-3"
+                  onChange={(e) => {
+                    onInputChange('tertiaryEducation', e.target.value);
+                    onInputChange('course', '');
+                    setCustomCourse('');
+                    setShowCustomCourse(false);
+                  }}
+                  className="border rounded w-full p-2"
                 >
                   <option value="">SELECT TERTIARY EDUCATION</option>
-                  <option>ALS SECONDARY GRADUATE</option>
-                  <option>TECHNICAL/VOCATIONAL COURSE GRADUATE</option>
-                  <option>COLLEGE UNDERGRADUATE</option>
-                  <option>COLLEGE GRADUATE</option>
+                  <option value="ALS SECONDARY GRADUATE">ALS SECONDARY GRADUATE</option>
+                  <option value="TECHNICAL/VOCATIONAL COURSE GRADUATE">
+                    TECHNICAL/VOCATIONAL COURSE GRADUATE
+                  </option>
+                  <option value="COLLEGE UNDERGRADUATE">COLLEGE UNDERGRADUATE</option>
+                  <option value="COLLEGE GRADUATE">COLLEGE GRADUATE</option>
                 </select>
               </div>
+
 
               {/* Show input for tertiary school name if education is selected */}
               {formData.tertiaryEducation && (
@@ -663,7 +661,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 <label className="block text-sm font-bold mb-2 uppercase">
                   Course *
                 </label>
-
                 {!showCustomCourse ? (
                   <select
                     value={formData.course || ''}

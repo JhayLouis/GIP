@@ -177,10 +177,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                     <th className="border border-black p-1 text-left font-bold">DEGREE OR DIPLOMA</th>
                   </tr>
                   <tr>
-                    <th className="border border-black p-0.5"></th>
-                    <th className="border border-black p-0.5 text-center font-semibold">From</th>
-                    <th className="border border-black p-0.5 text-center font-semibold">To</th>
-                    <th className="border border-black p-0.5"></th>
                   </tr>
                 </thead>
 

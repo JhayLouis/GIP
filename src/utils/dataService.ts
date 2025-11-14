@@ -22,9 +22,8 @@ export interface Applicant {
   primarySchoolName?: string;
   secondaryEducation?: string;
   secondarySchoolName?: string;
-  tertiaryEducation?: string;
   tertiarySchoolName?: string;
-  educationalAttainment?: string;
+  tertiaryEducation?: string;
   course?: string;
   beneficiaryName?: string;
   photoFile?: File;
@@ -323,7 +322,7 @@ export const filterApplicants = (
     list = max ? list.filter(a => a.age >= min && a.age <= max) : list.filter(a => a.age >= min);
   }
   if (filters.education && filters.education !== 'All Education Levels')
-    list = list.filter(a => a.educationalAttainment === filters.education);
+    list = list.filter(a => a.tertiaryEducation === filters.education);
   return list;
 };
 
@@ -347,7 +346,7 @@ export const initializeSampleData = (): void => {
       barangay: 'BALIBAGO',
       contactNumber: '09123456789',
       gender: 'MALE',
-      educationalAttainment: 'COLLEGE GRADUATE',
+      tertiaryEducation: 'COLLEGE GRADUATE',
       encoder: 'Administrator',
       status: 'PENDING',
       program: 'GIP',
@@ -363,7 +362,7 @@ export const initializeSampleData = (): void => {
       barangay: 'DITA',
       contactNumber: '09987654321',
       gender: 'FEMALE',
-      educationalAttainment: 'HIGH SCHOOL GRADUATE',
+      tertiaryEducation: 'HIGH SCHOOL GRADUATE',
       encoder: 'Administrator',
       status: 'APPROVED',
       program: 'TUPAD',
