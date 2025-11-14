@@ -33,7 +33,6 @@ const getEmailTemplate = (name: string, status: string, program: string, applica
             .content { background-color: #f9f9f9; padding: 30px; border: 1px solid #ddd; }
             .footer { text-align: center; padding: 20px; font-size: 12px; color: #666; }
             .highlight { background-color: #fef3c7; padding: 15px; border-left: 4px solid #f59e0b; margin: 20px 0; }
-            .button { background-color: ${program === 'GIP' ? '#dc2626' : '#16a34a'}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px; }
           </style>
         </head>
         <body>
@@ -186,11 +185,57 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+    
+    if (!RESEND_API_KEY) {
+      console.error('RESEND_API_KEY is not configured');
+      return new Response(
+        JSON.stringify({ 
+          error: 'Email service not configured',
+          message: 'Please configure RESEND_API_KEY in your Supabase Edge Function secrets'
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     const emailTemplate = getEmailTemplate(name, status, program, applicantCode);
 
-    console.log(`Sending email to: ${to}`);
-    console.log(`Subject: ${emailTemplate.subject}`);
-    console.log(`Status: ${status}`);
+    const resendResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'SOFT Projects <noreply@yourdomain.com>',
+        to: [to],
+        subject: emailTemplate.subject,
+        html: emailTemplate.html,
+        text: emailTemplate.text,
+      }),
+    });
+
+    const resendData = await resendResponse.json();
+
+    if (!resendResponse.ok) {
+      console.error('Resend API error:', resendData);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to send email',
+          details: resendData.message || 'Unknown error from email service'
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    console.log(`Email sent successfully to: ${to}`);
+    console.log(`Email ID: ${resendData.id}`);
 
     const data = {
       success: true,
@@ -201,7 +246,8 @@ Deno.serve(async (req: Request) => {
         status,
         program,
         applicantCode,
-        subject: emailTemplate.subject
+        subject: emailTemplate.subject,
+        emailId: resendData.id
       }
     };
 
