@@ -48,7 +48,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
     email: '',
     school: '',
     civilStats: '',
-    gender: 'MALE' as 'MALE' | 'FEMALE',
+    gender: '' as '' | 'MALE' | 'FEMALE',
     primaryEducation: '',
     primarySchoolName: '',
     primaryFrom: '',

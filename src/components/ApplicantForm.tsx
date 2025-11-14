@@ -312,6 +312,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               onChange={(e) => onInputChange('gender', e.target.value)}
               className="w-full border rounded-lg px-3 py-3"
             >
+              <option value="">SELECT GENDER</option>
               <option value="MALE">MALE</option>
               <option value="FEMALE">FEMALE</option>
             </select>
@@ -568,6 +569,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   <option>ELEMENTARY GRADUATE</option>
                 </select>
               </div>
+
               {/* Show Primary School Name */}
               {formData.primaryEducation && (
                 <div className="mt-2">
@@ -584,35 +586,85 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   />
                 </div>
               )}
+
               {/* Show FROM / TO only when School Name is filled */}
               {formData.primarySchoolName && formData.primarySchoolName.trim() !== '' && (
                 <div className="grid grid-cols-2 gap-4 mt-2">
+
+                  {/* FROM YEAR DROPDOWN */}
                   <div>
                     <label className="block text-sm font-bold mb-2 uppercase">From *</label>
-                    <input
-                      type="text"
+                    <select
                       value={formData.primaryFrom || ''}
-                      onChange={(e) => onInputChange('primaryFrom', e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+
+                        onInputChange('primaryFrom', value);
+
+                        // Validate: FROM must not be greater than TO
+                        if (formData.primaryTo && value > formData.primaryTo) {
+                          Swal.fire(
+                            "Invalid Selection",
+                            "'FROM' year cannot be greater than 'TO' year.",
+                            "error"
+                          );
+                          onInputChange('primaryFrom', '');
+                        }
+                      }}
                       required
-                      placeholder="Year started"
                       className="w-full border rounded-lg px-3 py-3"
-                    />
+                    >
+                      <option value="">SELECT YEAR</option>
+                      {Array.from(
+                        { length: new Date().getFullYear() - 1950 + 1 },
+                        (_, i) => 1950 + i
+                      ).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
+                  {/* TO YEAR DROPDOWN */}
                   <div>
                     <label className="block text-sm font-bold mb-2 uppercase">To *</label>
-                    <input
-                      type="text"
+                    <select
                       value={formData.primaryTo || ''}
-                      onChange={(e) => onInputChange('primaryTo', e.target.value.toUpperCase())}
+                      onChange={(e) => {
+                        const value = e.target.value;
+
+                        onInputChange('primaryTo', value);
+
+                        // Validate: TO must not be less than FROM
+                        if (formData.primaryFrom && value < formData.primaryFrom) {
+                          Swal.fire(
+                            "Invalid Selection",
+                            "'TO' year cannot be lower than 'FROM' year.",
+                            "error"
+                          );
+                          onInputChange('primaryTo', '');
+                        }
+                      }}
                       required
-                      placeholder="Year graduated"
                       className="w-full border rounded-lg px-3 py-3"
-                    />
+                    >
+                      <option value="">SELECT YEAR</option>
+                      {Array.from(
+                        { length: new Date().getFullYear() - 1950 + 1 },
+                        (_, i) => 1950 + i
+                      ).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
+
                 </div>
               )}
-              {/* SECONDARY EDUCATION */}
+
+             {/* SECONDARY EDUCATION */}
               <div className="mt-4">
                 <label className="block text-sm font-bold mb-2 uppercase">Secondary Education *</label>
                 <select
@@ -626,6 +678,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   <option>SENIOR HIGH SCHOOL GRADUATE</option>
                 </select>
               </div>
+
               {/* Show Secondary School Name */}
               {formData.secondaryEducation && (
                 <div className="mt-2">
@@ -642,34 +695,82 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   />
                 </div>
               )}
+
               {/* Show FROM / TO only when Secondary School Name is filled */}
               {formData.secondarySchoolName && formData.secondarySchoolName.trim() !== '' && (
                 <div className="grid grid-cols-2 gap-4 mt-2">
+
+                  {/* FROM YEAR (Dropdown) */}
                   <div>
                     <label className="block text-sm font-bold mb-2 uppercase">From *</label>
-                    <input
-                      type="text"
+                    <select
                       value={formData.secondaryFrom || ''}
-                      onChange={(e) => onInputChange('secondaryFrom', e.target.value.toUpperCase())}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        onInputChange('secondaryFrom', value);
+
+                        // Validate FROM <= TO
+                        if (formData.secondaryTo && value > formData.secondaryTo) {
+                          Swal.fire(
+                            "Invalid Selection",
+                            "'FROM' year cannot be greater than 'TO' year.",
+                            "error"
+                          );
+                          onInputChange('secondaryFrom', '');
+                        }
+                      }}
                       required
-                      placeholder="Year started"
                       className="w-full border rounded-lg px-3 py-3"
-                    />
+                    >
+                      <option value="">SELECT YEAR</option>
+                      {Array.from(
+                        { length: new Date().getFullYear() - 1950 + 1 },
+                        (_, i) => 1950 + i
+                      ).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
+                  {/* TO YEAR (Dropdown) */}
                   <div>
                     <label className="block text-sm font-bold mb-2 uppercase">To *</label>
-                    <input
-                      type="text"
+                    <select
                       value={formData.secondaryTo || ''}
-                      onChange={(e) => onInputChange('secondaryTo', e.target.value.toUpperCase())}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        onInputChange('secondaryTo', value);
+
+                        // Validate TO >= FROM
+                        if (formData.secondaryFrom && value < formData.secondaryFrom) {
+                          Swal.fire(
+                            "Invalid Selection",
+                            "'TO' year cannot be lower than 'FROM' year.",
+                            "error"
+                          );
+                          onInputChange('secondaryTo', '');
+                        }
+                      }}
                       required
-                      placeholder="Year graduated"
                       className="w-full border rounded-lg px-3 py-3"
-                    />
+                    >
+                      <option value="">SELECT YEAR</option>
+                      {Array.from(
+                        { length: new Date().getFullYear() - 1950 + 1 },
+                        (_, i) => 1950 + i
+                      ).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
+
                 </div>
               )}
+
               {/* TERTIARY EDUCATION */}
               <div className="mt-4">
                 <label className="block text-sm font-bold mb-2 uppercase">
@@ -679,7 +780,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   value={formData.tertiaryEducation || ''}
                   onChange={(e) => {
                     onInputChange('tertiaryEducation', e.target.value);
-                    onInputChange('course', '');
+                    onInputChange('course', ''); // reset course
                     setCustomCourse('');
                     setShowCustomCourse(false);
                   }}
@@ -712,7 +813,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 </div>
               )}
 
-              {/* Show FROM / TO only when Tertiary School Name is filled */}
+              {/* FROM / TO */}
               {formData.tertiarySchoolName && formData.tertiarySchoolName.trim() !== '' && (
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div>
@@ -741,7 +842,75 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 </div>
               )}
 
+              {/* COURSE DROPDOWN */}
+              {formData.tertiaryEducation && (
+                <div className="mt-4">
+                  <label className="block text-sm font-bold mb-2 uppercase">Course *</label>
 
+                  {/* Select the correct list based on user choice */}
+                  <select
+                    value={formData.course || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === 'OTHERS') {
+                        setShowCustomCourse(true);
+                        onInputChange('course', '');
+                      } else {
+                        setShowCustomCourse(false);
+                        onInputChange('course', value);
+                      }
+                    }}
+                    className="w-full border rounded-lg px-3 py-3"
+                    required
+                  >
+                    <option value="">SELECT COURSE</option>
+
+                    {/* COLLEGE COURSES */}
+                    {formData.tertiaryEducation === "COLLEGE GRADUATE" &&
+                      COLLEGE_COURSES.map((course, index) => (
+                        <option key={index} value={course}>{course}</option>
+                      ))}
+
+                    {/* TECHNICAL/VOCATIONAL COURSES */}
+                    {formData.tertiaryEducation === "TECHNICAL/VOCATIONAL COURSE GRADUATE" &&
+                      TECHNICAL_VOCATIONAL_COURSES.map((course, index) => (
+                        <option key={index} value={course}>{course}</option>
+                      ))}
+
+                    {/* ALS SECONDARY COURSES */}
+                    {formData.tertiaryEducation === "ALS SECONDARY GRADUATE" &&
+                      ALS_SECONDARY_COURSES.map((course, index) => (
+                        <option key={index} value={course}>{course}</option>
+                      ))}
+
+                    {/* COLLEGE UNDERGRADUATE COURSES */}
+                    {formData.tertiaryEducation === "COLLEGE UNDERGRADUATE" &&
+                      COLLEGE_UNDERGRADUATE_COURSES.map((course, index) => (
+                        <option key={index} value={course}>{course}</option>
+                      ))}
+
+                    <option value="OTHERS">OTHERS</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Custom Course Input */}
+              {showCustomCourse && (
+                <div className="mt-2">
+                  <label className="block text-sm font-bold mb-2 uppercase">Enter Course *</label>
+                  <input
+                    type="text"
+                    value={customCourse}
+                    onChange={(e) => {
+                      setCustomCourse(e.target.value.toUpperCase());
+                      onInputChange('course', e.target.value.toUpperCase());
+                    }}
+                    required
+                    placeholder="Enter your course"
+                    className="w-full border rounded-lg px-3 py-3"
+                  />
+                </div>
+              )}
 
               {isCourseFieldActive && (
               <div>
@@ -792,7 +961,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 )}
               </div>
             )}
-
               <div>
                 <label className="block text-sm font-bold mb-1 uppercase">Beneficiary Name</label>
                 <input
