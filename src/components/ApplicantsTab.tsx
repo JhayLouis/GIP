@@ -49,12 +49,6 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
     school: '',
     civilStats: '',
     gender: 'MALE' as 'MALE' | 'FEMALE',
-    primaryEducation: '',
-    primarySchoolName: '',
-    secondaryEducation: '',
-    secondarySchoolName: '',
-    tertiaryEducation: '',
-    tertiarySchoolName: '',
     educationalAttainment: '',
     course: '',
     beneficiaryName: '',
@@ -97,13 +91,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
       school: applicant.school || '',
       civilStats: applicant.civilStats || '',
       gender: applicant.gender,
-      primaryEducation: applicant.primaryEducation || '',
-      primarySchoolName: applicant.primarySchoolName || '',
-      secondaryEducation: applicant.secondaryEducation || '',
-      secondarySchoolName: applicant.secondarySchoolName || '',
-      tertiaryEducation: applicant.tertiaryEducation || '',
-      tertiarySchoolName: applicant.tertiarySchoolName || '',
-      educationalAttainment: applicant.educationalAttainment || '',
+      educationalAttainment: applicant.educationalAttainment,
       course: applicant.course || '',
       beneficiaryName: applicant.beneficiaryName || '',
       status: applicant.status,
@@ -142,12 +130,6 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
       school: '',
       civilStats: '',
       gender: 'MALE',
-      primaryEducation: '',
-      primarySchoolName: '',
-      secondaryEducation: '',
-      secondarySchoolName: '',
-      tertiaryEducation: '',
-      tertiarySchoolName: '',
       educationalAttainment: '',
       course: '',
       beneficiaryName: '',
@@ -192,33 +174,18 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
       return;
     }
 
-    if (activeProgram === 'GIP') {
-      if (!formData.primaryEducation || !formData.primarySchoolName) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Missing Required Fields',
-          text: 'Please fill in Primary Education and School Name',
-          confirmButtonColor: '#3085d6',
-          customClass: {
-            popup: 'rounded-2xl shadow-lg',
-            confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
-          }
-        });
-        return;
-      }
-      if (!formData.secondaryEducation || !formData.secondarySchoolName) {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Missing Required Fields',
-          text: 'Please fill in Secondary Education and School Name',
-          confirmButtonColor: '#3085d6',
-          customClass: {
-            popup: 'rounded-2xl shadow-lg',
-            confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
-          }
-        });
-        return;
-      }
+    if (activeProgram === 'GIP' && !formData.educationalAttainment) {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Missing Required Fields',
+        text: 'Please fill in all required fields',
+        confirmButtonColor: '#3085d6',
+        customClass: {
+          popup: 'rounded-2xl shadow-lg',
+          confirmButton: 'px-5 py-2 rounded-lg text-white font-semibold'
+        }
+      });
+      return;
     }
 
     if (activeProgram === 'TUPAD' && !formData.idType) {
@@ -306,12 +273,6 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           school: formData.school || undefined,
           civilStats: formData.civilStats || '',
           gender: formData.gender,
-          primaryEducation: formData.primaryEducation || undefined,
-          primarySchoolName: formData.primarySchoolName || undefined,
-          secondaryEducation: formData.secondaryEducation || undefined,
-          secondarySchoolName: formData.secondarySchoolName || undefined,
-          tertiaryEducation: formData.tertiaryEducation || undefined,
-          tertiarySchoolName: formData.tertiarySchoolName || undefined,
           educationalAttainment: formData.educationalAttainment || '',
           course: formData.course || '',
           beneficiaryName: formData.beneficiaryName || undefined,
@@ -378,17 +339,11 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           school: formData.school || undefined,
           civilStats: formData.civilStats || '',
           gender: formData.gender,
-          primaryEducation: formData.primaryEducation || undefined,
-          primarySchoolName: formData.primarySchoolName || undefined,
-          secondaryEducation: formData.secondaryEducation || undefined,
-          secondarySchoolName: formData.secondarySchoolName || undefined,
-          tertiaryEducation: formData.tertiaryEducation || undefined,
-          tertiarySchoolName: formData.tertiarySchoolName || undefined,
           educationalAttainment: formData.educationalAttainment || '',
           course: formData.course || '',
           beneficiaryName: formData.beneficiaryName || undefined,
           code: applicantCode,
-          encoder: 'Administrator',
+          encoder: 'Administrator', 
           status: formData.status,
           program: activeProgram,
           resumeFileName,
