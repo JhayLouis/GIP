@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Printer, X, Mail } from 'lucide-react';
 import EmailComposer from './EmailComposer';
+import { getHighestEducationAttainment } from '../../utils/dataService';
 
 interface ReportDetailsModalProps {
   title: string;
@@ -39,8 +40,10 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   const applicantStatus = useMemo<'APPROVED' | 'REJECTED' | null>(() => {
     if (data.length === 0) return null;
     const status = data[0]?.status;
-    return status === 'APPROVED' || status === 'REJECTED' ? status : null;
+    return (status === 'APPROVED' || status === 'REJECTED') ? status : null;
   }, [data]);
+
+  const shouldShowEmailActions = applicantStatus !== null && (applicantStatus === 'APPROVED' || applicantStatus === 'REJECTED');
 
   const handleEmailClick = (applicant: any) => {
     setSelectedApplicant(applicant);
@@ -211,7 +214,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                       <td>${p.age || '-'}</td>
                       <td>${p.barangay || '-'}</td>
                       <td>${p.contactNumber || '-'}</td>
-                      <td>${p.educationalAttainment || '-'}</td>
+                      <td>${getHighestEducationAttainment(p)}</td>
                       <td>${p.course || '-'}</td>
                     </tr>
                   `
@@ -312,8 +315,8 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                     </>
                   )}
 
-                  {/* Hide Actions if program is TUPAD */}
-                  {program !== 'TUPAD' && applicantStatus && (
+                  {/* Show Actions only if program is GIP and status is APPROVED/REJECTED */}
+                  {program !== 'TUPAD' && shouldShowEmailActions && (
                     <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
                   )}
                 </tr>
@@ -337,14 +340,14 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                       {program !== 'TUPAD' && (
                         <>
                           <td className="px-4 py-3 text-gray-700 text-xs">
-                            {p.educationalAttainment || '-'}
+                            {getHighestEducationAttainment(p)}
                           </td>
                           <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
                         </>
                       )}
 
-                      {/* Actions hidden for TUPAD */}
-                      {program !== 'TUPAD' && applicantStatus && (
+                      {/* Actions only shown if status is APPROVED/REJECTED */}
+                      {program !== 'TUPAD' && shouldShowEmailActions && (
                         <td className="px-4 py-3 text-center">
                           {p.email ? (
                             <button
@@ -421,7 +424,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
         </div>
       </div>
 
-      {emailComposerOpen && selectedApplicant && applicantStatus && (
+      {emailComposerOpen && selectedApplicant && shouldShowEmailActions && applicantStatus && (
         <EmailComposer
           applicant={selectedApplicant}
           program={program}

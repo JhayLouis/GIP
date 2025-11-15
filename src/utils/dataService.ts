@@ -588,3 +588,38 @@ export const getApplicantsByType = (program: 'GIP' | 'TUPAD', type: string, year
   if (type === 'total') return applicants;
   return applicants.filter(a => a.status === type);
 };
+
+export const getHighestEducationAttainment = (applicant: Applicant): string => {
+  const educationHierarchy: { [key: string]: number } = {
+    'NO FORMAL EDUCATION': 0,
+    'ELEMENTARY': 1,
+    'HIGH SCHOOL': 2,
+    'VOCATIONAL/TECHNICAL': 3,
+    'ASSOCIATE': 4,
+    'BACHELOR': 5,
+    'MASTER': 6,
+    'DOCTORATE': 7
+  };
+
+  const educationLevels = [
+    applicant.tertiaryEducation,
+    applicant.secondaryEducation,
+    applicant.primaryEducation
+  ].filter(Boolean);
+
+  if (educationLevels.length === 0) return '-';
+
+  let highest = educationLevels[0];
+  let highestRank = educationHierarchy[highest] ?? 0;
+
+  for (let i = 1; i < educationLevels.length; i++) {
+    const level = educationLevels[i];
+    const rank = educationHierarchy[level] ?? 0;
+    if (rank > highestRank) {
+      highest = level;
+      highestRank = rank;
+    }
+  }
+
+  return highest || '-';
+};
