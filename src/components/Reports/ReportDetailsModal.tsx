@@ -295,21 +295,29 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
           ) : (
             <>
               <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                  <tr>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Code</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Full Name</th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">Gender</th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">Age</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Barangay</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Contact</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Education</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">Course</th>
-                    {applicantStatus && (
-                      <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
-                    )}
-                  </tr>
-                </thead>
+              <thead className="sticky top-0 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Code</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Full Name</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Gender</th>
+                  <th className="px-4 py-3 text-center font-semibold text-gray-700">Age</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Barangay</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Contact</th>
+
+                  {/* Hide Education + Course if program is TUPAD */}
+                  {program !== 'TUPAD' && (
+                    <>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700">Education</th>
+                      <th className="px-4 py-3 text-left font-semibold text-gray-700">Course</th>
+                    </>
+                  )}
+
+                  {/* Hide Actions if program is TUPAD */}
+                  {program !== 'TUPAD' && applicantStatus && (
+                    <th className="px-4 py-3 text-center font-semibold text-gray-700">Actions</th>
+                  )}
+                </tr>
+              </thead>
                 <tbody>
                   {paginatedData.map((p, i) => (
                     <tr
@@ -324,15 +332,24 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                       <td className="px-4 py-3 text-center text-gray-700">{p.age || '-'}</td>
                       <td className="px-4 py-3 text-gray-700">{p.barangay || '-'}</td>
                       <td className="px-4 py-3 text-gray-700">{p.contactNumber || '-'}</td>
-                      <td className="px-4 py-3 text-gray-700 text-xs">{p.educationalAttainment || '-'}</td>
-                      <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
-                      {applicantStatus && (
+
+                      {/* Education + Course hidden for TUPAD */}
+                      {program !== 'TUPAD' && (
+                        <>
+                          <td className="px-4 py-3 text-gray-700 text-xs">
+                            {p.educationalAttainment || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-gray-700 text-xs">{p.course || '-'}</td>
+                        </>
+                      )}
+
+                      {/* Actions hidden for TUPAD */}
+                      {program !== 'TUPAD' && applicantStatus && (
                         <td className="px-4 py-3 text-center">
                           {p.email ? (
                             <button
                               onClick={() => handleEmailClick(p)}
                               className="inline-flex items-center gap-1 px-3 py-1 rounded-lg transition-all bg-blue-100 hover:bg-blue-200 text-blue-700"
-                              title="Send email"
                             >
                               <Mail className="w-4 h-4" />
                               <span className="text-xs font-medium">Email</span>
@@ -341,7 +358,6 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                             <button
                               disabled
                               className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed"
-                              title="No email address"
                             >
                               <Mail className="w-4 h-4" />
                               <span className="text-xs font-medium">Email</span>

@@ -119,8 +119,6 @@ const STORAGE_KEYS = {
   TUPAD_APPLICANTS: 'tupad_applicants'
 };
 
-// ---------- Utility Functions ----------
-
 export const getApplicants = (program: 'GIP' | 'TUPAD'): Applicant[] => {
   const key = program === 'GIP' ? STORAGE_KEYS.GIP_APPLICANTS : STORAGE_KEYS.TUPAD_APPLICANTS;
   const data = localStorage.getItem(key);
