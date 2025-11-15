@@ -18,7 +18,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
     document.body.innerHTML = printContents;
     window.print();
     document.body.innerHTML = originalContents;
-    window.location.reload(); // Optional, refresh to restore event listeners
   }
 };
 
@@ -189,8 +188,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </thead>
 
                 <tbody>
-
-                   {/* TERTIARY EDUCATION */}
                   <tr>
                     <td className="border border-black p-1">
                       {applicant.tertiarySchoolName
@@ -210,8 +207,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                         : '-'}
                     </td>
                   </tr>
-
-                  {/* SECONDARY EDUCATION */}
                   <tr>
                     <td className="border border-black p-1">
                       {applicant.secondarySchoolName
@@ -231,8 +226,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                         : '-'}
                     </td>
                   </tr>
-
-                  {/* PRIMARY EDUCATION */}
                   <tr>
                     <td className="border border-black p-1">
                       {applicant.primarySchoolName
