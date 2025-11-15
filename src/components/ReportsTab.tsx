@@ -14,29 +14,36 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedDetailData, setSelectedDetailData] = useState<any[]>([]);
   const [modalTitle, setModalTitle] = useState('Details');
+  const [shouldShowEmailActions, setShouldShowEmailActions] = useState(true);
   const { availableYears, statistics, barangayStats, statusStats, genderStats, loading } =
     useReportData(activeProgram, selectedYear);
 
   const handleRowClick = (type: string, filterValue?: string, filterType?: string) => {
     let data: any[] = [];
     let title = 'Detailed Report';
+    let allowEmailActions = true;
 
     if (filterType === 'barangay') {
       data = getApplicantsByBarangay(activeProgram, filterValue || '', selectedYear);
       title = `Applicants - ${filterValue}`;
+      allowEmailActions = false;
     } else if (filterType === 'status') {
       data = getApplicantsByStatus(activeProgram, filterValue || '', selectedYear);
       title = `Applicants - ${filterValue}`;
+      allowEmailActions = filterValue === 'APPROVED' || filterValue === 'REJECTED';
     } else if (filterType === 'gender') {
       data = getApplicantsByGenderAndStatus(activeProgram, type, filterValue || '', selectedYear);
       title = `Applicants - ${type} (${filterValue})`;
+      allowEmailActions = filterValue === 'APPROVED' || filterValue === 'REJECTED';
     } else {
       data = getApplicantsByType(activeProgram, type, selectedYear);
       title = type === 'total' ? 'All Applicants' : `Applicants - ${type}`;
+      allowEmailActions = type === 'APPROVED' || type === 'REJECTED';
     }
 
     setModalTitle(title);
     setSelectedDetailData(data);
+    setShouldShowEmailActions(allowEmailActions);
     setShowModal(true);
   };
 
@@ -128,6 +135,7 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
           data={selectedDetailData}
           onClose={() => setShowModal(false)}
           program={activeProgram}
+          showEmailActions={shouldShowEmailActions}
         />
       )}
     </div>

@@ -8,6 +8,7 @@ interface ReportDetailsModalProps {
   data: any[];
   onClose: () => void;
   program?: 'GIP' | 'TUPAD';
+  showEmailActions?: boolean;
 }
 
 const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
@@ -15,6 +16,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   data,
   onClose,
   program = 'GIP',
+  showEmailActions = true,
 }) => {
   const [courseFilter, setCourseFilter] = useState('');
   const [emailComposerOpen, setEmailComposerOpen] = useState(false);
@@ -38,12 +40,12 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   const applicantStatus = useMemo<'APPROVED' | 'REJECTED' | null>(() => {
-    if (data.length === 0) return null;
+    if (data.length === 0 || !showEmailActions) return null;
     const status = data[0]?.status;
     return (status === 'APPROVED' || status === 'REJECTED') ? status : null;
-  }, [data]);
+  }, [data, showEmailActions]);
 
-  const shouldShowEmailActions = applicantStatus !== null && (applicantStatus === 'APPROVED' || applicantStatus === 'REJECTED');
+  const shouldShowEmailActions = showEmailActions && applicantStatus !== null && (applicantStatus === 'APPROVED' || applicantStatus === 'REJECTED');
 
   const handleEmailClick = (applicant: any) => {
     setSelectedApplicant(applicant);
