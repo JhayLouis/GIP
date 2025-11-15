@@ -106,7 +106,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                   </div>
                   </div>
                   </div>
-              <div className="flex flex-col items-center justify-center text-center p-2">
+              <div className="flex flex-col items-center justify-center text-center">
                 {applicant.photoFileData ? (
                   <img
                     src={applicant.photoFileData}
