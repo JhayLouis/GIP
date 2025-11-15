@@ -106,17 +106,17 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                   </div>
                   </div>
                   </div>
-              <div className="flex flex-col items-center justify-center text-center">
+              <div className="flex flex-col items-center justify-center text-center p-2">
                 {applicant.photoFileData ? (
                   <img
                     src={applicant.photoFileData}
                     alt="Applicant Photo"
-                    className="w-[1.5in] h-[1.5in] object-cover border border-gray-400 cursor-pointer hover:opacity-80 transition"
+                    className="w-[1.5in] h-[1.5in] object-cover border border-black cursor-pointer hover:opacity-80 transition"
                     onClick={() => setShowImageModal(true)}
                   />
                 ) : (
-                  <div className="w-[1.5in] h-[1.5in] flex flex-col items-center justify-center bg-gray-200 border border-gray-400 p-1">
-                    <p className="text-[8px] font-bold text-center leading-tight">
+                  <div className="w-[1.5in] h-[1.5in] flex flex-col items-center justify-center bg-gray-200 border border-black p-2">
+                    <p className="text-[7px] font-bold text-center leading-tight">
                       ATTACH 2x2 PHOTO WITH NAME AND SIGNATURE TAKEN WITHIN THE LAST THREE (3) MONTHS
                     </p>
                   </div>
