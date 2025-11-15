@@ -48,35 +48,25 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
   const [showCustomCourse, setShowCustomCourse] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [telephoneError, setTelephoneError] = useState('');
+  const [nameErrors, setNameErrors] = useState({
+    first: '',
+    middle: '',
+    last: '',
+  });
+
+  // Reusable validation function
+  const validateName = (value: string) => {
+    const pattern = /^[A-Z\s'-]*$/; // letters, space, apostrophe, hyphen
+    return pattern.test(value);
+  };
+
 
   if (!showModal) return null;
 
   const headerDarkBgColor = activeProgram === 'GIP' ? 'bg-red-700' : 'bg-green-700';
   const primaryColor = activeProgram === 'GIP' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700';
   const programName = activeProgram === 'GIP' ? 'GIP' : 'TUPAD';
-
-  const isCourseFieldActive = formData.tertiaryEducation === 'COLLEGE GRADUATE' ||
-    formData.tertiaryEducation === 'TECHNICAL/VOCATIONAL COURSE GRADUATE' ||
-    formData.tertiaryEducation === 'ALS SECONDARY GRADUATE' ||
-    formData.tertiaryEducation === 'COLLEGE UNDERGRADUATE';
-
-  const getCourseOptions = () => {
-  switch (formData.tertiaryEducation) {
-    case 'COLLEGE GRADUATE':
-      return COLLEGE_COURSES;
-    case 'TECHNICAL/VOCATIONAL COURSE GRADUATE':
-      return TECHNICAL_VOCATIONAL_COURSES;
-    case 'ALS SECONDARY GRADUATE':
-      return ALS_SECONDARY_COURSES;
-    case 'COLLEGE UNDERGRADUATE':
-      return COLLEGE_UNDERGRADUATE_COURSES;
-    default:
-      return [];
-  }
-};
-
-
-  const courseOptions = getCourseOptions();
 
   const handleCancel = async () => {
     const hasData = Object.values(formData).some(val => val !== '' && val !== null);
@@ -107,6 +97,9 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
     }
   };
 
+
+
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
@@ -122,71 +115,20 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Applicant Code</label>
-              <input
-                type="text"
-                value={applicantCode}
-                readOnly
-                className="w-full border rounded-lg px-3 py-2 bg-gray-100"
-              />
-            </div>
+        <form onSubmit={onSubmit} className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Applicant Code</label>
+            <input
+              type="text"
+              value={applicantCode}
+              readOnly
+              className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+            />
+          </div>
 
-            {activeProgram === 'GIP' && (
-              <div>
-                <label className="block text-sm font-bold mb-1 uppercase">Upload 2x2 Photo *</label>
-                <div className="flex items-center gap-3 border rounded-lg px-3 py-2 bg-white">
-                  <label className="cursor-pointer shrink-0">
-                    <span className="bg-yellow-400 px-3 py-1 rounded-md font-medium hover:bg-yellow-500 transition whitespace-nowrap">
-                      Choose File
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            onInputChange('photoFile', file);
-                            onInputChange('photoFileName', file.name);
-                            onInputChange('photoFileData', reader.result as string);
-                          };
-                          reader.readAsDataURL(file);
-                        } else {
-                          onInputChange('photoFile', null);
-                          onInputChange('photoFileName', '');
-                          onInputChange('photoFileData', '');
-                        }
-                      }}
-                    />
-                  </label>
-                  {(formData.photoFileName || editingApplicant?.photoFileName) ? (
-                    <span
-                      className="text-sm text-green-600 font-medium cursor-pointer hover:text-green-700 hover:underline"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (formData.photoFileData || editingApplicant?.photoFileData) {
-                          setSelectedImage(formData.photoFileData || editingApplicant?.photoFileData || null);
-                          setShowImageModal(true);
-                        }
-                      }}
-                      title={formData.photoFileName || editingApplicant?.photoFileName}
-                    >
-                      {truncateFileName(formData.photoFileName || editingApplicant?.photoFileName || '')}
-                    </span>
-                  ) : (
-                    <span className="text-gray-500 text-sm">No file chosen</span>
-                  )}
-                </div>
-              </div>
-            )}
-
+          {activeProgram === 'GIP' && (
             <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Upload Resume</label>
+              <label className="block text-sm font-bold mb-1 uppercase">Upload 2x2 Photo *</label>
               <div className="flex items-center gap-3 border rounded-lg px-3 py-2 bg-white">
                 <label className="cursor-pointer shrink-0">
                   <span className="bg-yellow-400 px-3 py-1 rounded-md font-medium hover:bg-yellow-500 transition whitespace-nowrap">
@@ -194,101 +136,209 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   </span>
                   <input
                     type="file"
-                    accept=".pdf,.doc,.docx"
+                    accept="image/*"
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        onInputChange('resumeFile', file);
-                        onInputChange('resumeFileName', file.name);
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          onInputChange('photoFile', file);
+                          onInputChange('photoFileName', file.name);
+                          onInputChange('photoFileData', reader.result as string);
+                        };
+                        reader.readAsDataURL(file);
                       } else {
-                        onInputChange('resumeFile', null);
-                        onInputChange('resumeFileName', '');
+                        onInputChange('photoFile', null);
+                        onInputChange('photoFileName', '');
+                        onInputChange('photoFileData', '');
                       }
                     }}
                   />
                 </label>
-
-                {(formData.resumeFileName || editingApplicant?.resumeFileName) ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const fileName = formData.resumeFileName || editingApplicant?.resumeFileName;
-                      const fileData = formData.resumeFileData || editingApplicant?.resumeFileData;
-                      if (fileName && fileData) {
-                        downloadResume(fileName, fileData);
+                {(formData.photoFileName || editingApplicant?.photoFileName) ? (
+                  <span
+                    className="text-sm text-green-600 font-medium cursor-pointer hover:text-green-700 hover:underline"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (formData.photoFileData || editingApplicant?.photoFileData) {
+                        setSelectedImage(formData.photoFileData || editingApplicant?.photoFileData || null);
+                        setShowImageModal(true);
                       }
                     }}
-                    className="text-blue-600 hover:text-blue-800 hover:underline text-sm font-medium truncate max-w-[150px] text-left"
-                    title={formData.resumeFileName || editingApplicant?.resumeFileName}
+                    title={formData.photoFileName || editingApplicant?.photoFileName}
                   >
-                    {formData.resumeFileName || editingApplicant?.resumeFileName}
-                  </button>
+                    {truncateFileName(formData.photoFileName || editingApplicant?.photoFileName || '')}
+                  </span>
                 ) : (
                   <span className="text-gray-500 text-sm">No file chosen</span>
                 )}
               </div>
             </div>
-          </div>
+          )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+           <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Upload Resume</label>
+            <div className="flex items-center gap-3 border rounded-lg px-3 py-2 bg-white">
+              <label className="cursor-pointer shrink-0">
+                <span className="bg-yellow-400 px-3 py-1 rounded-md font-medium hover:bg-yellow-500 transition whitespace-nowrap">
+                  Choose File
+                </span>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      onInputChange('resumeFile', file);
+                      onInputChange('resumeFileName', file.name);
+                    } else {
+                      onInputChange('resumeFile', null);
+                      onInputChange('resumeFileName', '');
+                    }
+                  }}
+                />
+              </label>
+
+              {(formData.resumeFileName || editingApplicant?.resumeFileName) ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const fileName = formData.resumeFileName || editingApplicant?.resumeFileName;
+                    const fileData = formData.resumeFileData || editingApplicant?.resumeFileData;
+                    if (fileName && fileData) {
+                      downloadResume(fileName, fileData);
+                    }
+                  }}
+                  className="text-blue-600 hover:text-blue-800 hover:underline text-sm font-medium truncate max-w-[150px] text-left"
+                  title={formData.resumeFileName || editingApplicant?.resumeFileName}
+                >
+                  {formData.resumeFileName || editingApplicant?.resumeFileName}
+                </button>
+              ) : (
+                <span className="text-gray-500 text-sm">No file chosen</span>
+              )}
+            </div>
+          </div>
             <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Suffix</label>
+              <label className="block text-sm font-bold mb-1 uppercase">First Name *</label>
               <input
                 type="text"
-                value={formData.extensionName}
-                onChange={(e) => onInputChange('extensionName', e.target.value)}
-                placeholder="JR, SR, III, etc."
-                className="w-full border rounded-lg px-3 py-2 uppercase"
-                style={{ textTransform: 'uppercase' }}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Birth Date</label>
-              <input
-                type="date"
-                value={formData.birthDate}
+                value={formData.firstName}
                 onChange={(e) => {
-                  const birthDate = e.target.value;
-                  onInputChange('birthDate', birthDate);
-                  const calculatedAge = calculateAge(birthDate);
-                  onInputChange('age', String(calculatedAge));
+                  const value = e.target.value.toUpperCase();
+                  if (value === '' || validateName(value)) {
+                    onInputChange('firstName', value);
+                    setNameErrors((prev) => ({ ...prev, first: '' }));
+                  } else {
+                    setNameErrors((prev) => ({ ...prev, first: 'Only letters, spaces, hyphen (-) and apostrophe (\') allowed.' }));
+                  }
                 }}
                 required
-                className="w-full border rounded-lg px-3 py-2"
+                className={`w-full border rounded-lg px-3 py-2 uppercase ${
+                  nameErrors.first ? 'border-red-500' : ''
+                }`}
+                style={{ textTransform: 'uppercase' }}
               />
+              {nameErrors.first && <p className="text-xs text-red-500 mt-1">{nameErrors.first}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-bold mb-1 uppercase">Middle Name</label>
+              <input
+                type="text"
+                value={formData.middleName}
+                onChange={(e) => {
+                  const value = e.target.value.toUpperCase();
+                  if (value === '' || validateName(value)) {
+                    onInputChange('middleName', value);
+                    setNameErrors((prev) => ({ ...prev, middle: '' }));
+                  } else {
+                    setNameErrors((prev) => ({ ...prev, middle: 'Only letters, spaces, hyphen (-) and apostrophe (\') allowed.' }));
+                  }
+                }}
+                className={`w-full border rounded-lg px-3 py-2 uppercase ${
+                  nameErrors.middle ? 'border-red-500' : ''
+                }`}
+                style={{ textTransform: 'uppercase' }}
+              />
+              {nameErrors.middle && <p className="text-xs text-red-500 mt-1">{nameErrors.middle}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Age</label>
+              <label className="block text-sm font-bold mb-1 uppercase">Last Name *</label>
               <input
-                type="number"
-                value={formData.age || ''}
-                readOnly
-                className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+                type="text"
+                value={formData.lastName}
+                onChange={(e) => {
+                  const value = e.target.value.toUpperCase();
+                  if (value === '' || validateName(value)) {
+                    onInputChange('lastName', value);
+                    setNameErrors((prev) => ({ ...prev, last: '' }));
+                  } else {
+                    setNameErrors((prev) => ({ ...prev, last: 'Only letters, spaces, hyphen (-) and apostrophe (\') allowed.' }));
+                  }
+                }}
+                required
+                className={`w-full border rounded-lg px-3 py-2 uppercase ${
+                  nameErrors.last ? 'border-red-500' : ''
+                }`}
+                style={{ textTransform: 'uppercase' }}
               />
-              <p className="text-xs text-gray-500 mt-1">
-                {activeProgram === 'GIP' ? 'Must be 18–29 years old' : 'Must be 25-58 years old'}
-              </p>
+              {nameErrors.last && <p className="text-xs text-red-500 mt-1">{nameErrors.last}</p>}
             </div>
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Suffix</label>
+            <input
+              type="text"
+              value={formData.extensionName}
+              onChange={(e) => onInputChange('extensionName', e.target.value)}
+              placeholder="JR, SR, III, etc."
+              className="w-full border rounded-lg px-3 py-2 uppercase"
+              style={{ textTransform: 'uppercase' }}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Birth Date</label>
+            <input
+              type="date"
+              value={formData.birthDate}
+              onChange={(e) => {
+                const birthDate = e.target.value;
+                onInputChange('birthDate', birthDate);
+                const calculatedAge = calculateAge(birthDate);
+                onInputChange('age', String(calculatedAge));
+              }}
+              required
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Age</label>
+            <input
+              type="number"
+              value={formData.age || ''}
+              readOnly
+              className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              {activeProgram === 'GIP' ? 'Must be 18–29 years old' : 'Must be 25-58 years old'}
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-bold uppercase">Gender *</label>
+            <select
+              value={formData.gender}
+              onChange={(e) => onInputChange('gender', e.target.value)}
+              className="w-full border rounded-lg px-3 py-3"
+            >
+              <option value="">SELECT GENDER</option>
+              <option value="MALE">MALE</option>
+              <option value="FEMALE">FEMALE</option>
+            </select>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-bold mb-2 uppercase">Gender *</label>
-              <select
-                value={formData.gender}
-                onChange={(e) => onInputChange('gender', e.target.value)}
-                className="w-full border rounded-lg px-3 py-3"
-              >
-                <option value="">SELECT GENDER</option>
-                <option value="MALE">MALE</option>
-                <option value="FEMALE">FEMALE</option>
-              </select>
-            </div>
-
-            {activeProgram === 'GIP' && (
+          {activeProgram === 'GIP' && (
               <div>
                 <label className="block text-sm font-bold mb-1 uppercase">Place of Birth *</label>
                 <input
@@ -303,25 +353,22 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               </div>
             )}
 
-            {activeProgram === 'GIP' && (
-              <div>
-                <label className="block text-sm font-bold mb-1 uppercase">Residential Address *</label>
-                <input
-                  type="text"
-                  value={formData.residentialAddress || ''}
-                  onChange={(e) => onInputChange('residentialAddress', e.target.value)}
-                  required
-                  placeholder="House No. / Street / Subdivision"
-                  className="w-full border rounded-lg px-3 py-2 uppercase placeholder:text-[10px]"
-                  style={{ textTransform: 'uppercase' }}
-                />
-              </div>
-            )}
+          {activeProgram === 'GIP' && (
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Residential Address *</label>
+            <input
+              type="text"
+              value={formData.residentialAddress || ''}
+              onChange={(e) => onInputChange('residentialAddress', e.target.value)}
+              required
+              placeholder="House No. / Street / Subdivision"
+              className="w-full border rounded-lg px-3 py-2 uppercase placeholder:text-[10px]"
+              style={{ textTransform: 'uppercase' }}
+            />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          )}
             <div>
-              <label className="block text-sm font-bold mb-2 uppercase">Barangay *</label>
+              <label className="block text-sm font-bold uppercase">Barangay *</label>
               <select
                 value={formData.barangay}
                 onChange={(e) => onInputChange('barangay', e.target.value)}
@@ -349,204 +396,209 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 <option>TAGAPO</option>
               </select>
             </div>
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Mobile Number *</label>
+            <input
+              type="text"
+              value={formData.contactNumber}
+              onChange={(e) => {
+                let value = e.target.value.replace(/[^0-9]/g, '');
 
-            <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Mobile Number *</label>
-              <input
-                type="text"
-                value={formData.contactNumber}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/[^0-9]/g, '');
+                if (value.length > 11) {
+                  value = value.slice(0, 11);
+                }
 
-                  if (value.length > 11) {
-                    value = value.slice(0, 11);
+                if (value.length > 0) {
+                  let formatted = value;
+                  if (value.length > 4) {
+                    formatted = value.slice(0, 4) + '-' + value.slice(4);
                   }
-
-                  if (value.length > 0) {
-                    let formatted = value;
-                    if (value.length > 4) {
-                      formatted = value.slice(0, 4) + '-' + value.slice(4);
-                    }
-                    if (value.length > 7) {
-                      formatted = value.slice(0, 4) + '-' + value.slice(4, 7) + '-' + value.slice(7);
-                    }
-                    onInputChange('contactNumber', formatted);
-                  } else {
-                    onInputChange('contactNumber', value);
+                  if (value.length > 7) {
+                    formatted = value.slice(0, 4) + '-' + value.slice(4, 7) + '-' + value.slice(7);
                   }
-                }}
-                pattern="09[0-9]{2}-[0-9]{3}-[0-9]{4}"
-                title="Contact number must start with 09 and follow format: 09XX-XXX-XXXX"
-                required
-                maxLength={13}
-                placeholder="09XX-XXX-XXXX"
-                className="w-full border rounded-lg px-3 py-2"
-              />
-              <p className="text-xs text-gray-500 mt-1">Format: 09XX-XXX-XXXX</p>
-            </div>
-
-            {activeProgram === 'GIP' && (
-              <div>
-                <label className="block text-sm font-bold mb-1 uppercase">Telephone Number</label>
-                <input
-                  type="text"
-                  value={formData.telephoneNumber || ''}
-                  onChange={(e) => onInputChange('telephoneNumber', e.target.value)}
-                  placeholder="(Area code) Number"
-                  className="w-full border rounded-lg px-3 py-2"
-                />
-                <p className="text-xs text-gray-500 mt-1">Put N/A if none</p>
-              </div>
-            )}
+                  onInputChange('contactNumber', formatted);
+                } else {
+                  onInputChange('contactNumber', value);
+                }
+              }}
+              pattern="09[0-9]{2}-[0-9]{3}-[0-9]{4}"
+              title="Contact number must start with 09 and follow format: 09XX-XXX-XXXX"
+              required
+              maxLength={13}
+              placeholder="09XX-XXX-XXXX"
+              className="w-full border rounded-lg px-3 py-2"
+            />
+            <p className="text-xs text-gray-500 mt-1">Format: 09XX-XXX-XXXX</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {activeProgram === 'GIP' && (
+          {activeProgram === 'GIP' && (
+            <div>
+              <label className="block text-sm font-bold mb-1 uppercase">Telephone Number</label>
+
+              <input
+                type="text"
+                value={formData.telephoneNumber || ''}
+                onChange={(e) => {
+                  const value = e.target.value.toUpperCase();
+
+                  // Allow blank value
+                  if (value.trim() === "") {
+                    onInputChange('telephoneNumber', "");
+                    setTelephoneError('');
+                    return;
+                  }
+
+                  // Regex: only numbers, spaces, parentheses, hyphen
+                  const pattern = /^[0-9()\-\s]*$/;
+
+                  if (pattern.test(value) && value.length <= 20) {
+                    onInputChange('telephoneNumber', value);
+                    setTelephoneError('');
+                  } else {
+                    setTelephoneError('Invalid format. Use digits, parentheses, hyphen, or leave blank.');
+                  }
+                }}
+                placeholder="(Area code) Number"
+                className={`w-full border rounded-lg px-3 py-2 ${
+                  telephoneError ? 'border-red-500' : ''
+                }`}
+              />
+
+              {telephoneError && (
+                <p className="text-xs text-red-500 mt-1">{telephoneError}</p>
+              )}
+              {!telephoneError && (
+                <p className="text-xs text-gray-500 mt-1">Leave blank if none</p>
+              )}
+            </div>
+          )}
+
+
+          {activeProgram === 'GIP' && (
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Email *</label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => onInputChange('email', e.target.value)}
+              required
+              placeholder="example@email.com"
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+           )}
+
+
+          {activeProgram === 'GIP' && (
+            <div>
+              <label className="block text-sm font-bold uppercase">Civil Status *</label>
+              <select
+                value={formData.civilStats || ''}
+                onChange={(e) => onInputChange('civilStats', e.target.value)}
+                required
+                className="w-full border rounded-lg px-3 py-3"
+              >
+                <option value="">SELECT CIVIL STATUS</option>
+                <option>SINGLE</option>
+                <option>MARRIED</option>
+                <option>WIDOW/WIDOWER</option>
+              </select>
+            </div>
+          )}
+
+          {activeProgram === 'TUPAD' && (
+            <>
               <div>
-                <label className="block text-sm font-bold mb-1 uppercase">Email *</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => onInputChange('email', e.target.value)}
+                <label className="block text-sm font-bold mb-2 uppercase">Type of ID Submitted *</label>
+                <select
+                  value={formData.idType}
+                  onChange={(e) => onInputChange('idType', e.target.value)}
                   required
-                  placeholder="example@email.com"
-                  className="w-full border rounded-lg px-3 py-2"
+                  className="w-full border rounded-lg px-3 py-3"
+                >
+                  <option value="">SELECT ID TYPE</option>
+                  <option>PHILSYS ID</option>
+                  <option>DRIVER'S LICENSE</option>
+                  <option>SSS ID</option>
+                  <option>UMID</option>
+                  <option>PASSPORT</option>
+                  <option>VOTER'S ID</option>
+                  <option>POSTAL ID</option>
+                  <option>PRC ID</option>
+                  <option>SENIOR CITIZEN ID</option>
+                  <option>PWD ID</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold mb-1 uppercase">ID Number</label>
+                <input
+                  type="text"
+                  value={formData.idNumber}
+                  onChange={(e) => onInputChange('idNumber', e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2 uppercase"
+                  style={{ textTransform: 'uppercase' }}
                 />
               </div>
-            )}
 
-            {activeProgram === 'GIP' && (
               <div>
-                <label className="block text-sm font-bold mb-2 uppercase">Civil Status *</label>
+                <label className="block text-sm font-bold mb-1 uppercase">Occupation</label>
+                <input
+                  type="text"
+                  value={formData.occupation}
+                  onChange={(e) => onInputChange('occupation', e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2 uppercase"
+                  style={{ textTransform: 'uppercase' }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold mb-2 uppercase">Civil Status</label>
                 <select
-                  value={formData.civilStats || ''}
-                  onChange={(e) => onInputChange('civilStats', e.target.value)}
-                  required
+                  value={formData.civilStatus}
+                  onChange={(e) => onInputChange('civilStatus', e.target.value)}
                   className="w-full border rounded-lg px-3 py-3"
                 >
                   <option value="">SELECT CIVIL STATUS</option>
                   <option>SINGLE</option>
                   <option>MARRIED</option>
-                  <option>WIDOW/WIDOWER</option>
+                  <option>WIDOWED</option>
+                  <option>SEPARATED</option>
+                  <option>DIVORCED</option>
                 </select>
               </div>
-            )}
 
-            {activeProgram === 'GIP' && (
               <div>
-                <label className="block text-sm font-bold mb-2 uppercase">Primary Education *</label>
-                <select
-                  value={formData.primaryEducation || ''}
-                  onChange={(e) => onInputChange('primaryEducation', e.target.value.toUpperCase())}
-                  required
-                  className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT PRIMARY EDUCATION</option>
-                  <option>ELEMENTARY GRADUATE</option>
-                </select>
-              </div>
-            )}
-          </div>
-
-          {activeProgram === 'TUPAD' && (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-bold mb-2 uppercase">Type of ID Submitted *</label>
-                  <select
-                    value={formData.idType}
-                    onChange={(e) => onInputChange('idType', e.target.value)}
-                    required
-                    className="w-full border rounded-lg px-3 py-3"
-                  >
-                    <option value="">SELECT ID TYPE</option>
-                    <option>PHILSYS ID</option>
-                    <option>DRIVER'S LICENSE</option>
-                    <option>SSS ID</option>
-                    <option>UMID</option>
-                    <option>PASSPORT</option>
-                    <option>VOTER'S ID</option>
-                    <option>POSTAL ID</option>
-                    <option>PRC ID</option>
-                    <option>SENIOR CITIZEN ID</option>
-                    <option>PWD ID</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold mb-1 uppercase">ID Number</label>
-                  <input
-                    type="text"
-                    value={formData.idNumber}
-                    onChange={(e) => onInputChange('idNumber', e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2 uppercase"
-                    style={{ textTransform: 'uppercase' }}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold mb-1 uppercase">Occupation</label>
-                  <input
-                    type="text"
-                    value={formData.occupation}
-                    onChange={(e) => onInputChange('occupation', e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2 uppercase"
-                    style={{ textTransform: 'uppercase' }}
-                  />
-                </div>
+                <label className="block text-sm font-bold mb-1 uppercase">Average Monthly Income</label>
+                <input
+                  type="text"
+                  value={formData.averageMonthlyIncome}
+                  onChange={(e) => onInputChange('averageMonthlyIncome', e.target.value)}
+                  placeholder="₱"
+                  className="w-full border rounded-lg px-3 py-2"
+                />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-bold mb-2 uppercase">Civil Status</label>
-                  <select
-                    value={formData.civilStatus}
-                    onChange={(e) => onInputChange('civilStatus', e.target.value)}
-                    className="w-full border rounded-lg px-3 py-3"
-                  >
-                    <option value="">SELECT CIVIL STATUS</option>
-                    <option>SINGLE</option>
-                    <option>MARRIED</option>
-                    <option>WIDOWED</option>
-                    <option>SEPARATED</option>
-                    <option>DIVORCED</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold mb-1 uppercase">Average Monthly Income</label>
-                  <input
-                    type="text"
-                    value={formData.averageMonthlyIncome}
-                    onChange={(e) => onInputChange('averageMonthlyIncome', e.target.value)}
-                    placeholder="₱"
-                    className="w-full border rounded-lg px-3 py-2"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold mb-1 uppercase">Dependent Name</label>
-                  <input
-                    type="text"
-                    value={formData.dependentName}
-                    onChange={(e) => onInputChange('dependentName', e.target.value.toUpperCase())}
-                    className="w-full border rounded-lg px-3 py-2 uppercase"
-                    style={{ textTransform: 'uppercase' }}
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-bold mb-1 uppercase">Dependent Name</label>
+                <input
+                  type="text"
+                  value={formData.dependentName}
+                  onChange={(e) => onInputChange('dependentName', e.target.value.toUpperCase())}
+                  className="w-full border rounded-lg px-3 py-2 uppercase"
+                  style={{ textTransform: 'uppercase' }}
+                />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-bold mb-1 uppercase">Relationship to Dependent</label>
-                  <input
-                    type="text"
-                    value={formData.relationshipToDependent}
-                    onChange={(e) => onInputChange('relationshipToDependent', e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2 uppercase"
-                    style={{ textTransform: 'uppercase' }}
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-bold mb-1 uppercase">Relationship to Dependent</label>
+                <input
+                  type="text"
+                  value={formData.relationshipToDependent}
+                  onChange={(e) => onInputChange('relationshipToDependent', e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2 uppercase"
+                  style={{ textTransform: 'uppercase' }}
+                />
               </div>
             </>
           )}
@@ -554,7 +606,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
             <>
               {/* PRIMARY EDUCATION */}
               <div>
-                <label className="block text-sm font-bold mb-2 uppercase">Primary Education *</label>
+                <label className="block text-sm font-bold uppercase">Primary Education *</label>
                 <select
                   value={formData.primaryEducation || ''}
                   onChange={(e) => onInputChange('primaryEducation', e.target.value.toUpperCase())}
@@ -569,7 +621,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               {/* Show Primary School Name */}
               {formData.primaryEducation && (
                 <div className="mt-2">
-                  <label className="block text-sm font-bold mb-2 uppercase">
+                  <label className="block text-sm font-bold uppercase">
                     Primary School Name *
                   </label>
                   <input
@@ -589,7 +641,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
                   {/* FROM YEAR DROPDOWN */}
                   <div>
-                    <label className="block text-sm font-bold mb-2 uppercase">From *</label>
+                    <label className="block text-sm font-bold uppercase">From *</label>
                     <select
                       value={formData.primaryFrom || ''}
                       onChange={(e) => {
@@ -624,7 +676,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
                   {/* TO YEAR DROPDOWN */}
                   <div>
-                    <label className="block text-sm font-bold mb-2 uppercase">To *</label>
+                    <label className="block text-sm font-bold uppercase">To *</label>
                     <select
                       value={formData.primaryTo || ''}
                       onChange={(e) => {
@@ -661,13 +713,13 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               )}
 
              {/* SECONDARY EDUCATION */}
-              <div className="mt-4">
-                <label className="block text-sm font-bold mb-2 uppercase">Secondary Education *</label>
+              <div className="mt-2">
+                <label className="block text-sm font-bold uppercase">Secondary Education *</label>
                 <select
                   value={formData.secondaryEducation || ''}
                   onChange={(e) => onInputChange('secondaryEducation', e.target.value.toUpperCase())}
                   required
-                  className="w-full border rounded-lg px-3 py-3"
+                  className="w-full border rounded-lg px-2 py-3"
                 >
                   <option value="">SELECT SECONDARY EDUCATION</option>
                   <option>JUNIOR HIGH SCHOOL GRADUATE</option>
@@ -678,7 +730,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               {/* Show Secondary School Name */}
               {formData.secondaryEducation && (
                 <div className="mt-2">
-                  <label className="block text-sm font-bold mb-2 uppercase">
+                  <label className="block text-sm font-bold uppercase">
                     Secondary School Name *
                   </label>
                   <input
@@ -698,7 +750,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
                   {/* FROM YEAR (Dropdown) */}
                   <div>
-                    <label className="block text-sm font-bold mb-2 uppercase">From *</label>
+                    <label className="block text-sm font-bold uppercase">From *</label>
                     <select
                       value={formData.secondaryFrom || ''}
                       onChange={(e) => {
@@ -732,7 +784,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
                   {/* TO YEAR (Dropdown) */}
                   <div>
-                    <label className="block text-sm font-bold mb-2 uppercase">To *</label>
+                    <label className="block text-sm font-bold uppercase">To *</label>
                     <select
                       value={formData.secondaryTo || ''}
                       onChange={(e) => {
@@ -768,8 +820,8 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               )}
 
               {/* TERTIARY EDUCATION */}
-              <div className="mt-4">
-                <label className="block text-sm font-bold mb-2 uppercase">
+              <div className="mt-2">
+                <label className="block text-sm font-bold uppercase">
                   Tertiary Education *
                 </label>
                 <select
@@ -780,7 +832,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                     setCustomCourse('');
                     setShowCustomCourse(false);
                   }}
-                  className="border rounded w-full p-2"
+                  className="border rounded w-full p-3"
                 >
                   <option value="">SELECT TERTIARY EDUCATION</option>
                   <option value="ALS SECONDARY GRADUATE">ALS SECONDARY GRADUATE</option>
@@ -795,7 +847,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               {/* Show Tertiary School Name */}
               {formData.tertiaryEducation && (
                 <div className="mt-2">
-                  <label className="block text-sm font-bold mb-2 uppercase">
+                  <label className="block text-sm font-bold uppercase">
                     Tertiary School Name *
                   </label>
                   <input
@@ -813,7 +865,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
               {formData.tertiarySchoolName && formData.tertiarySchoolName.trim() !== '' && (
                 <div className="grid grid-cols-2 gap-4 mt-2">
                   <div>
-                    <label className="block text-sm font-bold mb-2 uppercase">From *</label>
+                    <label className="block text-sm font-bold uppercase">From *</label>
                     <input
                       type="text"
                       value={formData.tertiaryFrom || ''}
@@ -825,7 +877,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold mb-2 uppercase">To *</label>
+                    <label className="block text-sm font-bold uppercase">To *</label>
                     <input
                       type="text"
                       value={formData.tertiaryTo || ''}
@@ -838,167 +890,118 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 </div>
               )}
 
-              {/* COURSE DROPDOWN */}
-              {formData.tertiaryEducation && (
-                <div className="mt-4">
-                  <label className="block text-sm font-bold mb-2 uppercase">Course *</label>
+             {/* COURSE FIELD (Only One Dropdown Field) */}
+                {formData.tertiaryEducation && (
+                  <div className="mt-2">
+                    <label className="block text-sm font-bold uppercase">Course *</label>
 
-                  {/* Select the correct list based on user choice */}
-                  <select
-                    value={formData.course || ''}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value === 'OTHERS') {
-                        setShowCustomCourse(true);
-                        onInputChange('course', '');
-                      } else {
-                        setShowCustomCourse(false);
-                        onInputChange('course', value);
-                      }
-                    }}
-                    className="w-full border rounded-lg px-3 py-3"
-                    required
-                  >
-                    <option value="">SELECT COURSE</option>
+                    {!showCustomCourse ? (
+                      <select
+                        value={formData.course || ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === 'OTHERS') {
+                            setShowCustomCourse(true);
+                            setCustomCourse('');
+                            onInputChange('course', '');
+                          } else {
+                            onInputChange('course', value);
+                          }
+                        }}
+                        className="w-full border rounded-lg px-3 py-3"
+                        required
+                      >
+                        <option value="">SELECT COURSE</option>
 
-                    {/* COLLEGE COURSES */}
-                    {formData.tertiaryEducation === "COLLEGE GRADUATE" &&
-                      COLLEGE_COURSES.map((course, index) => (
-                        <option key={index} value={course}>{course}</option>
-                      ))}
+                        {/* COLLEGE COURSES */}
+                        {formData.tertiaryEducation === "COLLEGE GRADUATE" &&
+                          COLLEGE_COURSES.map((course, index) => (
+                            <option key={index} value={course}>{course}</option>
+                          ))}
 
-                    {/* TECHNICAL/VOCATIONAL COURSES */}
-                    {formData.tertiaryEducation === "TECHNICAL/VOCATIONAL COURSE GRADUATE" &&
-                      TECHNICAL_VOCATIONAL_COURSES.map((course, index) => (
-                        <option key={index} value={course}>{course}</option>
-                      ))}
+                        {/* TECHNICAL VOCATIONAL */}
+                        {formData.tertiaryEducation === "TECHNICAL/VOCATIONAL COURSE GRADUATE" &&
+                          TECHNICAL_VOCATIONAL_COURSES.map((course, index) => (
+                            <option key={index} value={course}>{course}</option>
+                          ))}
 
-                    {/* ALS SECONDARY COURSES */}
-                    {formData.tertiaryEducation === "ALS SECONDARY GRADUATE" &&
-                      ALS_SECONDARY_COURSES.map((course, index) => (
-                        <option key={index} value={course}>{course}</option>
-                      ))}
+                        {/* ALS SECONDARY */}
+                        {formData.tertiaryEducation === "ALS SECONDARY GRADUATE" &&
+                          ALS_SECONDARY_COURSES.map((course, index) => (
+                            <option key={index} value={course}>{course}</option>
+                          ))}
 
-                    {/* COLLEGE UNDERGRADUATE COURSES */}
-                    {formData.tertiaryEducation === "COLLEGE UNDERGRADUATE" &&
-                      COLLEGE_UNDERGRADUATE_COURSES.map((course, index) => (
-                        <option key={index} value={course}>{course}</option>
-                      ))}
+                        {/* COLLEGE UNDERGRADUATE */}
+                        {formData.tertiaryEducation === "COLLEGE UNDERGRADUATE" &&
+                          COLLEGE_UNDERGRADUATE_COURSES.map((course, index) => (
+                            <option key={index} value={course}>{course}</option>
+                          ))}
 
-                    <option value="OTHERS">OTHERS</option>
-                  </select>
-                </div>
-              )}
+                        <option value="OTHERS">OTHERS (Type manually)</option>
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={customCourse}
+                        onChange={(e) => {
+                          const value = e.target.value.toUpperCase();
+                          setCustomCourse(value);
+                          onInputChange('course', value);
 
-              {/* Custom Course Input */}
-              {showCustomCourse && (
-                <div className="mt-2">
-                  <label className="block text-sm font-bold mb-2 uppercase">Enter Course *</label>
-                  <input
-                    type="text"
-                    value={customCourse}
-                    onChange={(e) => {
-                      setCustomCourse(e.target.value.toUpperCase());
-                      onInputChange('course', e.target.value.toUpperCase());
-                    }}
-                    required
-                    placeholder="Enter your course"
-                    className="w-full border rounded-lg px-3 py-3"
-                  />
-                </div>
-              )}
-
-              {isCourseFieldActive && (
-              <div>
-                <label className="block text-sm font-bold mb-2 uppercase">
-                  Course *
-                </label>
-                {!showCustomCourse ? (
-                  <select
-                    value={formData.course || ''}
-                    onChange={(e) => {
-                      if (e.target.value === 'OTHER') {
-                        setShowCustomCourse(true);
-                        onInputChange('course', '');
-                      } else {
-                        onInputChange('course', e.target.value);
-                      }
-                    }}
-                    required
-                    className="w-full border rounded-lg px-3 py-3"
-                  >
-                    <option value="">SELECT COURSE</option>
-                    <option value="OTHER">OTHER (Type manually)</option>
-                    {courseOptions.map((course) => (
-                      <option key={course} value={course}>
-                        {course}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    value={customCourse}
-                    onChange={(e) => {
-                      const value = e.target.value.toUpperCase();
-                      setCustomCourse(value);
-                      onInputChange('course', value);
-
-                      // Automatically revert back to dropdown when cleared
-                      if (value.trim() === '') {
-                        setShowCustomCourse(false);
-                      }
-                    }}
-                    required
-                    placeholder="Type your course"
-                    className="w-full border rounded-lg px-3 py-2 uppercase"
-                    style={{ textTransform: 'uppercase' }}
-                  />
+                          // If user deletes text → return to dropdown
+                          if (value.trim() === '') {
+                            setShowCustomCourse(false);
+                          }
+                        }}
+                        required
+                        placeholder="Enter your course"
+                        className="w-full border rounded-lg px-3 py-3 uppercase"
+                        style={{ textTransform: 'uppercase' }}
+                      />
+                    )}
+                  </div>
                 )}
-              </div>
-            )}
+
               <div>
-                <label className="block text-sm font-bold mb-1 uppercase">Beneficiary Name</label>
+                <label className="block text-sm font-bold mb-2 uppercase">Beneficiary Name</label>
                 <input
                   type="text"
                   value={formData.beneficiaryName}
                   onChange={(e) => onInputChange('beneficiaryName', e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 uppercase"
+                  className="w-full border rounded-lg px-3 py-3 uppercase"
                   style={{ textTransform: 'uppercase' }}
                 />
               </div>
             </>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-bold mb-2 uppercase">Status</label>
-              <select
-                value={formData.status}
-                onChange={(e) => onInputChange('status', e.target.value)}
-                className="w-full border rounded-lg px-3 py-3"
-              >
-                <option value="PENDING">PENDING</option>
-                <option value="APPROVED">APPROVED</option>
-                <option value="DEPLOYED">DEPLOYED</option>
-                <option value="COMPLETED">COMPLETED</option>
-                <option value="REJECTED">REJECTED</option>
-                <option value="RESIGNED">RESIGNED</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-bold mb-1 uppercase">Encoder</label>
-              <input
-                type="text"
-                value="ADMIN"
-                readOnly
-                className="w-full border rounded-lg px-3 py-2 bg-gray-100"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => onInputChange('status', e.target.value)}
+              className="w-full border rounded-lg px-3 py-3"
+            >
+              <option value="PENDING">PENDING</option>
+              <option value="APPROVED">APPROVED</option>
+              <option value="DEPLOYED">DEPLOYED</option>
+              <option value="COMPLETED">COMPLETED</option>
+              <option value="REJECTED">REJECTED</option>
+              <option value="RESIGNED">RESIGNED</option>
+            </select>
           </div>
 
-          <div className="flex justify-end mt-6 space-x-3">
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">Encoder</label>
+            <input
+              type="text"
+              value="ADMIN"
+              readOnly
+              className="w-full border rounded-lg px-3 py-3 bg-gray-100"
+            />
+          </div>
+
+          <div className="md:col-span-3 flex justify-end mt-6 space-x-3">
             <button
               type="button"
               onClick={handleCancel}

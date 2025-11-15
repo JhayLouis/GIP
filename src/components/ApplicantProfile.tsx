@@ -95,14 +95,14 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
 
 
                 <div className="text-[10px] space-y-1">
-                <div className="grid grid-cols-[140px_1fr] items-center border-b border-black text-[10px]">
+                <div className="grid grid-cols-[140px_1fr] border-b border-black text-[10px]">
                    <p className="font-bold p-1">Telephone No.:</p>
-                   <span className="p-1"> {applicant.telephoneNumber}</span>
+                   <span className="p-1 ml-7"> {applicant.telephoneNumber}</span>
               </div>
 
-              <div className="grid grid-cols-[140px_1fr] items-center border-b border-black text-[10px]">
+              <div className="grid grid-cols-[140px_1fr] border-b border-black text-[10px]">
                   <p className="font-bold p-1">Mobile No.:</p>
-                  <span className="p-1"> {applicant.contactNumber}</span>
+                  <span className="p-1 ml-7"> {applicant.contactNumber}</span>
                   </div>
                   </div>
                   </div>
@@ -123,21 +123,29 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-[140px_1fr] items-center border-b-2 border-black text-[10px]">
+            <div className="grid grid-cols-[140px_1fr] border-b-2 border-black text-[10px]">
               <p className="font-bold p-1"> E-mail Address:</p>
-              <span className="p-1">{(applicant.email || '-').toUpperCase()}</span>
+              <span className="p-1 ml-9">{(applicant.email || '-').toUpperCase()}</span>
             </div>
-            <div className="grid grid-cols-[140px_1fr] items-center border-b-2 border-black text-[10px]">
-              <p className="font-bold p-1">3. PLACE OF BIRTH (city/province):</p>
-              <span className="p-1">{applicant.placeOfBirth ? applicant.placeOfBirth.toUpperCase() : '-'}</span>
+            <div className="flex border-b-2 border-black text-[10px] gap-1">
+              <p className="font-bold p-1 whitespace-nowrap">
+                3. PLACE OF BIRTH (city/province):
+              </p>
+              <span className="p-1 truncate">
+                {applicant.placeOfBirth ? applicant.placeOfBirth.toUpperCase() : '-'}
+              </span>
             </div>
-            <div className="grid grid-cols-[140px_1fr] items-center border-b-2 border-black text-[10px]">
-              <p className="font-bold p-1">4. DATE OF BIRTH :</p>
-              <span className="p-1">{applicant.birthDate}</span>
+            <div className="flex border-b-2 border-black text-[10px] gap-1">
+              <p className="font-bold p-1 whitespace-nowrap">
+                4. DATE OF BIRTH (dd/mm/yyyy):
+              </p>
+              <span className="p-1 ml-2 truncate">
+                {applicant.birthDate ? applicant.birthDate.toUpperCase() : '-'}
+              </span>
             </div>
             <div className="grid grid-cols-[140px_1fr] items-center border-b-2 border-black text-[10px]">
               <p className="font-bold p-1">5. GENDER</p>
-              <div className="flex items-center gap-3 p-1">
+              <div className="flex items-center gap-3 p-1 ml-9">
                 <label className="flex items-center gap-0.5">
                   <input type="checkbox" checked={applicant.gender === 'MALE'} readOnly className="w-2.5 h-2.5" />
                   <span>Male</span>
@@ -150,7 +158,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             </div>
             <div className="grid grid-cols-[140px_1fr] items-center border-b-2 border-black text-[10px]">
               <p className="font-bold p-1">6. CIVIL STATUS</p>
-              <div className="flex items-center gap-2 p-1">
+              <div className="flex items-center gap-2 p-1 ml-9">
                 <label className="flex items-center gap-0.5">
                   <input type="checkbox" checked={applicant.civilStats === 'SINGLE'} readOnly className="w-2.5 h-2.5" />
                   <span>Single</span>
