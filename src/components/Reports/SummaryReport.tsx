@@ -125,15 +125,15 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                 <div className={`font-bold ${colors.text} text-lg mb-3`}>{barangay.barangay}</div>
                 <div className={`text-sm space-y-2`}>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-700">Total:</span>
+                    <span className={`font-medium  ${colors.text}`}>Total:</span>
                     <span className={`font-bold text-base ${colors.text}`}>{barangay.total}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-700">Male:</span>
+                    <span className={`font-medium  ${colors.text}`}>Male:</span>
                     <span className={`font-semibold ${colors.textLight}`}>{barangay.male}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-700">Female:</span>
+                    <span className={`font-medium  ${colors.text}`}>Female:</span>
                     <span className={`font-semibold ${colors.textLight}`}>{barangay.female}</span>
                   </div>
                 </div>
@@ -153,15 +153,15 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                 <div className={`font-bold ${colors.text} text-lg mb-3`}>{status.status}</div>
                 <div className={`text-sm space-y-2`}>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-700">Total:</span>
+                    <span className={`font-medium  ${colors.text}`}>Total:</span>
                     <span className={`font-bold text-base ${colors.text}`}>{status.total}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-700">Male:</span>
+                    <span className={`font-medium  ${colors.text}`}>Male:</span>
                     <span className={`font-semibold ${colors.textLight}`}>{status.male}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-700">Female:</span>
+                    <span className={`font-medium  ${colors.text}`}>Female:</span>
                     <span className={`font-semibold ${colors.textLight}`}>{status.female}</span>
                   </div>
                 </div>
@@ -191,7 +191,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                       onClick={() => onRowClick(genderGroup.gender, status, 'gender')}
                       className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 ${colors.border} bg-white hover:shadow-md hover:scale-[1.05] transition-all duration-200`}
                     >
-                      <span className={`text-xs font-semibold text-gray-700 mb-1`}>{status}</span>
+                      <span className={`text-xs font-semibold ${colors.text} mb-1`}>{status}</span>
                       <span className={`text-xl font-bold ${colors.text}`}>
                         {genderGroup[status.toLowerCase()] ?? 0}
                       </span>
