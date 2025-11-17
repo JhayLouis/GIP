@@ -25,9 +25,9 @@ function App() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-100">
-        <Header 
-          activeProgram={activeProgram} 
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+        <Header
+          activeProgram={activeProgram}
           onProgramChange={setActiveProgram}
           user={user}
           onLogout={logout}

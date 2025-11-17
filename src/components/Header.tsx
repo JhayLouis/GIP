@@ -1,6 +1,8 @@
-import React from 'react';
-import { LogOut } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { LogOut, Sun, Moon, Monitor } from 'lucide-react';
 import { User } from '../utils/auth';
+import { useTheme } from '../contexts/ThemeContext';
+import Swal from 'sweetalert2';
 
 interface HeaderProps {
   activeProgram: 'GIP' | 'TUPAD';
@@ -10,17 +12,54 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, onLogout }) => {
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const { theme, setTheme } = useTheme();
+
   const toggleProgram = () => {
     onProgramChange(activeProgram === 'GIP' ? 'TUPAD' : 'GIP');
   };
 
-  const headerColor = activeProgram === 'GIP' ? 'bg-red-700' : 'bg-green-700';
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: 'Logout',
+      text: 'Are you sure you want to logout?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel'
+    });
 
-  // 👇 Replace these with your actual logo paths
+    if (result.isConfirmed) {
+      onLogout();
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showUserMenu]);
+
+  const headerColor = activeProgram === 'GIP' ? 'bg-red-700' : 'bg-green-700';
   const gipLogo = '/src/assets/GIPLogo.png';
   const tupadLogo = '/src/assets/TupadLogo.png';
-
   const logoSrc = activeProgram === 'GIP' ? gipLogo : tupadLogo;
+
+  const themeOptions = [
+    { id: 'light', label: 'Light', icon: Sun },
+    { id: 'dark', label: 'Dark', icon: Moon },
+    { id: 'system', label: 'System', icon: Monitor }
+  ];
 
   return (
     <header className={`${headerColor} text-white border-b-4 border-yellow-400`}>
@@ -28,15 +67,13 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
         <div className="flex items-center justify-between">
           {/* Left side - Logo and Title */}
           <div className="flex items-center space-x-4">
-            {/* Only the logo, no background */}
-           <div className="flex items-center justify-center w-12 h-12">
-            <img
-              src={logoSrc}
-              alt={`${activeProgram} logo`}
-              className="w-full h-full object-contain scale-125 transition-transform duration-300"
-            />
-          </div>
-
+            <div className="flex items-center justify-center w-12 h-12">
+              <img
+                src={logoSrc}
+                alt={`${activeProgram} logo`}
+                className="w-full h-full object-contain scale-125 transition-transform duration-300"
+              />
+            </div>
 
             <div>
               <h1 className="text-xl font-bold">SOFT PROJECTS MANAGEMENT SYSTEM</h1>
@@ -96,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
               </button>
             </div>
 
-            {/* User Info */}
+            {/* User Menu */}
             <div className="flex items-center space-x-3">
               <div className="text-right">
                 <p className="text-sm font-medium">
@@ -106,13 +143,67 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
                   {user?.role || 'user'}
                 </p>
               </div>
-              <button
-                onClick={onLogout}
-                className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors duration-200 group"
-                title="Logout"
-              >
-                <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
-              </button>
+
+              {/* User Menu Button */}
+              <div className="relative" ref={menuRef}>
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors duration-200 group"
+                  title="User menu"
+                >
+                  <div className="w-6 h-6 bg-white bg-opacity-30 rounded-full flex items-center justify-center hover:bg-opacity-40 transition-colors duration-200">
+                    <span className="text-sm font-bold">
+                      {(user?.name || 'U').charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                </button>
+
+                {/* Dropdown Menu */}
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50">
+                    {/* Theme Section */}
+                    <div className="border-b border-gray-700">
+                      <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                        Theme
+                      </div>
+                      <div className="px-2 pb-2 space-y-1">
+                        {themeOptions.map((option) => {
+                          const Icon = option.icon;
+                          return (
+                            <button
+                              key={option.id}
+                              onClick={() => {
+                                setTheme(option.id as 'light' | 'dark' | 'system');
+                                setShowUserMenu(false);
+                              }}
+                              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md transition-colors duration-200 ${
+                                theme === option.id
+                                  ? 'bg-gray-700 text-white'
+                                  : 'text-gray-300 hover:bg-gray-800'
+                              }`}
+                            >
+                              <Icon className="w-4 h-4" />
+                              <span className="text-sm">{option.label}</span>
+                              {theme === option.id && (
+                                <span className="ml-auto text-lg">✓</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Logout Section */}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-200"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span className="text-sm">Sign out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
