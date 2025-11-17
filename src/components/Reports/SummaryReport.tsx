@@ -21,18 +21,18 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
   const [selectedFilter, setSelectedFilter] = useState<'summary' | 'barangay' | 'status' | 'gender'>('summary');
 
   const isGIP = programName === 'GIP';
-  const programColor = isGIP ? 'blue' : 'green';
+  const programColor = isGIP ? 'red' : 'green';
 
   const getColorClasses = (colorName: string) => {
     const colorMap: { [key: string]: { [key: string]: string } } = {
-      blue: {
-        bg: 'bg-blue-50',
-        bgHover: 'hover:bg-blue-50',
-        bgGradient: 'from-blue-50 to-blue-100',
-        bgHoverGradient: 'hover:from-blue-100 hover:to-blue-200',
-        border: 'border-blue-200',
-        text: 'text-blue-700',
-        textLight: 'text-blue-600'
+      red: {
+        bg: 'bg-red-50',
+        bgHover: 'hover:bg-red-50',
+        bgGradient: 'from-red-50 to-red-100',
+        bgHoverGradient: 'hover:from-red-100 hover:to-red-200',
+        border: 'border-red-200',
+        text: 'text-red-700',
+        textLight: 'text-red-600'
       },
       green: {
         bg: 'bg-green-50',
@@ -44,7 +44,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
         textLight: 'text-green-600'
       }
     };
-    return colorMap[colorName] || colorMap.blue;
+    return colorMap[colorName] || colorMap.red;
   };
 
   const barangayColors = getColorClasses(programColor);
@@ -54,10 +54,10 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
   if (!data) return <p className="text-center text-gray-500">No summary data available.</p>;
 
   const summary = [
-    { label: 'Total Applicants', value: data.totalApplicants, male: data.maleCount, female: data.femaleCount, color: 'text-blue-600', type: 'total' },
-    { label: 'Approved', value: data.approved, male: data.approvedMale, female: data.approvedFemale, color: 'text-green-600', type: 'APPROVED' },
-    { label: 'Deployed', value: data.deployed, male: data.deployedMale, female: data.deployedFemale, color: 'text-orange-600', type: 'DEPLOYED' },
-    { label: 'Completed', value: data.completed, male: data.completedMale, female: data.completedFemale, color: 'text-purple-600', type: 'COMPLETED' },
+    { label: 'Total Applicants', value: data.totalApplicants, male: data.maleCount, female: data.femaleCount, color: 'text-red-600', type: 'total' },
+    { label: 'Approved', value: data.approved, male: data.approvedMale, female: data.approvedFemale, color: 'text-red-600', type: 'APPROVED' },
+    { label: 'Deployed', value: data.deployed, male: data.deployedMale, female: data.deployedFemale, color: 'text-red-600', type: 'DEPLOYED' },
+    { label: 'Completed', value: data.completed, male: data.completedMale, female: data.completedFemale, color: 'text-red-600', type: 'COMPLETED' },
   ];
 
   return (
@@ -72,7 +72,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
             <select
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value as 'summary' | 'barangay' | 'status' | 'gender')}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white cursor-pointer"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm bg-white cursor-pointer"
             >
               <option value="summary">Summary View</option>
               <option value="barangay">By Barangay</option>
@@ -88,13 +88,13 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
               <div
                 key={index}
                 onClick={() => onRowClick(item.type)}
-                className="text-center p-4 rounded-lg bg-gray-50 cursor-pointer hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:shadow-md hover:scale-[1.02] transition-all duration-200"
+                className="text-center p-4 rounded-lg bg-red-50 cursor-pointer hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 hover:shadow-md hover:scale-[1.02] transition-all duration-200"
               >
-                <h4 className="text-sm font-medium text-gray-600 mb-2">{item.label}</h4>
+                <h4 className="text-sm font-medium text-red-600 mb-2">{item.label}</h4>
                 <div className={`text-3xl font-bold mb-2 ${item.color}`}>
                   {item.value}
                 </div>
-                <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
+                <div className="flex items-center justify-center space-x-4 text-xs text-red-500">
                   <div className="flex items-center space-x-1">
                     <span>♂</span>
                     <span>{item.male}</span>
