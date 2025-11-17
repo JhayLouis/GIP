@@ -21,58 +21,63 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
   const [selectedFilter, setSelectedFilter] = useState<'summary' | 'barangay' | 'status' | 'gender'>('summary');
 
   const isGIP = programName === 'GIP';
-  const programColor = isGIP ? 'red' : 'green';
 
-  const getColorClasses = (colorName: string) => {
-    const colorMap: { [key: string]: { [key: string]: string } } = {
-      red: {
+  const getColorClasses = () => {
+    if (isGIP) {
+      return {
         bg: 'bg-red-50',
         bgHover: 'hover:bg-red-50',
         bgGradient: 'from-red-50 to-red-100',
-        bgHoverGradient: 'hover:from-red-100 hover:to-red-200',
+        bgHoverGradient: 'hover:from-red-100 hover:to-red-150',
         border: 'border-red-200',
         text: 'text-red-700',
-        textLight: 'text-red-600'
-      },
-      green: {
+        textLight: 'text-red-600',
+        badge: 'bg-red-100 text-red-700',
+        cardBg: 'bg-red-50',
+        headerBg: 'bg-gradient-to-r from-red-600 to-red-700',
+        headerText: 'text-white'
+      };
+    } else {
+      return {
         bg: 'bg-green-50',
         bgHover: 'hover:bg-green-50',
         bgGradient: 'from-green-50 to-green-100',
-        bgHoverGradient: 'hover:from-green-100 hover:to-green-200',
+        bgHoverGradient: 'hover:from-green-100 hover:to-green-150',
         border: 'border-green-200',
         text: 'text-green-700',
-        textLight: 'text-green-600'
-      }
-    };
-    return colorMap[colorName] || colorMap.red;
+        textLight: 'text-green-600',
+        badge: 'bg-green-100 text-green-700',
+        cardBg: 'bg-green-50',
+        headerBg: 'bg-gradient-to-r from-green-600 to-green-700',
+        headerText: 'text-white'
+      };
+    }
   };
 
-  const barangayColors = getColorClasses(programColor);
-  const statusColors = getColorClasses(programColor);
-  const genderColors = getColorClasses(programColor);
+  const colors = getColorClasses();
 
   if (!data) return <p className="text-center text-gray-500">No summary data available.</p>;
 
   const summary = [
-    { label: 'Total Applicants', value: data.totalApplicants, male: data.maleCount, female: data.femaleCount, color: 'text-red-600', type: 'total' },
-    { label: 'Approved', value: data.approved, male: data.approvedMale, female: data.approvedFemale, color: 'text-red-600', type: 'APPROVED' },
-    { label: 'Deployed', value: data.deployed, male: data.deployedMale, female: data.deployedFemale, color: 'text-red-600', type: 'DEPLOYED' },
-    { label: 'Completed', value: data.completed, male: data.completedMale, female: data.completedFemale, color: 'text-red-600', type: 'COMPLETED' },
+    { label: 'Total Applicants', value: data.totalApplicants, male: data.maleCount, female: data.femaleCount, type: 'total' },
+    { label: 'Approved', value: data.approved, male: data.approvedMale, female: data.approvedFemale, type: 'APPROVED' },
+    { label: 'Deployed', value: data.deployed, male: data.deployedMale, female: data.deployedFemale, type: 'DEPLOYED' },
+    { label: 'Completed', value: data.completed, male: data.completedMale, female: data.completedFemale, type: 'COMPLETED' },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+      <div className={`${colors.headerBg} rounded-xl p-6 shadow-md`}>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">
+          <h3 className={`text-2xl font-bold ${colors.headerText}`}>
             {programName} SUMMARY REPORT
           </h3>
           <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4 text-gray-500" />
+            <Filter className={`w-5 h-5 ${colors.headerText}`} />
             <select
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value as 'summary' | 'barangay' | 'status' | 'gender')}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm bg-white cursor-pointer"
+              className={`px-4 py-2 border-2 ${colors.border} rounded-lg focus:ring-2 ${isGIP ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-green-500 focus:border-green-500'} text-sm bg-white cursor-pointer font-medium`}
             >
               <option value="summary">Summary View</option>
               <option value="barangay">By Barangay</option>
@@ -88,20 +93,20 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
               <div
                 key={index}
                 onClick={() => onRowClick(item.type)}
-                className="text-center p-4 rounded-lg bg-red-50 cursor-pointer hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 hover:shadow-md hover:scale-[1.02] transition-all duration-200"
+                className={`text-center p-6 rounded-lg ${colors.cardBg} cursor-pointer border-2 ${colors.border} hover:shadow-lg hover:scale-[1.03] transition-all duration-200 hover:${colors.bgHoverGradient}`}
               >
-                <h4 className="text-sm font-medium text-red-600 mb-2">{item.label}</h4>
-                <div className={`text-3xl font-bold mb-2 ${item.color}`}>
+                <h4 className={`text-sm font-semibold ${colors.textLight} mb-3`}>{item.label}</h4>
+                <div className={`text-4xl font-bold mb-3 ${colors.text}`}>
                   {item.value}
                 </div>
-                <div className="flex items-center justify-center space-x-4 text-xs text-red-500">
-                  <div className="flex items-center space-x-1">
+                <div className={`flex items-center justify-center space-x-4 text-xs font-medium ${colors.text}`}>
+                  <div className="flex items-center space-x-1 bg-white px-3 py-1 rounded-full">
                     <span>♂</span>
-                    <span>{item.male}</span>
+                    <span className="font-bold">{item.male}</span>
                   </div>
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-1 bg-white px-3 py-1 rounded-full">
                     <span>♀</span>
-                    <span>{item.female}</span>
+                    <span className="font-bold">{item.female}</span>
                   </div>
                 </div>
               </div>
@@ -115,21 +120,21 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
               <button
                 key={index}
                 onClick={() => onRowClick(barangay.barangay, barangay.barangay, 'barangay')}
-                className={`p-4 text-left bg-gradient-to-r ${barangayColors.bgGradient} ${barangayColors.bgHoverGradient} rounded-lg border ${barangayColors.border} transition-all hover:shadow-md`}
+                className={`p-5 text-left bg-gradient-to-r ${colors.bgGradient} rounded-lg border-2 ${colors.border} transition-all hover:shadow-lg hover:scale-[1.02] duration-200`}
               >
-                <div className={`font-semibold ${barangayColors.text} text-lg mb-2`}>{barangay.barangay}</div>
-                <div className={`text-sm ${barangayColors.textLight} space-y-1`}>
-                  <div className="flex justify-between">
-                    <span>Total:</span>
-                    <span className="font-bold">{barangay.total}</span>
+                <div className={`font-bold ${colors.text} text-lg mb-3`}>{barangay.barangay}</div>
+                <div className={`text-sm space-y-2`}>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">Total:</span>
+                    <span className={`font-bold text-base ${colors.text}`}>{barangay.total}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Male:</span>
-                    <span className="font-semibold">{barangay.male}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">Male:</span>
+                    <span className={`font-semibold ${colors.textLight}`}>{barangay.male}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Female:</span>
-                    <span className="font-semibold">{barangay.female}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">Female:</span>
+                    <span className={`font-semibold ${colors.textLight}`}>{barangay.female}</span>
                   </div>
                 </div>
               </button>
@@ -143,21 +148,21 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
               <button
                 key={index}
                 onClick={() => onRowClick(status.status, status.status, 'status')}
-                className={`p-4 text-left bg-gradient-to-r ${statusColors.bgGradient} ${statusColors.bgHoverGradient} rounded-lg border ${statusColors.border} transition-all hover:shadow-md`}
+                className={`p-5 text-left bg-gradient-to-r ${colors.bgGradient} rounded-lg border-2 ${colors.border} transition-all hover:shadow-lg hover:scale-[1.02] duration-200`}
               >
-                <div className={`font-semibold ${statusColors.text} text-lg mb-2`}>{status.status}</div>
-                <div className={`text-sm ${statusColors.textLight} space-y-1`}>
-                  <div className="flex justify-between">
-                    <span>Total:</span>
-                    <span className="font-bold">{status.total}</span>
+                <div className={`font-bold ${colors.text} text-lg mb-3`}>{status.status}</div>
+                <div className={`text-sm space-y-2`}>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">Total:</span>
+                    <span className={`font-bold text-base ${colors.text}`}>{status.total}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Male:</span>
-                    <span className="font-semibold">{status.male}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">Male:</span>
+                    <span className={`font-semibold ${colors.textLight}`}>{status.male}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Female:</span>
-                    <span className="font-semibold">{status.female}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-700">Female:</span>
+                    <span className={`font-semibold ${colors.textLight}`}>{status.female}</span>
                   </div>
                 </div>
               </button>
@@ -170,37 +175,24 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
             {genderStats.map((genderGroup, index) => (
               <div
                 key={index}
-                className={`border rounded-xl p-6 bg-gradient-to-br ${genderColors.bgGradient} to-white shadow-sm hover:shadow-md transition-all duration-200 ${genderColors.border}`}
+                className={`border-2 rounded-xl p-6 bg-gradient-to-br ${colors.bgGradient} to-white shadow-md hover:shadow-lg transition-all duration-200 ${colors.border}`}
               >
-                <div className="font-semibold text-gray-700 text-lg mb-4 text-center">
-                  {genderGroup.gender === 'MALE' ? '♂ Male' : '♀ Female'} —
-                  <span className="ml-1 text-gray-600 font-bold">Total: {genderGroup.total}</span>
+                <div className={`font-bold text-lg mb-4 text-center`}>
+                  <span className={`${colors.text}`}>
+                    {genderGroup.gender === 'MALE' ? '♂ Male' : '♀ Female'}
+                  </span>
+                  <span className={`ml-3 ${colors.textLight} font-bold`}>Total: {genderGroup.total}</span>
                 </div>
 
-                {/* Status Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {['PENDING', 'APPROVED', 'DEPLOYED', 'COMPLETED', 'REJECTED', 'RESIGNED'].map((status) => (
                     <button
                       key={status}
                       onClick={() => onRowClick(genderGroup.gender, status, 'gender')}
-                      className={`flex flex-col items-center justify-center p-4 rounded-lg border ${genderColors.border} bg-white ${genderColors.bgHover} hover:shadow-sm transition-all duration-200`}
+                      className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 ${colors.border} bg-white hover:shadow-md hover:scale-[1.05] transition-all duration-200`}
                     >
-                      <span className="text-sm font-medium text-gray-700">{status}</span>
-                      <span
-                        className={`text-lg font-bold ${
-                          status === 'APPROVED'
-                            ? 'text-gray-600'
-                            : status === 'REJECTED'
-                            ? 'text-gray-600'
-                            : status === 'DEPLOYED'
-                            ? 'text-gray-600'
-                            : status === 'COMPLETED'
-                            ? 'text-gray-600'
-                            : status === 'RESIGNED'
-                            ? 'text-gray-600'
-                            : 'text-gray-600'
-                        }`}
-                      >
+                      <span className={`text-xs font-semibold text-gray-700 mb-1`}>{status}</span>
+                      <span className={`text-xl font-bold ${colors.text}`}>
                         {genderGroup[status.toLowerCase()] ?? 0}
                       </span>
                     </button>
