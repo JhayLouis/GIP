@@ -95,10 +95,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
       onClose();
     }
   };
-
-
-
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
@@ -599,40 +595,32 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
           )}
          {activeProgram === 'GIP' && (
             <>
-              <div className="col-span-3">
-                <label className="block text-sm font-bold uppercase">
-                  Primary Education *
-                </label>
-                <select
-                  value={formData.primaryEducation || ''}
-                  onChange={(e) =>
-                    onInputChange('primaryEducation', e.target.value.toUpperCase())
-                  }
-                  required
-                  className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT PRIMARY EDUCATION</option>
-                  <option>ELEMENTARY GRADUATE</option>
-                </select>
-              </div>
-              {formData.primaryEducation && (
+              {/* PRIMARY EDUCATION (No More Dropdown) */}
                 <div className="col-span-3 mt-3">
                   <div className="grid grid-cols-4 gap-4">
                     <div className="col-span-2">
                       <label className="block text-sm font-bold uppercase">
-                        Primary School Name *
+                        Primary Education *
                       </label>
                       <input
                         type="text"
                         value={formData.primarySchoolName || ''}
-                        onChange={(e) =>
-                          onInputChange('primarySchoolName', e.target.value.toUpperCase())
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value.toUpperCase();
+                          onInputChange('primarySchoolName', value);
+
+                          // 🔥 RESET FROM & TO WHEN SCHOOL NAME IS DELETED
+                          if (value.trim() === '') {
+                            onInputChange('primaryFrom', '');
+                            onInputChange('primaryTo', '');
+                          }
+                        }}
                         required
-                        placeholder="Enter school name"
+                        placeholder="Enter elementary school name"
                         className="w-full border rounded-lg px-3 py-3"
                       />
                     </div>
+
                     {formData.primarySchoolName?.trim() !== '' && (
                       <>
                         <div>
@@ -666,6 +654,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                             ))}
                           </select>
                         </div>
+
                         <div>
                           <label className="block text-sm font-bold uppercase">To *</label>
                           <select
@@ -701,283 +690,347 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                     )}
                   </div>
                 </div>
-              )}
-              <div className="col-span-3 mt-2">
-                <label className="block text-sm font-bold uppercase">
-                  Secondary Education *
-                </label>
 
-                <select
-                  value={formData.secondaryEducation || ''}
-                  onChange={(e) =>
-                    onInputChange('secondaryEducation', e.target.value.toUpperCase())
-                  }
-                  required
-                  className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT SECONDARY EDUCATION</option>
-                  <option>JUNIOR HIGH SCHOOL GRADUATE</option>
-                  <option>SENIOR HIGH SCHOOL GRADUATE</option>
-                </select>
-              </div>
-              {formData.secondaryEducation && (
-                <div className="col-span-3 mt-3">
-                  <div className="grid grid-cols-4 gap-4">
+            {/* SECONDARY EDUCATION (Junior + Senior High School) */}
+                <div className="col-span-3 mt-2"> 
+                  {/* 🔹 JUNIOR HIGH SCHOOL */}
+                  <div className="grid grid-cols-4 gap-4 mt-2">
                     <div className="col-span-2">
                       <label className="block text-sm font-bold uppercase">
-                        Secondary School Name *
+                        Junior High School Name *
                       </label>
                       <input
                         type="text"
-                        value={formData.secondarySchoolName || ''}
-                        onChange={(e) =>
-                          onInputChange('secondarySchoolName', e.target.value.toUpperCase())
-                        }
+                        value={formData.juniorHighSchoolName || ''}
+                        onChange={(e) => {
+                          const value = e.target.value.toUpperCase();
+                          onInputChange('juniorHighSchoolName', value);
+
+                          // 🔥 Reset FROM & TO when name is deleted
+                          if (value.trim() === '') {
+                            onInputChange('juniorHighFrom', '');
+                            onInputChange('juniorHighTo', '');
+                          }
+                        }}
                         required
-                        placeholder="Enter school name"
+                        placeholder="Enter junior high school name"
                         className="w-full border rounded-lg px-3 py-3"
                       />
                     </div>
-                    {formData.secondarySchoolName?.trim() !== '' && (
+
+                    {formData.juniorHighSchoolName?.trim().length > 0 && (
                       <>
+                        {/* FROM YEAR */}
                         <div>
                           <label className="block text-sm font-bold uppercase">From *</label>
                           <select
-                            value={formData.secondaryFrom || ''}
+                            value={formData.juniorHighFrom || ''}
                             onChange={(e) => {
                               const value = e.target.value;
-                              onInputChange('secondaryFrom', value);
+                              onInputChange('juniorHighFrom', value);
 
-                              if (formData.secondaryTo && value > formData.secondaryTo) {
-                                Swal.fire(
-                                  "Invalid Selection",
-                                  "'FROM' year cannot be greater than 'TO' year.",
-                                  "error"
-                                );
-                                onInputChange('secondaryFrom', '');
+                              if (formData.juniorHighTo && value > formData.juniorHighTo) {
+                                Swal.fire("Invalid Selection", "'FROM' year cannot be greater than 'TO' year.", "error");
+                                onInputChange('juniorHighFrom', '');
                               }
                             }}
                             required
                             className="w-full border rounded-lg px-3 py-3"
                           >
                             <option value="">SELECT YEAR</option>
-                            {Array.from(
-                              { length: new Date().getFullYear() - 1950 + 1 },
-                              (_, i) => 1950 + i
-                            ).map((year) => (
-                              <option key={year} value={year}>
-                                {year}
-                              </option>
-                            ))}
+                            {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                              .map((year) => (
+                                <option key={year} value={year}>{year}</option>
+                              ))}
                           </select>
                         </div>
+
+                        {/* TO YEAR */}
                         <div>
                           <label className="block text-sm font-bold uppercase">To *</label>
                           <select
-                            value={formData.secondaryTo || ''}
+                            value={formData.juniorHighTo || ''}
                             onChange={(e) => {
                               const value = e.target.value;
-                              onInputChange('secondaryTo', value);
+                              onInputChange('juniorHighTo', value);
 
-                              if (formData.secondaryFrom && value < formData.secondaryFrom) {
-                                Swal.fire(
-                                  "Invalid Selection",
-                                  "'TO' year cannot be lower than 'FROM' year.",
-                                  "error"
-                                );
-                                onInputChange('secondaryTo', '');
+                              if (formData.juniorHighFrom && value < formData.juniorHighFrom) {
+                                Swal.fire("Invalid Selection", "'TO' year cannot be lower than 'FROM' year.", "error");
+                                onInputChange('juniorHighTo', '');
                               }
                             }}
                             required
                             className="w-full border rounded-lg px-3 py-3"
                           >
                             <option value="">SELECT YEAR</option>
-                            {Array.from(
-                              { length: new Date().getFullYear() - 1950 + 1 },
-                              (_, i) => 1950 + i
-                            ).map((year) => (
-                              <option key={year} value={year}>
-                                {year}
-                              </option>
-                            ))}
+                            {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                              .map((year) => (
+                                <option key={year} value={year}>{year}</option>
+                              ))}
+                          </select>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* 🔹 SENIOR HIGH SCHOOL */}
+                  <div className="grid grid-cols-4 gap-4 mt-4">
+                    <div className="col-span-2">
+                      <label className="block text-sm font-bold uppercase">
+                        Senior High School Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.seniorHighSchoolName || ''}
+                        onChange={(e) => {
+                          const value = e.target.value.toUpperCase();
+                          onInputChange('seniorHighSchoolName', value);
+
+                          // 🔥 Reset FROM & TO when name is deleted
+                          if (value.trim() === '') {
+                            onInputChange('seniorHighFrom', '');
+                            onInputChange('seniorHighTo', '');
+                          }
+                        }}
+                        required
+                        placeholder="Enter senior high school name"
+                        className="w-full border rounded-lg px-3 py-3"
+                      />
+                    </div>
+
+                    {formData.seniorHighSchoolName?.trim().length > 0 && (
+                      <>
+                        {/* FROM YEAR */}
+                        <div>
+                          <label className="block text-sm font-bold uppercase">From *</label>
+                          <select
+                            value={formData.seniorHighFrom || ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              onInputChange('seniorHighFrom', value);
+
+                              if (formData.seniorHighTo && value > formData.seniorHighTo) {
+                                Swal.fire("Invalid Selection", "'FROM' year cannot be greater than 'TO' year.", "error");
+                                onInputChange('seniorHighFrom', '');
+                              }
+                            }}
+                            required
+                            className="w-full border rounded-lg px-3 py-3"
+                          >
+                            <option value="">SELECT YEAR</option>
+                            {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                              .map((year) => (
+                                <option key={year} value={year}>{year}</option>
+                              ))}
+                          </select>
+                        </div>
+
+                        {/* TO YEAR */}
+                        <div>
+                          <label className="block text-sm font-bold uppercase">To *</label>
+                          <select
+                            value={formData.seniorHighTo || ''}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              onInputChange('seniorHighTo', value);
+
+                              if (formData.seniorHighFrom && value < formData.seniorHighFrom) {
+                                Swal.fire("Invalid Selection", "'TO' year cannot be lower than 'FROM' year.", "error");
+                                onInputChange('seniorHighTo', '');
+                              }
+                            }}
+                            required
+                            className="w-full border rounded-lg px-3 py-3"
+                          >
+                            <option value="">SELECT YEAR</option>
+                            {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                              .map((year) => (
+                                <option key={year} value={year}>{year}</option>
+                              ))}
                           </select>
                         </div>
                       </>
                     )}
                   </div>
                 </div>
-              )}
+               {/* TERTIARY EDUCATION */}
                 <div className="col-span-3 mt-2">
-                  <label className="block text-sm font-bold uppercase">
-                    Tertiary Education *
-                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    
+                    {/* TERTIARY EDUCATION DROPDOWN */}
+                    <div>
+                      <label className="block text-sm font-bold uppercase">
+                        Tertiary Education *
+                      </label>
+                      <select
+                        value={formData.tertiaryEducation || ''}
+                        onChange={(e) => {
+                          onInputChange('tertiaryEducation', e.target.value);
 
-                  <select
-                    value={formData.tertiaryEducation || ''}
-                    onChange={(e) => {
-                      onInputChange('tertiaryEducation', e.target.value);
-                      onInputChange('course', ''); 
-                      setCustomCourse('');
-                      setShowCustomCourse(false);
-                    }}
-                    className="border rounded w-full p-3"
-                  >
-                    <option value="">SELECT TERTIARY EDUCATION</option>
-                    <option value="ALS SECONDARY GRADUATE">ALS SECONDARY GRADUATE</option>
-                    <option value="TECHNICAL/VOCATIONAL COURSE GRADUATE">
-                      TECHNICAL/VOCATIONAL COURSE GRADUATE
-                    </option>
-                    <option value="COLLEGE UNDERGRADUATE">COLLEGE UNDERGRADUATE</option>
-                    <option value="COLLEGE GRADUATE">COLLEGE GRADUATE</option>
-                  </select>
-                </div>
-                {formData.tertiaryEducation && (
-                  <div className="col-span-3 mt-3">
-                    <div className="grid grid-cols-4 gap-4">
-                      <div className="col-span-2">
+                          // Reset all tertiary fields if education type changes
+                          onInputChange('tertiarySchoolName', '');
+                          onInputChange('tertiaryFrom', '');
+                          onInputChange('tertiaryTo', '');
+                          onInputChange('course', '');
+                          setCustomCourse('');
+                          setShowCustomCourse(false);
+                        }}
+                        className="border rounded w-full p-3"
+                      >
+                        <option value="">SELECT TERTIARY EDUCATION</option>
+                        <option value="ALS SECONDARY GRADUATE">ALS SECONDARY GRADUATE</option>
+                        <option value="TECHNICAL/VOCATIONAL COURSE GRADUATE">
+                          TECHNICAL/VOCATIONAL COURSE GRADUATE
+                        </option>
+                        <option value="COLLEGE UNDERGRADUATE">COLLEGE UNDERGRADUATE</option>
+                        <option value="COLLEGE GRADUATE">COLLEGE GRADUATE</option>
+                      </select>
+                    </div>
+
+                    {/* SCHOOL NAME INPUT */}
+                    {formData.tertiaryEducation && (
+                      <div>
                         <label className="block text-sm font-bold uppercase">
                           Tertiary School Name *
                         </label>
                         <input
                           type="text"
                           value={formData.tertiarySchoolName || ''}
-                          onChange={(e) =>
-                            onInputChange('tertiarySchoolName', e.target.value.toUpperCase())
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value.toUpperCase();
+                            onInputChange('tertiarySchoolName', value);
+
+                            // 🔥 AUTO-RESET WHEN SCHOOL NAME IS DELETED
+                            if (value.trim() === '') {
+                              onInputChange('tertiaryFrom', '');
+                              onInputChange('tertiaryTo', '');
+                              onInputChange('course', '');
+                              setCustomCourse('');
+                              setShowCustomCourse(false);
+                            }
+                          }}
                           required
                           placeholder="Enter school name"
                           className="w-full border rounded-lg px-3 py-3"
                         />
                       </div>
-                    {formData.tertiarySchoolName?.trim() !== '' && (
-                      <>
-                        <div>
-                          <label className="block text-sm font-bold uppercase">From *</label>
-                          <select
-                            value={formData.tertiaryFrom || ''}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              onInputChange('tertiaryFrom', value);
-
-                              if (formData.tertiaryTo && value > formData.tertiaryTo) {
-                                Swal.fire(
-                                  "Invalid Selection",
-                                  "'FROM' year cannot be greater than 'TO' year.",
-                                  "error"
-                                );
-                                onInputChange('tertiaryFrom', '');
-                              }
-                            }}
-                            required
-                            className="w-full border rounded-lg px-3 py-3"
-                          >
-                            <option value="">SELECT YEAR</option>
-                            {Array.from(
-                              { length: new Date().getFullYear() - 1950 + 1 },
-                              (_, i) => 1950 + i
-                            ).map((year) => (
-                              <option key={year} value={year}>
-                                {year}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-bold uppercase">To *</label>
-                          <select
-                            value={formData.tertiaryTo || ''}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              onInputChange('tertiaryTo', value);
-
-                              if (formData.tertiaryFrom && value < formData.tertiaryFrom) {
-                                Swal.fire(
-                                  "Invalid Selection",
-                                  "'TO' year cannot be lower than 'FROM' year.",
-                                  "error"
-                                );
-                                onInputChange('tertiaryTo', '');
-                              }
-                            }}
-                            required
-                            className="w-full border rounded-lg px-3 py-3"
-                          >
-                            <option value="">SELECT YEAR</option>
-                            {Array.from(
-                              { length: new Date().getFullYear() - 1950 + 1 },
-                              (_, i) => 1950 + i
-                            ).map((year) => (
-                              <option key={year} value={year}>
-                                {year}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </>
                     )}
-                    </div>
                   </div>
-                )}
-                {formData.tertiaryEducation && (
-                  <div className="mt-2">
-                    <label className="block text-sm font-bold uppercase">Course *</label>
 
-                    {!showCustomCourse ? (
-                      <select
-                        value={formData.course || ''}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === 'OTHERS') {
-                            setShowCustomCourse(true);
-                            setCustomCourse('');
-                            onInputChange('course', '');
-                          } else {
+                  {/* SHOW ONLY IF SCHOOL NAME IS FILLED */}
+                  {formData.tertiarySchoolName?.trim() !== '' && (
+                    <div className="grid grid-cols-3 gap-4 mt-3">
+
+                      {/* FROM YEAR */}
+                      <div>
+                        <label className="block text-sm font-bold uppercase">From *</label>
+                        <select
+                          value={formData.tertiaryFrom || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            onInputChange('tertiaryFrom', value);
+
+                            if (formData.tertiaryTo && value > formData.tertiaryTo) {
+                              Swal.fire("Invalid Selection", "'FROM' year cannot be greater than 'TO' year.", "error");
+                              onInputChange('tertiaryFrom', '');
+                            }
+                          }}
+                          required
+                          className="w-full border rounded-lg px-3 py-3"
+                        >
+                          <option value="">SELECT YEAR</option>
+                          {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                            .map((year) => (
+                              <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                      </div>
+
+                      {/* TO YEAR */}
+                      <div>
+                        <label className="block text-sm font-bold uppercase">To *</label>
+                        <select
+                          value={formData.tertiaryTo || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            onInputChange('tertiaryTo', value);
+
+                            if (formData.tertiaryFrom && value < formData.tertiaryFrom) {
+                              Swal.fire("Invalid Selection", "'TO' year cannot be lower than 'FROM' year.", "error");
+                              onInputChange('tertiaryTo', '');
+                            }
+                          }}
+                          required
+                          className="w-full border rounded-lg px-3 py-3"
+                        >
+                          <option value="">SELECT YEAR</option>
+                          {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                            .map((year) => (
+                              <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                      </div>
+                    {/* COURSE FIELD (same line) */}
+                    <div>
+                      <label className="block text-sm font-bold uppercase">Course *</label>
+
+                      {!showCustomCourse ? (
+                        <select
+                          value={formData.course || ''}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === 'OTHERS') {
+                              setShowCustomCourse(true);
+                              setCustomCourse('');
+                              onInputChange('course', '');
+                            } else {
+                              onInputChange('course', value);
+                            }
+                          }}
+                          className="w-full border rounded-lg px-3 py-3"
+                          required
+                        >
+                          <option value="">SELECT COURSE</option>
+                          {formData.tertiaryEducation === "COLLEGE GRADUATE" &&
+                            COLLEGE_COURSES.map((course, index) => (
+                              <option key={index} value={course}>{course}</option>
+                            ))}
+                          {formData.tertiaryEducation === "TECHNICAL/VOCATIONAL COURSE GRADUATE" &&
+                            TECHNICAL_VOCATIONAL_COURSES.map((course, index) => (
+                              <option key={index} value={course}>{course}</option>
+                            ))}
+                          {formData.tertiaryEducation === "ALS SECONDARY GRADUATE" &&
+                            ALS_SECONDARY_COURSES.map((course, index) => (
+                              <option key={index} value={course}>{course}</option>
+                            ))}
+                          {formData.tertiaryEducation === "COLLEGE UNDERGRADUATE" &&
+                            COLLEGE_UNDERGRADUATE_COURSES.map((course, index) => (
+                              <option key={index} value={course}>{course}</option>
+                            ))}
+                          <option value="OTHERS">OTHERS (Type manually)</option>
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          value={customCourse}
+                          onChange={(e) => {
+                            const value = e.target.value.toUpperCase();
+                            setCustomCourse(value);
                             onInputChange('course', value);
-                          }
-                        }}
-                        className="w-full border rounded-lg px-3 py-3"
-                        required
-                      >
-                        <option value="">SELECT COURSE</option>
-                        {formData.tertiaryEducation === "COLLEGE GRADUATE" &&
-                          COLLEGE_COURSES.map((course, index) => (
-                            <option key={index} value={course}>{course}</option>
-                          ))}
-                        {formData.tertiaryEducation === "TECHNICAL/VOCATIONAL COURSE GRADUATE" &&
-                          TECHNICAL_VOCATIONAL_COURSES.map((course, index) => (
-                            <option key={index} value={course}>{course}</option>
-                          ))}
-                        {formData.tertiaryEducation === "ALS SECONDARY GRADUATE" &&
-                          ALS_SECONDARY_COURSES.map((course, index) => (
-                            <option key={index} value={course}>{course}</option>
-                          ))}
-                        {formData.tertiaryEducation === "COLLEGE UNDERGRADUATE" &&
-                          COLLEGE_UNDERGRADUATE_COURSES.map((course, index) => (
-                            <option key={index} value={course}>{course}</option>
-                          ))}
+                            if (value.trim() === '') setShowCustomCourse(false);
+                          }}
+                          required
+                          placeholder="Enter your course"
+                          className="w-full border rounded-lg px-3 py-3 uppercase"
+                        />
+                      )}
+                    </div>
 
-                        <option value="OTHERS">OTHERS (Type manually)</option>
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        value={customCourse}
-                        onChange={(e) => {
-                          const value = e.target.value.toUpperCase();
-                          setCustomCourse(value);
-                          onInputChange('course', value);
-                          if (value.trim() === '') {
-                            setShowCustomCourse(false);
-                          }
-                        }}
-                        required
-                        placeholder="Enter your course"
-                        className="w-full border rounded-lg px-3 py-3 uppercase"
-                        style={{ textTransform: 'uppercase' }}
-                      />
-                    )}
                   </div>
                 )}
+                  </div>
+
+
 
               <div>
                 <label className="block text-sm font-bold mb-2 uppercase">Beneficiary Name</label>
