@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Sun, Moon, Monitor } from 'lucide-react';
+import { LogOut, Sun, Moon } from 'lucide-react';
 import { User } from '../utils/auth';
 import { useTheme } from '../contexts/ThemeContext';
 import Swal from 'sweetalert2';
@@ -55,11 +55,6 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
   const tupadLogo = '/src/assets/TupadLogo.png';
   const logoSrc = activeProgram === 'GIP' ? gipLogo : tupadLogo;
 
-  const themeOptions = [
-    { id: 'light', label: 'Light', icon: Sun },
-    { id: 'dark', label: 'Dark', icon: Moon },
-    { id: 'system', label: 'System', icon: Monitor }
-  ];
 
   return (
     <header className={`${headerColor} text-white border-b-4 border-yellow-400`}>
@@ -133,6 +128,19 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
               </button>
             </div>
 
+            {/* Theme Toggle Button */}
+            <button
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors duration-200"
+              title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
+              {theme === 'light' ? (
+                <Moon className="w-5 h-5 text-white" />
+              ) : (
+                <Sun className="w-5 h-5 text-white" />
+              )}
+            </button>
+
             {/* User Menu */}
             <div className="flex items-center space-x-3">
               <div className="text-right">
@@ -161,42 +169,9 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
                 {/* Dropdown Menu */}
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50">
-                    {/* Theme Section */}
-                    <div className="border-b border-gray-700">
-                      <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Theme
-                      </div>
-                      <div className="px-2 pb-2 space-y-1">
-                        {themeOptions.map((option) => {
-                          const Icon = option.icon;
-                          return (
-                            <button
-                              key={option.id}
-                              onClick={() => {
-                                setTheme(option.id as 'light' | 'dark' | 'system');
-                                setShowUserMenu(false);
-                              }}
-                              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md transition-colors duration-200 ${
-                                theme === option.id
-                                  ? 'bg-gray-700 text-white'
-                                  : 'text-gray-300 hover:bg-gray-800'
-                              }`}
-                            >
-                              <Icon className="w-4 h-4" />
-                              <span className="text-sm">{option.label}</span>
-                              {theme === option.id && (
-                                <span className="ml-auto text-lg">✓</span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Logout Section */}
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-200"
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-red-600 hover:text-white transition-colors duration-200 rounded-lg"
                     >
                       <LogOut className="w-4 h-4" />
                       <span className="text-sm">Sign out</span>
