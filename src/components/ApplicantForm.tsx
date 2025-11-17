@@ -595,7 +595,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
           )}
          {activeProgram === 'GIP' && (
             <>
-             {/* PRIMARY EDUCATION (No More Dropdown) */}
             <div className="col-span-3 mt-3">
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-2">
@@ -609,17 +608,15 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                       const value = e.target.value.toUpperCase();
                       onInputChange('primarySchoolName', value);
 
-                      // 🔥 RESET FROM & TO WHEN SCHOOL NAME IS DELETED
                       if (value.trim() === '') {
                         onInputChange('primaryFrom', '');
                         onInputChange('primaryTo', '');
-                        onInputChange('primaryEducation', ''); // clear education
+                        onInputChange('primaryEducation', ''); 
                       } else if (
                         value.trim() !== '' &&
                         formData.primaryFrom &&
                         formData.primaryTo
                       ) {
-                        // AUTO-ASSIGN ELEMENTARY GRADUATE
                         onInputChange('primaryEducation', 'ELEMENTARY GRADUATE');
                       }
                     }}
@@ -647,7 +644,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                             );
                             onInputChange('primaryFrom', '');
                           } else if (formData.primarySchoolName && value && formData.primaryTo) {
-                            // AUTO-ASSIGN ELEMENTARY GRADUATE
                             onInputChange('primaryEducation', 'ELEMENTARY GRADUATE');
                           }
                         }}
@@ -682,7 +678,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                             );
                             onInputChange('primaryTo', '');
                           } else if (formData.primarySchoolName && formData.primaryFrom && value) {
-                            // AUTO-ASSIGN ELEMENTARY GRADUATE
                             onInputChange('primaryEducation', 'ELEMENTARY GRADUATE');
                           }
                         }}
@@ -704,11 +699,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 )}
               </div>
             </div>
-
-
-            {/* SECONDARY EDUCATION (Junior + Senior High School) */}
                 <div className="col-span-3 mt-2"> 
-                {/* 🔹 JUNIOR HIGH SCHOOL */}
                 <div className="grid grid-cols-4 gap-4 mt-2">
                   <div className="col-span-2">
                     <label className="block text-sm font-bold uppercase">
@@ -720,18 +711,15 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                       onChange={(e) => {
                         const value = e.target.value.toUpperCase();
                         onInputChange('juniorHighSchoolName', value);
-
-                        // 🔥 Reset FROM & TO and education when name is deleted
                         if (value.trim() === '') {
                           onInputChange('juniorHighFrom', '');
                           onInputChange('juniorHighTo', '');
-                          onInputChange('juniorHighEducation', ''); // clear education
+                          onInputChange('juniorHighEducation', ''); 
                         } else if (
                           value.trim() !== '' &&
                           formData.juniorHighFrom &&
                           formData.juniorHighTo
                         ) {
-                          // AUTO-ASSIGN JUNIOR HIGH SCHOOL GRADUATE
                           onInputChange('juniorHighEducation', 'JUNIOR HIGH SCHOOL GRADUATE');
                         }
                       }}
@@ -743,48 +731,71 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
                   {formData.juniorHighSchoolName?.trim().length > 0 && (
                     <>
-                      {/* FROM YEAR */}
-                      <div>
-                        <label className="block text-sm font-bold uppercase">From *</label>
-                        <select
-                          value={formData.juniorHighFrom || ''}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            onInputChange('juniorHighFrom', value);
-
-                            if (formData.juniorHighTo && value > formData.juniorHighTo) {
-                              Swal.fire("Invalid Selection", "'FROM' year cannot be greater than 'TO' year.", "error");
-                              onInputChange('juniorHighFrom', '');
-                            } else if (formData.juniorHighSchoolName && value && formData.juniorHighTo) {
-                              // AUTO-ASSIGN JUNIOR HIGH SCHOOL GRADUATE
-                              onInputChange('juniorHighEducation', 'JUNIOR HIGH SCHOOL GRADUATE');
-                            }
-                          }}
-                          required
-                          className="w-full border rounded-lg px-3 py-3"
-                        >
-                          <option value="">SELECT YEAR</option>
-                          {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
-                            .map((year) => (
-                              <option key={year} value={year}>{year}</option>
-                            ))}
-                        </select>
-                      </div>
-
-                      {/* TO YEAR */}
+                    <div>
+                      <label className="block text-sm font-bold uppercase">From *</label>
+                      <select
+                        value={formData.juniorHighFrom || ''}
+                        onChange={(e) => {
+                          const value = Number(e.target.value);
+                          if (formData.primaryTo && value <= Number(formData.primaryTo)) {
+                            Swal.fire(
+                              "Invalid Selection",
+                              "Junior High FROM year must be after Primary TO year.",
+                              "error"
+                            );
+                            onInputChange('juniorHighFrom', '');
+                            return;
+                          }
+                          if (formData.juniorHighTo && value > formData.juniorHighTo) {
+                            Swal.fire(
+                              "Invalid Selection",
+                              "'FROM' year cannot be greater than 'TO' year.",
+                              "error"
+                            );
+                            onInputChange('juniorHighFrom', '');
+                            return;
+                          }
+                          onInputChange('juniorHighFrom', value);
+                          if (formData.juniorHighSchoolName && formData.juniorHighTo) {
+                            onInputChange('juniorHighEducation', 'JUNIOR HIGH SCHOOL GRADUATE');
+                          }
+                        }}
+                        required
+                        className="w-full border rounded-lg px-3 py-3"
+                      >
+                        <option value="">SELECT YEAR</option>
+                        {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                          .map((year) => (
+                            <option key={year} value={year}>{year}</option>
+                        ))}
+                      </select>
+                    </div>
                       <div>
                         <label className="block text-sm font-bold uppercase">To *</label>
                         <select
                           value={formData.juniorHighTo || ''}
                           onChange={(e) => {
-                            const value = e.target.value;
-                            onInputChange('juniorHighTo', value);
-
-                            if (formData.juniorHighFrom && value < formData.juniorHighFrom) {
-                              Swal.fire("Invalid Selection", "'TO' year cannot be lower than 'FROM' year.", "error");
+                            const value = Number(e.target.value);
+                            if (formData.primaryTo && value <= Number(formData.primaryTo)) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "Junior High TO year must be after Primary TO year.",
+                                "error"
+                              );
                               onInputChange('juniorHighTo', '');
-                            } else if (formData.juniorHighSchoolName && formData.juniorHighFrom && value) {
-                              // AUTO-ASSIGN JUNIOR HIGH SCHOOL GRADUATE
+                              return;
+                            }
+                            if (formData.juniorHighFrom && value < formData.juniorHighFrom) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "'TO' year cannot be lower than 'FROM' year.",
+                                "error"
+                              );
+                              onInputChange('juniorHighTo', '');
+                              return;
+                            }
+                            onInputChange('juniorHighTo', value);
+                            if (formData.juniorHighSchoolName && formData.juniorHighFrom) {
                               onInputChange('juniorHighEducation', 'JUNIOR HIGH SCHOOL GRADUATE');
                             }
                           }}
@@ -798,11 +809,9 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                             ))}
                         </select>
                       </div>
-                    </>
-                  )}
-                </div>
-
-                  {/* 🔹 SENIOR HIGH SCHOOL */}
+                      </>
+                      )}
+                      </div>
                     <div className="grid grid-cols-4 gap-4 mt-4">
                       <div className="col-span-2">
                         <label className="block text-sm font-bold uppercase">
@@ -814,14 +823,11 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                           onChange={(e) => {
                             const value = e.target.value.toUpperCase();
                             onInputChange('seniorHighSchoolName', value);
-
-                            // 🔥 Reset FROM, TO, and Education when name is deleted
                             if (value.trim() === '') {
                               onInputChange('seniorHighFrom', '');
                               onInputChange('seniorHighTo', '');
                               onInputChange('seniorHighEducation', '');
                             } else if (value && formData.seniorHighFrom && formData.seniorHighTo) {
-                              // AUTO-ASSIGN Senior High School Graduate
                               onInputChange('seniorHighEducation', 'SENIOR HIGH SCHOOL GRADUATE');
                             }
                           }}
@@ -833,76 +839,86 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
                       {formData.seniorHighSchoolName?.trim().length > 0 && (
                         <>
-                          {/* FROM YEAR */}
-                          <div>
-                            <label className="block text-sm font-bold uppercase">From *</label>
-                            <select
-                              value={formData.seniorHighFrom || ''}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                onInputChange('seniorHighFrom', value);
-
-                                if (formData.seniorHighTo && value > formData.seniorHighTo) {
-                                  Swal.fire(
-                                    "Invalid Selection",
-                                    "'FROM' year cannot be greater than 'TO' year.",
-                                    "error"
-                                  );
-                                  onInputChange('seniorHighFrom', '');
-                                } else if (formData.seniorHighSchoolName && value && formData.seniorHighTo) {
-                                  // AUTO-ASSIGN Senior High School Graduate
-                                  onInputChange('seniorHighEducation', 'SENIOR HIGH SCHOOL GRADUATE');
-                                }
-                              }}
-                              required
-                              className="w-full border rounded-lg px-3 py-3"
-                            >
-                              <option value="">SELECT YEAR</option>
-                              {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
-                                .map((year) => <option key={year} value={year}>{year}</option>)}
-                            </select>
+                      <div>
+                        <label className="block text-sm font-bold uppercase">From *</label>
+                        <select
+                          value={formData.seniorHighFrom || ''}
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            if (formData.juniorHighTo && value <= Number(formData.juniorHighTo)) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "Senior High FROM year must be after Junior High TO year.",
+                                "error"
+                              );
+                              onInputChange('seniorHighFrom', '');
+                              return;
+                            }
+                            if (formData.seniorHighTo && value > formData.seniorHighTo) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "'FROM' year cannot be greater than 'TO' year.",
+                                "error"
+                              );
+                              onInputChange('seniorHighFrom', '');
+                              return;
+                            }
+                            onInputChange('seniorHighFrom', value);
+                            if (formData.seniorHighSchoolName && formData.seniorHighTo) {
+                              onInputChange('seniorHighEducation', 'SENIOR HIGH SCHOOL GRADUATE');
+                            }
+                          }}
+                          required
+                          className="w-full border rounded-lg px-3 py-3"
+                        >
+                          <option value="">SELECT YEAR</option>
+                          {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                            .map((year) => <option key={year} value={year}>{year}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold uppercase">To *</label>
+                        <select
+                          value={formData.seniorHighTo || ''}
+                          onChange={(e) => {
+                            const value = Number(e.target.value);
+                            if (formData.juniorHighTo && value <= Number(formData.juniorHighTo)) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "Senior High TO year must be after Junior High TO year.",
+                                "error"
+                              );
+                              onInputChange('seniorHighTo', '');
+                              return;
+                            }
+                            if (formData.seniorHighFrom && value < Number(formData.seniorHighFrom)) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "'TO' year cannot be lower than 'FROM' year.",
+                                "error"
+                              );
+                              onInputChange('seniorHighTo', '');
+                              return;
+                            }
+                            onInputChange('seniorHighTo', value);
+                            if (formData.seniorHighSchoolName && formData.seniorHighFrom) {
+                              onInputChange('seniorHighEducation', 'SENIOR HIGH SCHOOL GRADUATE');
+                            }
+                          }}
+                          required
+                          className="w-full border rounded-lg px-3 py-3"
+                        >
+                          <option value="">SELECT YEAR</option>
+                          {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
+                            .map((year) => <option key={year} value={year}>{year}</option>)}
+                        </select>
+                      </div>
+                      </>
+                        )}
+                         </div>
                           </div>
-
-                          {/* TO YEAR */}
-                          <div>
-                            <label className="block text-sm font-bold uppercase">To *</label>
-                            <select
-                              value={formData.seniorHighTo || ''}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                onInputChange('seniorHighTo', value);
-
-                                if (formData.seniorHighFrom && value < formData.seniorHighFrom) {
-                                  Swal.fire(
-                                    "Invalid Selection",
-                                    "'TO' year cannot be lower than 'FROM' year.",
-                                    "error"
-                                  );
-                                  onInputChange('seniorHighTo', '');
-                                } else if (formData.seniorHighSchoolName && formData.seniorHighFrom && value) {
-                                  // AUTO-ASSIGN Senior High School Graduate
-                                  onInputChange('seniorHighEducation', 'SENIOR HIGH SCHOOL GRADUATE');
-                                }
-                              }}
-                              required
-                              className="w-full border rounded-lg px-3 py-3"
-                            >
-                              <option value="">SELECT YEAR</option>
-                              {Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i)
-                                .map((year) => <option key={year} value={year}>{year}</option>)}
-                            </select>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    </div>
-
-
-               {/* TERTIARY EDUCATION */}
                 <div className="col-span-3 mt-2">
                   <div className="grid grid-cols-2 gap-4">
-                    
-                    {/* TERTIARY EDUCATION DROPDOWN */}
                     <div>
                       <label className="block text-sm font-bold uppercase">
                         Tertiary Education *
@@ -911,8 +927,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                         value={formData.tertiaryEducation || ''}
                         onChange={(e) => {
                           onInputChange('tertiaryEducation', e.target.value);
-
-                          // Reset all tertiary fields if education type changes
                           onInputChange('tertiarySchoolName', '');
                           onInputChange('tertiaryFrom', '');
                           onInputChange('tertiaryTo', '');
@@ -931,8 +945,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                         <option value="COLLEGE GRADUATE">COLLEGE GRADUATE</option>
                       </select>
                     </div>
-
-                    {/* SCHOOL NAME INPUT */}
                     {formData.tertiaryEducation && (
                       <div>
                         <label className="block text-sm font-bold uppercase">
@@ -944,8 +956,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                           onChange={(e) => {
                             const value = e.target.value.toUpperCase();
                             onInputChange('tertiarySchoolName', value);
-
-                            // 🔥 AUTO-RESET WHEN SCHOOL NAME IS DELETED
                             if (value.trim() === '') {
                               onInputChange('tertiaryFrom', '');
                               onInputChange('tertiaryTo', '');
@@ -961,24 +971,29 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                       </div>
                     )}
                   </div>
-
-                  {/* SHOW ONLY IF SCHOOL NAME IS FILLED */}
                   {formData.tertiarySchoolName?.trim() !== '' && (
                     <div className="grid grid-cols-3 gap-4 mt-3">
-
-                      {/* FROM YEAR */}
                       <div>
                         <label className="block text-sm font-bold uppercase">From *</label>
                         <select
                           value={formData.tertiaryFrom || ''}
                           onChange={(e) => {
-                            const value = e.target.value;
-                            onInputChange('tertiaryFrom', value);
-
-                            if (formData.tertiaryTo && value > formData.tertiaryTo) {
+                            const value = Number(e.target.value);
+                            if (formData.seniorHighTo && value <= Number(formData.seniorHighTo)) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "Tertiary FROM year must be after Senior High TO year.",
+                                "error"
+                              );
+                              onInputChange('tertiaryFrom', '');
+                              return;
+                            }
+                            if (formData.tertiaryTo && value > Number(formData.tertiaryTo)) {
                               Swal.fire("Invalid Selection", "'FROM' year cannot be greater than 'TO' year.", "error");
                               onInputChange('tertiaryFrom', '');
+                              return;
                             }
+                            onInputChange('tertiaryFrom', value);
                           }}
                           required
                           className="w-full border rounded-lg px-3 py-3"
@@ -990,20 +1005,27 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                             ))}
                         </select>
                       </div>
-
-                      {/* TO YEAR */}
                       <div>
                         <label className="block text-sm font-bold uppercase">To *</label>
                         <select
                           value={formData.tertiaryTo || ''}
                           onChange={(e) => {
-                            const value = e.target.value;
-                            onInputChange('tertiaryTo', value);
-
-                            if (formData.tertiaryFrom && value < formData.tertiaryFrom) {
+                            const value = Number(e.target.value);
+                            if (formData.seniorHighTo && value <= Number(formData.seniorHighTo)) {
+                              Swal.fire(
+                                "Invalid Selection",
+                                "Tertiary TO year must be after Senior High TO year.",
+                                "error"
+                              );
+                              onInputChange('tertiaryTo', '');
+                              return;
+                            }
+                            if (formData.tertiaryFrom && value < Number(formData.tertiaryFrom)) {
                               Swal.fire("Invalid Selection", "'TO' year cannot be lower than 'FROM' year.", "error");
                               onInputChange('tertiaryTo', '');
+                              return;
                             }
+                            onInputChange('tertiaryTo', value);
                           }}
                           required
                           className="w-full border rounded-lg px-3 py-3"
@@ -1015,7 +1037,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                             ))}
                         </select>
                       </div>
-                    {/* COURSE FIELD (same line) */}
                     <div>
                       <label className="block text-sm font-bold uppercase">Course *</label>
 
@@ -1074,9 +1095,6 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                   </div>
                 )}
                   </div>
-
-
-
               <div>
                 <label className="block text-sm font-bold mb-2 uppercase">Beneficiary Name</label>
                 <input
