@@ -20,6 +20,37 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
 }) => {
   const [selectedFilter, setSelectedFilter] = useState<'summary' | 'barangay' | 'status' | 'gender'>('summary');
 
+  const isGIP = programName === 'GIP';
+  const programColor = isGIP ? 'blue' : 'green';
+
+  const getColorClasses = (colorName: string) => {
+    const colorMap: { [key: string]: { [key: string]: string } } = {
+      blue: {
+        bg: 'bg-blue-50',
+        bgHover: 'hover:bg-blue-50',
+        bgGradient: 'from-blue-50 to-blue-100',
+        bgHoverGradient: 'hover:from-blue-100 hover:to-blue-200',
+        border: 'border-blue-200',
+        text: 'text-blue-700',
+        textLight: 'text-blue-600'
+      },
+      green: {
+        bg: 'bg-green-50',
+        bgHover: 'hover:bg-green-50',
+        bgGradient: 'from-green-50 to-green-100',
+        bgHoverGradient: 'hover:from-green-100 hover:to-green-200',
+        border: 'border-green-200',
+        text: 'text-green-700',
+        textLight: 'text-green-600'
+      }
+    };
+    return colorMap[colorName] || colorMap.blue;
+  };
+
+  const barangayColors = getColorClasses(programColor);
+  const statusColors = getColorClasses(programColor);
+  const genderColors = getColorClasses(programColor);
+
   if (!data) return <p className="text-center text-gray-500">No summary data available.</p>;
 
   const summary = [
@@ -84,10 +115,10 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
               <button
                 key={index}
                 onClick={() => onRowClick(barangay.barangay, barangay.barangay, 'barangay')}
-                className="p-4 text-left bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-lg border border-green-200 transition-all hover:shadow-md"
+                className={`p-4 text-left bg-gradient-to-r ${barangayColors.bgGradient} ${barangayColors.bgHoverGradient} rounded-lg border ${barangayColors.border} transition-all hover:shadow-md`}
               >
-                <div className="font-semibold text-green-700 text-lg mb-2">{barangay.barangay}</div>
-                <div className="text-sm text-green-600 space-y-1">
+                <div className={`font-semibold ${barangayColors.text} text-lg mb-2`}>{barangay.barangay}</div>
+                <div className={`text-sm ${barangayColors.textLight} space-y-1`}>
                   <div className="flex justify-between">
                     <span>Total:</span>
                     <span className="font-bold">{barangay.total}</span>
@@ -112,10 +143,10 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
               <button
                 key={index}
                 onClick={() => onRowClick(status.status, status.status, 'status')}
-                className="p-4 text-left bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-lg border border-purple-200 transition-all hover:shadow-md"
+                className={`p-4 text-left bg-gradient-to-r ${statusColors.bgGradient} ${statusColors.bgHoverGradient} rounded-lg border ${statusColors.border} transition-all hover:shadow-md`}
               >
-                <div className="font-semibold text-purple-700 text-lg mb-2">{status.status}</div>
-                <div className="text-sm text-purple-600 space-y-1">
+                <div className={`font-semibold ${statusColors.text} text-lg mb-2`}>{status.status}</div>
+                <div className={`text-sm ${statusColors.textLight} space-y-1`}>
                   <div className="flex justify-between">
                     <span>Total:</span>
                     <span className="font-bold">{status.total}</span>
@@ -139,10 +170,10 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
             {genderStats.map((genderGroup, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-xl p-6 bg-gradient-to-br from-pink-50 to-white shadow-sm hover:shadow-md transition-all duration-200"
+                className={`border rounded-xl p-6 bg-gradient-to-br ${genderColors.bgGradient} to-white shadow-sm hover:shadow-md transition-all duration-200 ${genderColors.border}`}
               >
                 <div className="font-semibold text-gray-700 text-lg mb-4 text-center">
-                  {genderGroup.gender === 'MALE' ? '♂ Male' : '♀ Female'} — 
+                  {genderGroup.gender === 'MALE' ? '♂ Male' : '♀ Female'} —
                   <span className="ml-1 text-gray-600 font-bold">Total: {genderGroup.total}</span>
                 </div>
 
@@ -152,7 +183,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                     <button
                       key={status}
                       onClick={() => onRowClick(genderGroup.gender, status, 'gender')}
-                      className="flex flex-col items-center justify-center p-4 rounded-lg border border-pink-200 bg-white hover:bg-pink-50 hover:shadow-sm transition-all duration-200"
+                      className={`flex flex-col items-center justify-center p-4 rounded-lg border ${genderColors.border} bg-white ${genderColors.bgHover} hover:shadow-sm transition-all duration-200`}
                     >
                       <span className="text-sm font-medium text-gray-700">{status}</span>
                       <span
