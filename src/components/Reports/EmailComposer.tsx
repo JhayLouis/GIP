@@ -214,8 +214,8 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
       html: `
         <p>Are you sure you want to send this email to:</p>
         <p class="font-semibold text-lg mt-2">${applicant.email}</p>
-        <p class="text-sm text-gray-600 mt-4">Name: ${applicant.firstName} ${applicant.lastName}</p>
-        <p class="text-sm text-gray-600">Status: ${status}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300 mt-4">Name: ${applicant.firstName} ${applicant.lastName}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Status: ${status}</p>
       `,
       icon: 'question',
       showCancelButton: true,
@@ -268,11 +268,11 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+      <div className="bg-white dark:bg-slate-800 w-full max-w-4xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-slate-700">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Send Email</h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Send Email</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
               {applicant.firstName} {applicant.lastName} ({applicant.email || 'No email'})
             </p>
           </div>
@@ -298,7 +298,7 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
                 {status}
               </span>
             </div>
-            <p className="text-xs text-gray-600 mt-2">
+            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
               This email will be sent as an {status.toLowerCase()} notification to the applicant.
             </p>
           </div>
@@ -318,12 +318,12 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
               <textarea
                 value={htmlContent}
                 onChange={(e) => setHtmlContent(e.target.value)}
-                className="w-full h-64 p-3 border border-purple-300 rounded-lg font-mono text-xs focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
+                className="w-full h-64 p-3 border border-purple-300 rounded-lg font-mono text-xs focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-slate-800"
                 placeholder="Enter HTML content..."
               />
             ) : (
               <div
-                className="w-full h-64 p-4 bg-white border border-purple-300 rounded-lg overflow-auto text-xs"
+                className="w-full h-64 p-4 bg-white dark:bg-slate-800 border border-purple-300 rounded-lg overflow-auto text-xs"
                 dangerouslySetInnerHTML={{ __html: emailContent }}
               />
             )}
@@ -343,10 +343,10 @@ const EmailComposer: React.FC<EmailComposerProps> = ({
         </div>
 
         {/* Footer buttons */}
-        <div className="flex justify-end gap-2 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex justify-end gap-2 p-6 border-t border-gray-200 dark:border-slate-700 bg-gray-50">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+            className="px-4 py-2 text-gray-700 bg-white dark:bg-slate-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
           >
             Cancel
           </button>

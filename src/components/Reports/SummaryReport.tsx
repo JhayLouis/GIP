@@ -56,7 +56,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
 
   const colors = getColorClasses();
 
-  if (!data) return <p className="text-center text-gray-500">No summary data available.</p>;
+  if (!data) return <p className="text-center text-gray-500 dark:text-gray-400">No summary data available.</p>;
 
   const summary = [
     { label: 'Total Applicants', value: data.totalApplicants, male: data.maleCount, female: data.femaleCount, type: 'total' },
@@ -77,7 +77,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
             <select
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value as 'summary' | 'barangay' | 'status' | 'gender')}
-              className={`px-4 py-2 border-2 ${colors.border} rounded-lg focus:ring-2 ${isGIP ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-green-500 focus:border-green-500'} text-sm bg-white cursor-pointer font-medium`}
+              className={`px-4 py-2 border-2 ${colors.border} rounded-lg focus:ring-2 ${isGIP ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-green-500 focus:border-green-500'} text-sm bg-white dark:bg-slate-800 cursor-pointer font-medium`}
             >
               <option value="summary">Summary View</option>
               <option value="barangay">By Barangay</option>
@@ -100,11 +100,11 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                   {item.value}
                 </div>
                 <div className={`flex items-center justify-center space-x-4 text-xs font-medium ${colors.text}`}>
-                  <div className="flex items-center space-x-1 bg-white px-3 py-1 rounded-full">
+                  <div className="flex items-center space-x-1 bg-white dark:bg-slate-800 px-3 py-1 rounded-full">
                     <span>♂</span>
                     <span className="font-bold">{item.male}</span>
                   </div>
-                  <div className="flex items-center space-x-1 bg-white px-3 py-1 rounded-full">
+                  <div className="flex items-center space-x-1 bg-white dark:bg-slate-800 px-3 py-1 rounded-full">
                     <span>♀</span>
                     <span className="font-bold">{item.female}</span>
                   </div>
@@ -189,7 +189,7 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                     <button
                       key={status}
                       onClick={() => onRowClick(genderGroup.gender, status, 'gender')}
-                      className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 ${colors.border} bg-white hover:shadow-md hover:scale-[1.05] transition-all duration-200`}
+                      className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 ${colors.border} bg-white dark:bg-slate-800 hover:shadow-md hover:scale-[1.05] transition-all duration-200`}
                     >
                       <span className={`text-xs font-semibold ${colors.text} mb-1`}>{status}</span>
                       <span className={`text-xl font-bold ${colors.text}`}>

@@ -62,11 +62,11 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{activeProgram} REPORTS</h1>
-            <p className="text-gray-600">Generate and view comprehensive reports</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{activeProgram} REPORTS</h1>
+            <p className="text-gray-600 dark:text-gray-300">Generate and view comprehensive reports</p>
           </div>
         </div>
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-slate-700">
           <div className="animate-pulse space-y-4">
             <div className="h-4 bg-gray-200 rounded w-1/4"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -84,12 +84,12 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{activeProgram} REPORTS</h1>
-          <p className="text-gray-600">Generate and view comprehensive reports</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{activeProgram} REPORTS</h1>
+          <p className="text-gray-600 dark:text-gray-300">Generate and view comprehensive reports</p>
         </div>
         <div className="flex space-x-2 items-center">
-          <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
-            <Calendar className="w-4 h-4 text-gray-500" />
+          <div className="flex items-center space-x-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
+            <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             <select
               value={selectedYear || ''}
               onChange={(e) => setSelectedYear(e.target.value ? Number(e.target.value) : undefined)}

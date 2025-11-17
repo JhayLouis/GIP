@@ -20,12 +20,12 @@ const BarangayReport: React.FC<BarangayReportProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 overflow-hidden">
-        <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
           {programName} APPLICANTS BY BARANGAY
         </h3>
 
-        <div className="overflow-hidden rounded-xl border border-gray-200">
+        <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
@@ -46,7 +46,7 @@ const BarangayReport: React.FC<BarangayReportProps> = ({
                   onClick={() => onRowClick(b.barangay)}
                   className="border-b border-gray-100 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 hover:shadow-md hover:scale-[1.01]"
                 >
-                  <td className="py-3 px-4 text-center font-bold text-gray-900">{b.barangay}</td>
+                  <td className="py-3 px-4 text-center font-bold text-gray-900 dark:text-gray-100">{b.barangay}</td>
                   <td className="py-3 px-4 text-center font-bold text-blue-600">{b.total}</td>
                   <td className="py-3 px-4 text-center text-gray-800">{b.male}</td>
                   <td className="py-3 px-4 text-center text-gray-800">{b.female}</td>

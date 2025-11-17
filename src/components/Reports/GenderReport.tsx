@@ -15,12 +15,12 @@ const GenderReport: React.FC<GenderReportProps> = ({ data, programName, onRowCli
     'DEPLOYED': 'text-green-600',
     'COMPLETED': 'text-pink-600',
     'REJECTED': 'text-orange-600',
-    'RESIGNED': 'text-gray-600'
+    'RESIGNED': 'text-gray-600 dark:text-gray-300'
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-md border border-gray-200">
-      <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border border-gray-200 dark:border-slate-700">
+      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">
         {programName} APPLICANTS BY GENDER
       </h3>
 
@@ -39,11 +39,11 @@ const GenderReport: React.FC<GenderReportProps> = ({ data, programName, onRowCli
                 <div
                   key={status}
                   onClick={() => onRowClick && onRowClick(g.gender, status)}
-                  className={`flex flex-col items-center justify-center border border-gray-200 rounded-xl p-3 cursor-pointer hover:bg-white hover:shadow-sm transition-all duration-150 ${
+                  className={`flex flex-col items-center justify-center border border-gray-200 dark:border-slate-700 rounded-xl p-3 cursor-pointer hover:bg-white dark:bg-slate-800 hover:shadow-sm transition-all duration-150 ${
                     onRowClick ? 'hover:scale-[1.02]' : ''
                   }`}
                 >
-                  <span className="font-medium text-gray-600">{status}</span>
+                  <span className="font-medium text-gray-600 dark:text-gray-300">{status}</span>
                   <span className={`text-lg font-semibold ${statusColors[status] || 'text-gray-700'}`}>
                     {g[status.toLowerCase()] || 0}
                   </span>

@@ -170,7 +170,7 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       <div className="flex justify-center">
         <button
           onClick={() => setShowMore(!showMore)}
-          className="flex items-center space-x-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-lg shadow-sm border border-gray-200 transition-all duration-200 hover:shadow-md"
+          className="flex items-center space-x-2 px-6 py-3 bg-white dark:bg-slate-800 hover:bg-gray-50 text-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 transition-all duration-200 hover:shadow-md"
         >
           <span className="font-medium">
             {showMore ? 'See Less' : 'See More'}

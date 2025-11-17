@@ -21,7 +21,7 @@ const StatusReport: React.FC<StatusReportProps> = ({
     'REJECTED': 'bg-orange-50 border-orange-200 hover:from-orange-50 hover:to-orange-100',
     'DEPLOYED': 'bg-green-50 border-green-200 hover:from-green-50 hover:to-green-100',
     'COMPLETED': 'bg-pink-50 border-pink-200 hover:from-pink-50 hover:to-pink-100',
-    'RESIGNED': 'bg-gray-50 border-gray-200 hover:from-gray-50 hover:to-gray-100'
+    'RESIGNED': 'bg-gray-50 border-gray-200 dark:border-slate-700 hover:from-gray-50 hover:to-gray-100'
   };
 
   const statusTextColors: { [key: string]: string } = {
@@ -39,8 +39,8 @@ const StatusReport: React.FC<StatusReportProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
+      <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
           {programName} APPLICANTS BY STATUS
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -56,8 +56,8 @@ const StatusReport: React.FC<StatusReportProps> = ({
                 <div className={`text-lg font-semibold mb-1 ${statusTextColors[s.status] || statusTextColors['PENDING']}`}>
                   {s.status}
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-2">{s.total}</div>
-                <div className="text-sm text-gray-600">Applicants</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{s.total}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Applicants</div>
               </div>
               {onSendEmails && (s.status === 'APPROVED' || s.status === 'REJECTED') && s.total > 0 && (
                 <button

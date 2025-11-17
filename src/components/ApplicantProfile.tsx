@@ -23,7 +23,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="bg-red-700 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10 no-print">
           <h2 className="text-xl font-bold">GIP APPLICANT FORM</h2>
           <div className="flex items-center space-x-2">
@@ -39,7 +39,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             </button>
           </div>
         </div>
-       <div className="p-6 bg-white">
+       <div className="p-6 bg-white dark:bg-slate-800">
         <div className="border-2 border-black" id="applicant-profile-content">
         <div className="border-2 border-black border-b-0 p-3 flex justify-between items-center">
           <div className="flex-1">
@@ -414,7 +414,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
           <div className="relative max-w-4xl max-h-[90vh] p-4">
             <button
               onClick={() => setShowImageModal(false)}
-              className="absolute top-6 right-6 bg-white rounded-full p-2 hover:bg-gray-100 transition z-10"
+              className="absolute top-6 right-6 bg-white dark:bg-slate-800 rounded-full p-2 hover:bg-gray-100 transition z-10"
             >
               <X className="w-6 h-6 text-gray-800" />
             </button>

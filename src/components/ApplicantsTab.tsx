@@ -582,7 +582,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {programName} APPLICANTS{showArchived ? ' - ARCHIVE' : ''}
           </h1>
         </div>
@@ -634,23 +634,23 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           )}
         </div>
       </div>
-      <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+      <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-slate-700">
         <div className="flex flex-wrap gap-3 items-center">
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 dark:text-gray-400 w-4 h-4" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search Applicants..."
-              className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor}`}
+              className={`w-full bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 ${focusColor}`}
             />
           </div>
 
-          <select
+          <select style={{backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-primary)"}} 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
+            className={`px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>ALL STATUS</option>
             <option>PENDING</option>
@@ -661,10 +661,10 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             <option>RESIGNED</option>
           </select>
 
-          <select
+          <select style={{backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-primary)"}} 
             value={barangayFilter}
             onChange={(e) => setBarangayFilter(e.target.value)}
-            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
+            className={`px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>ALL BARANGAYS</option>
             <option>APLAYA</option>
@@ -687,20 +687,20 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             <option>TAGAPO</option>
           </select>
 
-          <select
+          <select style={{backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-primary)"}} 
             value={genderFilter}
             onChange={(e) => setGenderFilter(e.target.value)}
-            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
+            className={`px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>ALL GENDERS</option>
             <option>MALE</option>
             <option>FEMALE</option>
           </select>
 
-          <select
+          <select style={{backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-primary)"}} 
             value={ageFilter}
             onChange={(e) => setAgeFilter(e.target.value)}
-            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
+            className={`px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>ALL AGES</option>
             <option>18-25</option>
@@ -709,10 +709,10 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
             <option>46+</option>
           </select>
 
-          <select
+          <select style={{backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-primary)"}} 
             value={educationFilter}
             onChange={(e) => setEducationFilter(e.target.value)}
-            className={`px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 ${focusColor} text-sm`}
+            className={`px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 ${focusColor} text-sm`}
           >
             <option>ALL EDUCATION</option>
             <option>JUNIOR HIGH SCHOOL GRADUATE</option>
@@ -728,29 +728,29 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-600">Show</span>
-          <select
+          <span className="text-sm text-gray-600 dark:text-gray-300">Show</span>
+          <select style={{backgroundColor: "var(--color-bg-primary)", color: "var(--color-text-primary)"}} 
             value={entriesPerPage}
             onChange={(e) => {
               setEntriesPerPage(Number(e.target.value));
               setCurrentPage(1);
             }}
-            className="px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-1 border bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-slate-600 rounded text-sm focus:ring-2 focus:ring-blue-500"
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
           </select>
-          <span className="text-sm text-gray-600">entries</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">entries</span>
         </div>
 
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-300">
           Showing {startIndex + 1} to {Math.min(endIndex, totalEntries)} of {totalEntries} entries
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className={`${headerBgColor} text-white`}>
@@ -767,7 +767,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <tbody>
             {currentEntries.length === 0 ? (
               <tr>
-                  <td colSpan={isAdmin ? 8 : 7} className="px-6 py-2 text-center text-gray-500">
+                  <td colSpan={isAdmin ? 8 : 7} className="px-6 py-2 text-center text-gray-500 dark:text-gray-400">
                   <div className="text-lg mb-2">No applicants found.</div>
                 </td>
               </tr>
@@ -775,24 +775,24 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
               currentEntries.map((applicant) => (
                 <tr
                   key={applicant.id}
-                  className="border-b border-gray-100 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-md hover:scale-[1.01] hover:border-blue-200"
+                  className="border-b border-gray-100 dark:border-slate-700 cursor-pointer transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-slate-700 dark:hover:to-slate-700 hover:shadow-md hover:scale-[1.01] hover:border-blue-200"
                   onClick={() => setViewingApplicant(applicant)}
                 >
-                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
                     <div className="truncate" title={applicant.code}>{applicant.code}</div>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
                     <div className="truncate max-w-[200px] mx-auto" title={`${applicant.firstName} ${applicant.middleName || ''} ${applicant.lastName} ${applicant.extensionName || ''}`.trim()}>
                       {`${applicant.firstName} ${applicant.middleName || ''} ${applicant.lastName} ${applicant.extensionName || ''}`.trim()}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
                     <div className="truncate" title={applicant.age.toString()}>{applicant.age}</div>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
                     <div className="truncate max-w-[140px] mx-auto" title={applicant.barangay}>{applicant.barangay}</div>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
                     <div className="truncate" title={applicant.gender}>{applicant.gender}</div>
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -802,12 +802,12 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
                       applicant.status === 'DEPLOYED' ? 'bg-green-100 text-green-800' :
                       applicant.status === 'COMPLETED' ? 'bg-pink-100 text-pink-800' :
                       applicant.status === 'REJECTED' ? 'bg-orange-100 text-orange-800' :
-                      'bg-gray-100 text-gray-800'
+                      'bg-gray-100 text-gray-800 dark:text-gray-200'
                     }`}>
                       {applicant.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900">
+                  <td className="px-6 py-4 text-center text-sm font-bold text-gray-900 dark:text-gray-100">
                     <div className="truncate" title={applicant.dateSubmitted}>{applicant.dateSubmitted}</div>
                   </td>
                   {isAdmin && (
@@ -863,7 +863,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
@@ -875,7 +875,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
               className={`px-3 py-2 text-sm border rounded-md ${
                 currentPage === page
                   ? `${headerBgColor} text-white border-transparent`
-                  : 'border-gray-300 hover:bg-gray-50'
+                  : 'border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-700'
               }`}
             >
               {page}
@@ -885,7 +885,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>

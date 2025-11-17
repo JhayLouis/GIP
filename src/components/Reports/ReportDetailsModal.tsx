@@ -242,11 +242,11 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4 no-print">
-      <div className="bg-white w-full max-w-4xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 w-full max-w-4xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 no-print space-y-4">
+        <div className="p-6 border-b border-gray-200 dark:border-slate-700 no-print space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{title}</h2>
             <div className="flex items-center space-x-2">
               {filteredData.length > 0 && (
                 <button
@@ -277,10 +277,10 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                 setCurrentPage(1);
               }}
               placeholder="Type course name to filter..."
-              className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
+              className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 text-sm"
             />
             {courseFilter && (
-              <p className="text-xs text-gray-600 mt-2">
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
                 Showing {filteredData.length} of {data.length} records
               </p>
             )}
@@ -300,7 +300,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
           ) : (
             <>
               <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <thead className="sticky top-0 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 dark:border-slate-700">
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Code</th>
                   <th className="px-4 py-3 text-left font-semibold text-gray-700">Full Name</th>
@@ -329,7 +329,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
                       key={`${refreshKey}-${i}`}
                       className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-4 py-3 font-medium text-gray-900">{p.code || '-'}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{p.code || '-'}</td>
                       <td className="px-4 py-3 text-gray-800">
                         {`${p.firstName} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName}`}
                       </td>
@@ -376,7 +376,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
               </table>
 
               {/* ✅ Pagination controls */}
-              <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-t border-gray-200 text-sm">
+              <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-t border-gray-200 dark:border-slate-700 text-sm">
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
@@ -420,7 +420,7 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-gray-50 border-t border-gray-200 text-xs text-gray-600 rounded-b-xl no-print">
+        <div className="p-4 bg-gray-50 border-t border-gray-200 dark:border-slate-700 text-xs text-gray-600 dark:text-gray-300 rounded-b-xl no-print">
           Showing {filteredData.length} of {data.length} record
           {data.length !== 1 ? 's' : ''} • Generated on {new Date().toLocaleDateString()}
         </div>
