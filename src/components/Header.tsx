@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
       showCancelButton: true,
       confirmButtonColor: '#dc2626',
       cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Yes, logout',
+      confirmButtonText: 'Logout',
       cancelButtonText: 'Cancel'
     });
 
