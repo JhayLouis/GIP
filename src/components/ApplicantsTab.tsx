@@ -228,7 +228,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
     }
 
     if (activeProgram === 'GIP') {
-      if (!formData.primaryEducation || !formData.primarySchoolName) {
+      if (!formData.primaryEducation || !formData.primarySchoolName || !formData.primarySchoolName.trim()) {
         await Swal.fire({
           icon: 'error',
           title: 'Missing Required Fields',
@@ -241,7 +241,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
         });
         return;
       }
-      if (!formData.secondaryEducation || !formData.secondarySchoolName) {
+      if (!formData.secondaryEducation || !formData.secondarySchoolName || !formData.secondarySchoolName.trim()) {
         await Swal.fire({
           icon: 'error',
           title: 'Missing Required Fields',
