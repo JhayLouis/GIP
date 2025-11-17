@@ -22,10 +22,14 @@ export interface Applicant {
   primarySchoolName?: string;
   primaryTo?: string;
   primaryFrom?: string;
-  secondaryEducation?: string;
-  secondarySchoolName?: string;
-  secondaryFrom?: string;
-  secondaryTo?: string;
+  juniorHighEducation?: string;
+  juniorHighSchoolName?: string;
+  juniorHighFrom?: string;
+  juniorHighTo?: string;
+  seniorHighEducation?: string;
+  seniorHighSchoolName?: string;
+  seniorHighFrom?: string;
+  seniorHighTo?: string;
   tertiarySchoolName?: string;
   tertiaryEducation?: string;
   tertiaryFrom?: string;
@@ -603,7 +607,8 @@ export const getHighestEducationAttainment = (applicant: Applicant): string => {
 
   const educationLevels = [
     applicant.tertiaryEducation,
-    applicant.secondaryEducation,
+    applicant.seniorHighEducation,
+    applicant.juniorHighEducation,
     applicant.primaryEducation
   ].filter(Boolean);
 

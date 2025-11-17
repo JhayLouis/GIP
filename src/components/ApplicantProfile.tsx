@@ -21,7 +21,6 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
   }
 };
 
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -207,22 +206,41 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                         : '-'}
                     </td>
                   </tr>
-                  <tr>
+                   <tr> 
                     <td className="border border-black p-1">
-                      {applicant.secondarySchoolName
-                        ? applicant.secondarySchoolName.toUpperCase()
+                      {applicant.seniorHighSchoolName
+                        ? applicant.seniorHighSchoolName.toUpperCase()
                         : '-'}
                     </td>
                     <td className="border border-black p-1 text-center">
-                      {applicant.secondaryFrom || "-"}
+                      {applicant.seniorHighFrom || "-"}
                     </td>
 
                     <td className="border border-black p-1 text-center">
-                      {applicant.secondaryTo || "-"}
+                      {applicant.seniorHighTo || "-"}
                     </td>
                     <td className="border border-black p-1">
-                      {applicant.secondaryEducation
-                        ? applicant.secondaryEducation.toUpperCase()
+                      {applicant.seniorHighEducation
+                        ? applicant.seniorHighEducation.toUpperCase()
+                        : '-'}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-black p-1">
+                      {applicant.juniorHighSchoolName
+                        ? applicant.juniorHighSchoolName.toUpperCase()
+                        : '-'}
+                    </td>
+                    <td className="border border-black p-1 text-center">
+                      {applicant.juniorHighFrom || "-"}
+                    </td>
+
+                    <td className="border border-black p-1 text-center">
+                      {applicant.juniorHighTo || "-"}
+                    </td>
+                    <td className="border border-black p-1">
+                      {applicant.juniorHighEducation
+                        ? applicant.juniorHighEducation.toUpperCase()
                         : '-'}
                     </td>
                   </tr>
