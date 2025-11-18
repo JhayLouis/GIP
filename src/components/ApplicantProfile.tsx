@@ -11,15 +11,34 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
   const [showImageModal, setShowImageModal] = React.useState(false);
 
   const handlePrint = () => {
-  const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
-  const originalContents = document.body.innerHTML;
+    const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
+    const originalHTML = document.documentElement.innerHTML;
+    const originalDarkClass = document.documentElement.classList.contains('dark');
 
-  if (printContents) {
-    document.body.innerHTML = printContents;
-    window.print();
-    document.body.innerHTML = originalContents;
-  }
-};
+    if (printContents) {
+      document.documentElement.classList.remove('dark');
+      document.body.innerHTML = `
+        <html>
+          <head>
+            <title>Applicant Profile</title>
+            <style>
+              body { margin: 0; padding: 0; background: white; color: black; }
+              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            </style>
+          </head>
+          <body>${printContents}</body>
+        </html>
+      `;
+
+      setTimeout(() => {
+        window.print();
+        document.documentElement.innerHTML = originalHTML;
+        if (originalDarkClass) {
+          document.documentElement.classList.add('dark');
+        }
+      }, 100);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
