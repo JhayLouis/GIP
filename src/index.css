@@ -75,12 +75,10 @@
   * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    color: black !important;
   }
 
   body {
-    background: white !important;
-    color: black !important;
+    background: white;
     margin: 0;
     padding: 0;
   }

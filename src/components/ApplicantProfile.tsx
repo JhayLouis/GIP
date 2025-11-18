@@ -11,16 +11,15 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
   const [showImageModal, setShowImageModal] = React.useState(false);
 
   const handlePrint = () => {
-    const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
-    const originalContents = document.body.innerHTML;
+  const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
+  const originalContents = document.body.innerHTML;
 
-    if (printContents) {
-      document.body.innerHTML = printContents;
-      window.print();
-      document.body.innerHTML = originalContents;
-      window.location.reload();
-    }
-  };
+  if (printContents) {
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
