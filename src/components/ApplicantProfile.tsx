@@ -11,54 +11,33 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
   const [showImageModal, setShowImageModal] = React.useState(false);
 
   const handlePrint = () => {
-    window.print();
-    const printElement = document.getElementById("applicant-profile-content");
-    if (!printElement) return;
+    const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
+    const originalHTML = document.documentElement.innerHTML;
+    const originalDarkClass = document.documentElement.classList.contains('dark');
 
-    const printWindow = window.open("", "", "height=800,width=900");
-    if (!printWindow) return;
+    if (printContents) {
+      document.documentElement.classList.remove('dark');
+      document.body.innerHTML = `
+        <html>
+          <head>
+            <title>Applicant Profile</title>
+            <style>
+              body { margin: 0; padding: 0; background: white; color: black; }
+              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            </style>
+          </head>
+          <body>${printContents}</body>
+        </html>
+      `;
 
-    const printContents = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Print Applicant Profile</title>
-          <style>
-            * {
-              margin: 0;
-              padding: 0;
-              color: black !important;
-              background: white !important;
-            }
-            body {
-              font-family: Arial, sans-serif;
-              color: black;
-              background: white;
-            }
-            @media print {
-              * {
-                color: black !important;
-                background: white !important;
-              }
-              body {
-                color: black;
-                background: white;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          ${printElement.innerHTML}
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(printContents);
-    printWindow.document.close();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 250);
+      setTimeout(() => {
+        window.print();
+        document.documentElement.innerHTML = originalHTML;
+        if (originalDarkClass) {
+          document.documentElement.classList.add('dark');
+        }
+      }, 100);
+    }
   };
 
   return (
