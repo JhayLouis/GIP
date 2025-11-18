@@ -12,31 +12,47 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
 
   const handlePrint = () => {
     const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
-    const originalHTML = document.documentElement.innerHTML;
-    const originalDarkClass = document.documentElement.classList.contains('dark');
 
     if (printContents) {
-      document.documentElement.classList.remove('dark');
-      document.body.innerHTML = `
-        <html>
-          <head>
-            <title>Applicant Profile</title>
-            <style>
-              body { margin: 0; padding: 0; background: white; color: black; }
-              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            </style>
-          </head>
-          <body>${printContents}</body>
-        </html>
-      `;
-
-      setTimeout(() => {
-        window.print();
-        document.documentElement.innerHTML = originalHTML;
-        if (originalDarkClass) {
-          document.documentElement.classList.add('dark');
-        }
-      }, 100);
+      const printWindow = window.open('', '', 'height=800,width=800');
+      if (printWindow) {
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Applicant Profile</title>
+              <style>
+                @page {
+                  size: 8.5in 13in;
+                  margin: 0.1in 0.4in;
+                }
+                * {
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                  background-color: white !important;
+                  color: black !important;
+                }
+                html, body {
+                  background: white !important;
+                  color: black !important;
+                  margin: 0;
+                  padding: 0;
+                  width: 100%;
+                  height: 100%;
+                }
+                body {
+                  font-family: Arial, sans-serif;
+                }
+              </style>
+            </head>
+            <body>
+              ${printContents}
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+      }
     }
   };
 
