@@ -11,53 +11,15 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
   const [showImageModal, setShowImageModal] = React.useState(false);
 
   const handlePrint = () => {
-    const printElement = document.getElementById("applicant-profile-content");
-    if (!printElement) return;
+    const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
+    const originalContents = document.body.innerHTML;
 
-    const printWindow = window.open("", "", "height=800,width=900");
-    if (!printWindow) return;
-
-    const printContents = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Print Applicant Profile</title>
-          <style>
-            * {
-              margin: 0;
-              padding: 0;
-              color: black !important;
-              background: white !important;
-            }
-            body {
-              font-family: Arial, sans-serif;
-              color: black;
-              background: white;
-            }
-            @media print {
-              * {
-                color: black !important;
-                background: white !important;
-              }
-              body {
-                color: black;
-                background: white;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          ${printElement.innerHTML}
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(printContents);
-    printWindow.document.close();
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 250);
+    if (printContents) {
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+      window.location.reload();
+    }
   };
 
   return (
