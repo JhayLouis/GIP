@@ -35,6 +35,15 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
     return true;
   };
 
+      // Run validation only when full 4-digit year is typed
+    const safeValidateYear = (value, condition, message, resetCallback) => {
+      if (!value || value.toString().length < 4) {
+        return true; // Do not validate yet
+      }
+      return validateYear(condition, message, resetCallback);
+    };
+
+
   return (
     <>
       <div className="col-span-3 mt-3">
@@ -66,178 +75,167 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
             <>
               <div>
                 <label className="block text-sm font-bold uppercase">From *</label>
-                <select
+                <input
+                  type="number"
                   value={formData.primaryFrom || ""}
                   onChange={(e) => {
                     const value = Number(e.target.value);
+
                     if (
-                      !validateYear(
+                      !safeValidateYear(
+                        value,
                         formData.primaryTo && value > formData.primaryTo,
                         "'FROM' year cannot be greater than 'TO' year.",
                         () => onInputChange("primaryFrom", "")
                       )
-                    )
-                      return;
+                    ) return;
 
                     onInputChange("primaryFrom", value);
+
                     if (formData.primarySchoolName && formData.primaryTo)
                       onInputChange("primaryEducation", "ELEMENTARY GRADUATE");
                   }}
                   required
+                  placeholder="FROM (Year)"
                   className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT YEAR</option>
-                  {renderYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
+
               <div>
                 <label className="block text-sm font-bold uppercase">To *</label>
-                <select
+                <input
+                  type="number"
                   value={formData.primaryTo || ""}
                   onChange={(e) => {
                     const value = Number(e.target.value);
+
                     if (
-                      !validateYear(
+                      !safeValidateYear(
+                        value,
                         formData.primaryFrom && value < formData.primaryFrom,
                         "'TO' year cannot be lower than 'FROM' year.",
                         () => onInputChange("primaryTo", "")
                       )
-                    )
-                      return;
+                    ) return;
 
                     onInputChange("primaryTo", value);
+
                     if (formData.primarySchoolName && formData.primaryFrom)
                       onInputChange("primaryEducation", "ELEMENTARY GRADUATE");
                   }}
                   required
+                  placeholder="TO (Year)"
                   className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT YEAR</option>
-                  {renderYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
             </>
           )}
         </div>
       </div>
-      <div className="col-span-3 mt-2">
-        <div className="grid grid-cols-4 gap-4 mt-2">
-          <div className="col-span-2">
-            <label className="block text-sm font-bold uppercase">Junior High School Name *</label>
-            <input
-              type="text"
-              value={formData.juniorHighSchoolName || ""}
-              onChange={(e) => {
-                const value = e.target.value.toUpperCase();
-                onInputChange("juniorHighSchoolName", value);
+          <div className="col-span-3 mt-2">
+            <div className="grid grid-cols-4 gap-4 mt-2">
 
-                if (!value.trim()) {
-                  onInputChange("juniorHighFrom", "");
-                  onInputChange("juniorHighTo", "");
-                  onInputChange("juniorHighEducation", "");
-                } else if (formData.juniorHighFrom && formData.juniorHighTo) {
-                  onInputChange("juniorHighEducation", "JUNIOR HIGH SCHOOL GRADUATE");
-                }
-              }}
-              required
-              className="w-full border rounded-lg px-3 py-3"
-              placeholder="Enter junior high school name"
-            />
-          </div>
+              <div className="col-span-2">
+                <label className="block text-sm font-bold uppercase">Junior High School Name *</label>
+                <input
+                  type="text"
+                  value={formData.juniorHighSchoolName || ""}
+                  onChange={(e) => {
+                    const value = e.target.value.toUpperCase();
+                    onInputChange("juniorHighSchoolName", value);
 
-          {formData.juniorHighSchoolName?.trim() !== "" && (
+                    if (!value.trim()) {
+                      onInputChange("juniorHighFrom", "");
+                      onInputChange("juniorHighTo", "");
+                      onInputChange("juniorHighEducation", "");
+                    } else if (formData.juniorHighFrom && formData.juniorHighTo) {
+                      onInputChange("juniorHighEducation", "JUNIOR HIGH SCHOOL GRADUATE");
+                    }
+                  }}
+                  required
+                  className="w-full border rounded-lg px-3 py-3"
+                  placeholder="Enter junior high school name"
+                />
+              </div>
+
+              {formData.juniorHighSchoolName?.trim() !== "" && (
             <>
               <div>
                 <label className="block text-sm font-bold uppercase">From *</label>
-                <select
+                <input
+                  type="number"
                   value={formData.juniorHighFrom || ""}
                   onChange={(e) => {
                     const value = Number(e.target.value);
 
                     if (
-                      !validateYear(
+                      !safeValidateYear(
+                        value,
                         formData.primaryTo && value < Number(formData.primaryTo),
                         "Junior High FROM year must be AFTER Primary TO.",
                         () => onInputChange("juniorHighFrom", "")
                       )
-                    )
-                      return;
+                    ) return;
 
                     if (
-                      !validateYear(
+                      !safeValidateYear(
+                        value,
                         formData.juniorHighTo && value > formData.juniorHighTo,
                         "'FROM' year cannot be greater than 'TO' year.",
                         () => onInputChange("juniorHighFrom", "")
                       )
-                    )
-                      return;
+                    ) return;
 
                     onInputChange("juniorHighFrom", value);
+
                     if (formData.juniorHighSchoolName && formData.juniorHighTo)
                       onInputChange("juniorHighEducation", "JUNIOR HIGH SCHOOL GRADUATE");
                   }}
                   required
+                  placeholder="FROM (Year)"
                   className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT YEAR</option>
-                  {renderYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
+
               <div>
                 <label className="block text-sm font-bold uppercase">To *</label>
-                <select
+                <input
+                  type="number"
                   value={formData.juniorHighTo || ""}
                   onChange={(e) => {
                     const value = Number(e.target.value);
 
                     if (
-                      !validateYear(
+                      !safeValidateYear(
+                        value,
                         formData.primaryTo && value < Number(formData.primaryTo),
                         "Junior High TO must be AFTER Primary TO.",
                         () => onInputChange("juniorHighTo", "")
                       )
-                    )
-                      return;
+                    ) return;
 
                     if (
-                      !validateYear(
+                      !safeValidateYear(
+                        value,
                         formData.juniorHighFrom && value < formData.juniorHighFrom,
                         "'TO' year cannot be lower than 'FROM' year.",
                         () => onInputChange("juniorHighTo", "")
                       )
-                    )
-                      return;
+                    ) return;
 
                     onInputChange("juniorHighTo", value);
+
                     if (formData.juniorHighSchoolName && formData.juniorHighFrom)
                       onInputChange("juniorHighEducation", "JUNIOR HIGH SCHOOL GRADUATE");
                   }}
                   required
+                  placeholder="TO (Year)"
                   className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT YEAR</option>
-                  {renderYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
             </>
           )}
-        </div>
+     </div>
         <div className="grid grid-cols-4 gap-4 mt-4">
           <div className="col-span-2">
             <label className="block text-sm font-bold uppercase">Senior High School Name *</label>
@@ -260,91 +258,93 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
               className="w-full border rounded-lg px-3 py-3"
             />
           </div>
+         {formData.seniorHighSchoolName?.trim() !== "" && (
+          <>
+            {/* FROM */}
+            <div>
+              <label className="block text-sm font-bold uppercase">From *</label>
+              <input
+                type="number"
+                value={formData.seniorHighFrom || ""}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
 
-          {formData.seniorHighSchoolName?.trim() !== "" && (
-            <>
-              <div>
-                <label className="block text-sm font-bold uppercase">From *</label>
-                <select
-                  value={formData.seniorHighFrom || ""}
-                  onChange={(e) => {
-                    const value = Number(e.target.value);
-
-                    if (
-                      !validateYear(
-                        formData.juniorHighTo && value < Number(formData.juniorHighTo),
-                        "Senior High FROM must be AFTER Junior High TO.",
-                        () => onInputChange("seniorHighFrom", "")
-                      )
+                  // === VALIDATION - only when 4 digits ===
+                  if (
+                    !safeValidateYear(
+                      value,
+                      formData.juniorHighTo && value < Number(formData.juniorHighTo),
+                      "Senior High FROM must be AFTER Junior High TO.",
+                      () => onInputChange("seniorHighFrom", "")
                     )
-                      return;
+                  )
+                    return;
 
-                    if (
-                      !validateYear(
-                        formData.seniorHighTo && value > formData.seniorHighTo,
-                        "'FROM' year cannot be greater than 'TO' year.",
-                        () => onInputChange("seniorHighFrom", "")
-                      )
+                  if (
+                    !safeValidateYear(
+                      value,
+                      formData.seniorHighTo && value > formData.seniorHighTo,
+                      "'FROM' year cannot be greater than 'TO' year.",
+                      () => onInputChange("seniorHighFrom", "")
                     )
-                      return;
+                  )
+                    return;
 
-                    onInputChange("seniorHighFrom", value);
-                    if (formData.seniorHighSchoolName && formData.seniorHighTo)
-                      onInputChange("seniorHighEducation", "SENIOR HIGH SCHOOL GRADUATE");
-                  }}
-                  required
-                  className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT YEAR</option>
-                  {renderYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-bold uppercase">To *</label>
-                <select
-                  value={formData.seniorHighTo || ""}
-                  onChange={(e) => {
-                    const value = Number(e.target.value);
+                  onInputChange("seniorHighFrom", value);
 
-                    if (
-                      !validateYear(
-                        formData.juniorHighTo && value < Number(formData.juniorHighTo),
-                        "Senior High TO must be AFTER Junior High TO.",
-                        () => onInputChange("seniorHighTo", "")
-                      )
+                  if (formData.seniorHighSchoolName && formData.seniorHighTo)
+                    onInputChange("seniorHighEducation", "SENIOR HIGH SCHOOL GRADUATE");
+                }}
+                required
+                placeholder="FROM (Year)"
+                className="w-full border rounded-lg px-3 py-3"
+              />
+            </div>
+
+            {/* TO */}
+            <div>
+              <label className="block text-sm font-bold uppercase">To *</label>
+              <input
+                type="number"
+                value={formData.seniorHighTo || ""}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+
+                  // === VALIDATION - only when 4 digits ===
+                  if (
+                    !safeValidateYear(
+                      value,
+                      formData.juniorHighTo && value < Number(formData.juniorHighTo),
+                      "Senior High TO must be AFTER Junior High TO.",
+                      () => onInputChange("seniorHighTo", "")
                     )
-                      return;
-                    if (
-                      !validateYear(
-                        formData.seniorHighFrom && value < formData.seniorHighFrom,
-                        "'TO' year cannot be lower than 'FROM' year.",
-                        () => onInputChange("seniorHighTo", "")
-                      )
+                  )
+                    return;
+
+                  if (
+                    !safeValidateYear(
+                      value,
+                      formData.seniorHighFrom && value < formData.seniorHighFrom,
+                      "'TO' year cannot be lower than 'FROM' year.",
+                      () => onInputChange("seniorHighTo", "")
                     )
-                      return;
-                    onInputChange("seniorHighTo", value);
-                    if (formData.seniorHighSchoolName && formData.seniorHighFrom)
-                      onInputChange("seniorHighEducation", "SENIOR HIGH SCHOOL GRADUATE");
-                  }}
-                  required
-                  className="w-full border rounded-lg px-3 py-3"
-                >
-                  <option value="">SELECT YEAR</option>
-                  {renderYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-            )}
+                  )
+                    return;
+
+                  onInputChange("seniorHighTo", value);
+
+                  if (formData.seniorHighSchoolName && formData.seniorHighFrom)
+                    onInputChange("seniorHighEducation", "SENIOR HIGH SCHOOL GRADUATE");
+                }}
+                required
+                placeholder="TO (Year)"
+                className="w-full border rounded-lg px-3 py-3"
+              />
           </div>
+        </>
+      )}
         </div>
+      </div>
       <div className="col-span-3 mt-2">
         <div className="grid grid-cols-2 gap-4">
           <div>
