@@ -165,10 +165,8 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
                   </div>
                 )}
               </div>
-
-            </div> {/* end flex */}
+            </div>
           </div>
-
         </div>
       </div>
     </header>
