@@ -12,31 +12,12 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
 
   const handlePrint = () => {
     const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
-    const originalHTML = document.documentElement.innerHTML;
-    const originalDarkClass = document.documentElement.classList.contains('dark');
+    const originalContents = document.body.innerHTML;
 
     if (printContents) {
-      document.documentElement.classList.remove('dark');
-      document.body.innerHTML = `
-        <html>
-          <head>
-            <title>Applicant Profile</title>
-            <style>
-              body { margin: 0; padding: 0; background: white; color: black; }
-              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            </style>
-          </head>
-          <body>${printContents}</body>
-        </html>
-      `;
-
-      setTimeout(() => {
-        window.print();
-        document.documentElement.innerHTML = originalHTML;
-        if (originalDarkClass) {
-          document.documentElement.classList.add('dark');
-        }
-      }, 100);
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
     }
   };
 
