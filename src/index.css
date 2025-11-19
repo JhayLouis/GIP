@@ -24,57 +24,37 @@
   }
 }
 
-/* Custom Scrollbar Styles */
-.scrollbar-thin {
-  scrollbar-width: thin;
-}
-
-.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 6px;
-}
-
-.scrollbar-track-transparent::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.hover\:scrollbar-thumb-gray-400:hover::-webkit-scrollbar-thumb {
-  background-color: #9ca3af;
-}
-
-/* Webkit Scrollbar */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: transparent;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-}
-
-.scrollbar-thin:hover::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af;
-}
-
-/* Print Styles for DOLE-GIP Application Form */
 @media print {
   @page {
-  size: 8.5in 13in;
-  margin: 0.1in 0.4in;
-}
+    size: 8.5in 13in;
+    margin: 0.4in 0.5in;
+  }
 
   * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #applicant-profile-content,
+  #applicant-profile-content * {
+    visibility: visible;
+    line-height: normal !important;
+  }
+
+  #applicant-profile-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    page-break-inside: auto !important;
+    border: 2px solid black !important;
+  }
+
+  #applicant-profile-content > div {
+    page-break-inside: avoid !important;
   }
 
   body {
@@ -142,16 +122,6 @@
     padding: 0 !important;
   }
 
-  #applicant-profile-content {
-    page-break-inside: auto !important;
-    border: 2px solid black !important;
-    width: 100%;
-  }
-
-  #applicant-profile-content > div {
-    page-break-inside: avoid !important;
-  }
-
   .border-b-2.border-black {
     border-bottom: 2px solid black !important;
   }
@@ -170,7 +140,7 @@
     page-break-inside: avoid;
     page-break-after: auto;
   }
-  
+
   td,
   table,
   th {

@@ -10,39 +10,11 @@ interface ApplicantProfileProps {
 const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose }) => {
   const [showImageModal, setShowImageModal] = React.useState(false);
 
-  const handlePrint = () => {
-    const printContents = document.getElementById("applicant-profile-content")?.innerHTML;
-    const originalHTML = document.documentElement.innerHTML;
-    const originalDarkClass = document.documentElement.classList.contains('dark');
-
-    if (printContents) {
-      document.documentElement.classList.remove('dark');
-      document.body.innerHTML = `
-        <html>
-          <head>
-            <title>Applicant Profile</title>
-            <style>
-              body { margin: 0; padding: 0; background: white; color: black; }
-              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            </style>
-          </head>
-          <body>${printContents}</body>
-        </html>
-      `;
-
-      setTimeout(() => {
-        window.print();
-        document.documentElement.innerHTML = originalHTML;
-        if (originalDarkClass) {
-          document.documentElement.classList.add('dark');
-        }
-      }, 100);
-    }
-  };
+const handlePrint = () => { const printContents = document.getElementById("applicant-profile-content"); if (!printContents) return; window.print(); };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto text-black" style={{ colorScheme: 'light' }}>
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="bg-red-700 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10 no-print">
           <h2 className="text-xl font-bold">GIP APPLICANT FORM</h2>
           <div className="flex items-center space-x-2">
@@ -58,25 +30,25 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             </button>
           </div>
         </div>
-       <div className="p-6 bg-white text-black">
+       <div className="p-6 bg-white">
         <div className="border-2 border-black" id="applicant-profile-content">
-        <div className="border-2 border-black border-b-0 p-3 flex justify-between items-center">
+        <div className="border-1 border-black border-b-0 p-3 flex justify-between items-center">
           <div className="flex-1">
           </div>
           <div className="border-2 border-black px-4 py-2 text-xs font-bold text-center">
             DOLE-GIP Application Form
           </div>
         </div>
-            <div className="border-b-2 border-black flex items-center justify-center p-1">
+            <div className="border-t-2 border-b-2 border-black flex items-center justify-center p-1">
               <img
                 src="src/assets/DOLElogo.png"
                 alt="DOLE Logo"
                 className="w-12 h-12 object-contain mr-2"
               />
                 <div className="text-center">
-                <p className="font-bold text-xs mb-0.5">DOLE REGIONAL OFFICE NO. ___</p>
-                <p className="font-bold text-xs mb-0.5">GOVERNMENT INTERNSHIP PROGRAM (GIP)</p>
-                <p className="font-bold text-xs underline">APPLICATION FORM</p>
+                <p className="font-bold text-sm mb-0.5">DOLE REGIONAL OFFICE NO. ___</p>
+                <p className="font-bold text-sm mb-0.5">GOVERNMENT INTERNSHIP PROGRAM (GIP)</p>
+                <p className="font-bold text-sm underline">APPLICATION FORM</p>
               </div>
               <img
                 src="src/assets/GIPLogo.png"
@@ -88,7 +60,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
               <p className="font-bold text-[10px] mb-0.5">INSTRUCTION TO APPLICANTS:</p>
               <p className="text-[10px]">Please fill out all the required information in this form and attach additional documents, if necessary.</p>
             </div>
-            <div className="grid grid-cols-[2fr_1fr] border-t-2 border-b-2 border-black">
+            <div className="grid grid-cols-[2fr_1fr] border-t-1 border-b-2 border-black">
               <div className="border-r-2 border-black p-2">
                 <p className="font-bold text-[10px] mb-1">1. NAME OF APPLICANT:</p>
                 <div className="border-b border-black mb-1.5 pb-0.5">
@@ -383,7 +355,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </div>
               </div>
             </div>
-            <div className="border-b-2 border-black p-2">
+            <div className="border-b-1 border-black p-1">
               <p className="font-bold text-[10px] mb-1">Documents Received:</p>
               <div className="grid grid-cols-2 gap-2 text-[10px]">
                 <div>
