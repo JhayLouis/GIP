@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Filter } from 'lucide-react';
 
 interface SummaryReportProps {
   data: any;

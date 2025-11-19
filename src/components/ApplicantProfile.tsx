@@ -407,7 +407,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                   <span>Others:</span>
                   <input
                     type="text"
-                    value={applicant.otherDisadvantaged || ''}
+                    value={typeof applicant.otherDisadvantaged === 'string' ? applicant.otherDisadvantaged : ''}
                     readOnly
                     className="border border-black w-16 px-0.5 text-[10px] bg-white"
                   />
