@@ -166,14 +166,18 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
           );
         })}
       </div>
-
       <div className="flex justify-center">
         <button
           onClick={() => setShowMore(!showMore)}
-          className="flex items-center space-x-2 px-6 py-3 bg-white dark:bg-slate-800 hover:bg-gray-50 text-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700 transition-all duration-200 hover:shadow-md"
+          className="flex items-center space-x-2 px-6 py-3 
+                    bg-white dark:bg-slate-800 
+                    text-gray-700 dark:text-gray-200
+                    border border-gray-200 dark:border-slate-700
+                    hover:bg-gray-100 dark:hover:bg-slate-700
+                    rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
         >
           <span className="font-medium">
-            {showMore ? 'See Less' : 'See More'}
+            {showMore ? "See Less" : "See More"}
           </span>
           {showMore ? (
             <ChevronUp className="w-4 h-4" />

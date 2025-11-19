@@ -100,11 +100,11 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
                   {item.value}
                 </div>
                 <div className={`flex items-center justify-center space-x-4 text-xs font-medium ${colors.text}`}>
-                  <div className="flex items-center space-x-1 bg-white dark:bg-slate-800 px-3 py-1 rounded-full">
+                  <div className="flex items-center space-x-1 bg-white px-3 py-1 rounded-full">
                     <span>♂</span>
                     <span className="font-bold">{item.male}</span>
                   </div>
-                  <div className="flex items-center space-x-1 bg-white dark:bg-slate-800 px-3 py-1 rounded-full">
+                  <div className="flex items-center space-x-1 bg-white px-3 py-1 rounded-full">
                     <span>♀</span>
                     <span className="font-bold">{item.female}</span>
                   </div>

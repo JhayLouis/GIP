@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LogOut, Sun, Moon } from 'lucide-react';
+import { LogOut, Sun, Moon, User as UserIcon } from 'lucide-react'; // FIXED: renamed User → UserIcon
 import { User } from '../utils/auth';
 import { useTheme } from '../contexts/ThemeContext';
 import Swal from 'sweetalert2';
@@ -55,12 +55,12 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
   const tupadLogo = '/src/assets/TupadLogo.png';
   const logoSrc = activeProgram === 'GIP' ? gipLogo : tupadLogo;
 
-
   return (
     <header className={`${headerColor} text-white border-b-4 border-yellow-400`}>
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          {/* Left side - Logo and Title */}
+
+          {/* LEFT SIDE */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center justify-center w-12 h-12">
               <img
@@ -78,9 +78,10 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
             </div>
           </div>
 
-          {/* Right side - Toggle and User Info */}
+          {/* RIGHT SIDE */}
           <div className="flex items-center space-x-6">
-            {/* Toggle Switch */}
+
+            {/* Program Toggle */}
             <div className="flex items-center space-x-3 bg-black bg-opacity-20 px-4 py-2 rounded-lg">
               <button
                 onClick={toggleProgram}
@@ -93,28 +94,16 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
                 GIP
               </button>
 
-              <div className="relative">
-                <button
-                  onClick={toggleProgram}
-                  className="relative w-8 h-4 bg-white bg-opacity-30 rounded-full transition-colors duration-200 focus:outline-2 focus:ring-2 focus:ring-white focus:ring-opacity-50"
-                >
-                  <div
-                    className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform duration-200 flex items-center justify-center shadow-sm ${
-                      activeProgram === 'GIP'
-                        ? 'translate-x-0.5'
-                        : 'translate-x-4'
-                    }`}
-                  >
-                    <div
-                      className={`w-1 h-1 rounded-full ${
-                        activeProgram === 'GIP'
-                          ? 'bg-red-800'
-                          : 'bg-green-800'
-                      }`}
-                    />
-                  </div>
-                </button>
-              </div>
+              <button
+                onClick={toggleProgram}
+                className="relative w-8 h-4 bg-white bg-opacity-30 rounded-full transition-colors duration-200"
+              >
+                <div
+                  className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-transform duration-200 shadow-sm ${
+                    activeProgram === 'GIP' ? 'translate-x-0.5' : 'translate-x-4'
+                  }`}
+                />
+              </button>
 
               <button
                 onClick={toggleProgram}
@@ -128,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
               </button>
             </div>
 
-            {/* Theme Toggle Button */}
+            {/* THEME BUTTON */}
             <button
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
               className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors duration-200"
@@ -141,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
               )}
             </button>
 
-            {/* User Menu */}
+            {/* USER INFO + USER MENU */}
             <div className="flex items-center space-x-3">
               <div className="text-right">
                 <p className="text-sm font-medium">
@@ -152,21 +141,18 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
                 </p>
               </div>
 
-              {/* User Menu Button */}
+              {/* USER ICON MENU */}
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors duration-200 group"
+                  className="p-2 hover:bg-white hover:bg-opacity-10 rounded-lg transition-colors duration-200"
                   title="User menu"
                 >
-                  <div className="w-6 h-6 bg-white bg-opacity-30 rounded-full flex items-center justify-center hover:bg-opacity-40 transition-colors duration-200">
-                    <span className="text-sm font-bold">
-                      {(user?.name || 'U').charAt(0).toUpperCase()}
-                    </span>
+                  <div className="w-8 h-8 bg-white bg-opacity-30 rounded-full flex items-center justify-center hover:bg-opacity-40 transition-colors duration-200">
+                    <UserIcon className="w-5 h-5 text-white" />
                   </div>
                 </button>
 
-                {/* Dropdown Menu */}
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50">
                     <button
@@ -179,8 +165,10 @@ const Header: React.FC<HeaderProps> = ({ activeProgram, onProgramChange, user, o
                   </div>
                 )}
               </div>
-            </div>
+
+            </div> {/* end flex */}
           </div>
+
         </div>
       </div>
     </header>
