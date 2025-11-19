@@ -37,7 +37,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
 
   return (
     <>
-      {/* PRIMARY EDUCATION */}
       <div className="col-span-3 mt-3">
         <div className="grid grid-cols-4 gap-4">
           <div className="col-span-2">
@@ -65,7 +64,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
 
           {formData.primarySchoolName?.trim() !== "" && (
             <>
-              {/* PRIMARY FROM */}
               <div>
                 <label className="block text-sm font-bold uppercase">From *</label>
                 <select
@@ -96,8 +94,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   ))}
                 </select>
               </div>
-
-              {/* PRIMARY TO */}
               <div>
                 <label className="block text-sm font-bold uppercase">To *</label>
                 <select
@@ -132,8 +128,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
           )}
         </div>
       </div>
-
-      {/* JUNIOR HIGH */}
       <div className="col-span-3 mt-2">
         <div className="grid grid-cols-4 gap-4 mt-2">
           <div className="col-span-2">
@@ -161,7 +155,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
 
           {formData.juniorHighSchoolName?.trim() !== "" && (
             <>
-              {/* JUNIOR FROM */}
               <div>
                 <label className="block text-sm font-bold uppercase">From *</label>
                 <select
@@ -202,8 +195,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   ))}
                 </select>
               </div>
-
-              {/* JUNIOR TO */}
               <div>
                 <label className="block text-sm font-bold uppercase">To *</label>
                 <select
@@ -247,8 +238,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
             </>
           )}
         </div>
-
-        {/* SENIOR HIGH */}
         <div className="grid grid-cols-4 gap-4 mt-4">
           <div className="col-span-2">
             <label className="block text-sm font-bold uppercase">Senior High School Name *</label>
@@ -274,7 +263,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
 
           {formData.seniorHighSchoolName?.trim() !== "" && (
             <>
-              {/* SENIOR FROM */}
               <div>
                 <label className="block text-sm font-bold uppercase">From *</label>
                 <select
@@ -315,8 +303,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   ))}
                 </select>
               </div>
-
-              {/* SENIOR TO */}
               <div>
                 <label className="block text-sm font-bold uppercase">To *</label>
                 <select
@@ -332,7 +318,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                       )
                     )
                       return;
-
                     if (
                       !validateYear(
                         formData.seniorHighFrom && value < formData.seniorHighFrom,
@@ -341,8 +326,9 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                       )
                     )
                       return;
-
                     onInputChange("seniorHighTo", value);
+                    if (formData.seniorHighSchoolName && formData.seniorHighFrom)
+                      onInputChange("seniorHighEducation", "SENIOR HIGH SCHOOL GRADUATE");
                   }}
                   required
                   className="w-full border rounded-lg px-3 py-3"
@@ -356,11 +342,9 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 </select>
               </div>
             </>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-
-      {/* TERTIARY SECTION */}
       <div className="col-span-3 mt-2">
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -415,7 +399,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
 
         {formData.tertiarySchoolName?.trim() !== "" && (
           <div className="grid grid-cols-3 gap-4 mt-3">
-            {/* TERTIARY FROM */}
             <div>
               <label className="block text-sm font-bold uppercase">From *</label>
               <select
@@ -454,8 +437,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 ))}
               </select>
             </div>
-
-            {/* TERTIARY TO */}
             <div>
               <label className="block text-sm font-bold uppercase">To *</label>
               <select
@@ -494,11 +475,8 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 ))}
               </select>
             </div>
-
-            {/* COURSE */}
             <div>
               <label className="block text-sm font-bold uppercase">Course *</label>
-
               {!showCustomCourse ? (
                 <select
                   value={formData.course || ""}
@@ -516,37 +494,31 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   required
                 >
                   <option value="">SELECT COURSE</option>
-
+                  <option value="OTHERS">OTHERS (Type manually)</option>
                   {formData.tertiaryEducation === "COLLEGE GRADUATE" &&
                     COLLEGE_COURSES.map((c, i) => (
                       <option key={i} value={c}>
                         {c}
                       </option>
                     ))}
-
-                  {formData.tertiaryEducation ===
-                    "TECHNICAL/VOCATIONAL COURSE GRADUATE" &&
+                  {formData.tertiaryEducation === "TECHNICAL/VOCATIONAL COURSE GRADUATE" &&
                     TECHNICAL_VOCATIONAL_COURSES.map((c, i) => (
                       <option key={i} value={c}>
                         {c}
                       </option>
                     ))}
-
                   {formData.tertiaryEducation === "ALS SECONDARY GRADUATE" &&
                     ALS_SECONDARY_COURSES.map((c, i) => (
                       <option key={i} value={c}>
                         {c}
                       </option>
                     ))}
-
                   {formData.tertiaryEducation === "COLLEGE UNDERGRADUATE" &&
                     COLLEGE_UNDERGRADUATE_COURSES.map((c, i) => (
                       <option key={i} value={c}>
                         {c}
                       </option>
                     ))}
-
-                  <option value="OTHERS">OTHERS (Type manually)</option>
                 </select>
               ) : (
                 <input
@@ -555,9 +527,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   onChange={(e) => {
                     const value = e.target.value.toUpperCase();
                     setCustomCourse(value);
-                    onInputChange("course", value);
-
-                    if (!value.trim()) setShowCustomCourse(false);
+                    onInputChange("course", value.trim());
                   }}
                   required
                   placeholder="Enter your course"
@@ -566,10 +536,8 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
               )}
             </div>
           </div>
-        )}
+          )}
       </div>
-
-      {/* BENEFICIARY NAME */}
       <div>
         <label className="block text-sm font-bold mb-2 uppercase">Beneficiary Name</label>
         <input

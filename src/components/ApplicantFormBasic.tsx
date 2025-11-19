@@ -243,7 +243,6 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
           onChange={(e) => {
             const birthDate = e.target.value;
             onInputChange('birthDate', birthDate);
-            // Placeholder: calculateAge would be imported and used here
           }}
           required
           className="w-full border rounded-lg px-3 py-2"

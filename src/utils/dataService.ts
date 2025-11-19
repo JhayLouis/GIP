@@ -34,6 +34,7 @@ export interface Applicant {
   tertiaryEducation?: string;
   tertiaryFrom?: string;
   tertiaryTo?: string;
+  courseType?: string;
   course?: string;
   beneficiaryName?: string;
   photoFile?: File;
