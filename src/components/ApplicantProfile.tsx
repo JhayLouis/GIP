@@ -134,29 +134,86 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             <div className="grid grid-cols-[140px_1fr] items-center border-b-2 border-black text-[10px]">
               <p className="font-bold p-1">5. GENDER</p>
               <div className="flex items-center gap-3 p-1 ml-9">
-                <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.gender === 'MALE'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.gender === 'MALE'}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[11px]
+                    "
+                  />
                   <span>Male</span>
                 </label>
-                <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.gender === 'FEMALE'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.gender === 'FEMALE'}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[11px]
+                    "
+                  />
                   <span>Female</span>
                 </label>
               </div>
             </div>
             <div className="grid grid-cols-[140px_1fr] items-center border-b-2 border-black text-[10px]">
               <p className="font-bold p-1">6. CIVIL STATUS</p>
-              <div className="flex items-center gap-2 p-1 ml-9">
-                <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.civilStats === 'SINGLE'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
+              <div className="flex items-center gap-3 p-1 ml-9">
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.civilStats === 'SINGLE'}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[11px]
+                    "
+                  />
                   <span>Single</span>
                 </label>
-                <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.civilStats === 'MARRIED'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
+
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.civilStats === 'MARRIED'}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[11px]
+                    "
+                  />
                   <span>Married</span>
                 </label>
-                <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.civilStats === 'WIDOW/WIDOWER'} readOnly className="w-2.5 h-2.5" />
+
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.civilStats === 'WIDOW/WIDOWER'}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[11px]
+                    "
+                  />
                   <span>Widow/Widower</span>
                 </label>
               </div>
@@ -256,35 +313,105 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                 </tbody>
               </table>
             </div>
-
             <div className="border-b-2 border-black p-2">
               <p className="font-bold text-[10px] mb-0.5">8. DISADVANTAGED GROUP</p>
               <div className="text-[10px] flex flex-wrap gap-2 mt-0.5">
-                <div className="flex items-center gap-0.5">
-                  <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.disadvantaged?.includes('PWDs')}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[10px]
+                    "
+                  />
                   <span>PWDs</span>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                </label>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.disadvantaged?.includes('IPs')}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[10px]
+                    "
+                  />
                   <span>IPs</span>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                </label>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.disadvantaged?.includes('Victims of Armed Conflict')}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[10px]
+                    "
+                  />
                   <span>Victims of Armed Conflict</span>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                </label>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.disadvantaged?.includes('Rebel Returnee')}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[10px]
+                    "
+                  />
                   <span>Rebel Returnee</span>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                </label>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={applicant.disadvantaged?.includes('4Ps')}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[10px]
+                    "
+                  />
                   <span>4Ps</span>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                </label>
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(applicant.otherDisadvantaged)}
+                    readOnly
+                    className="
+                      w-3 h-3 bg-white border border-black appearance-none relative
+                      checked:bg-white checked:border-black
+                      checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                      checked:after:flex checked:after:items-center checked:after:justify-center
+                      checked:after:text-black checked:after:font-bold checked:after:text-[10px]
+                    "
+                  />
                   <span>Others:</span>
-                  <input type="text" className="border border-black w-16 px-0.5 text-[10px]" readOnly />
-                </div>
+                  <input
+                    type="text"
+                    value={applicant.otherDisadvantaged || ''}
+                    readOnly
+                    className="border border-black w-16 px-0.5 text-[10px] bg-white"
+                  />
+                </label>
               </div>
             </div>
             <div className="border-b-2 border-black p-2">
@@ -356,41 +483,110 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             </div>
             <div className="border-b-1 border-black p-1">
               <p className="font-bold text-[10px] mb-1">Documents Received:</p>
+
               <div className="grid grid-cols-2 gap-2 text-[10px]">
                 <div>
                   <div className="flex items-center gap-1 mb-0.5">
-                    <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                    <input
+                      type="checkbox"
+                      readOnly
+                      className="w-2.5 h-2.5 bg-white border border-black appearance-none relative
+                                checked:bg-white checked:border-black
+                                checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                                checked:after:flex checked:after:items-center checked:after:justify-center
+                                checked:after:text-black checked:after:font-bold checked:after:text-[10px]"
+                    />
                     <span>Birth certificate or equivalent</span>
                   </div>
+
                   <div className="flex items-center gap-1 mb-0.5">
-                    <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                    <input
+                      type="checkbox"
+                      readOnly
+                      className="w-2.5 h-2.5 bg-white border border-black appearance-none relative
+                                checked:bg-white checked:border-black
+                                checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                                checked:after:flex checked:after:items-center checked:after:justify-center
+                                checked:after:text-black checked:after:font-bold checked:after:text-[10px]"
+                    />
                     <span>Transcript of Records</span>
                   </div>
+
                   <div className="flex items-center gap-1">
-                    <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                    <input
+                      type="checkbox"
+                      readOnly
+                      className="w-2.5 h-2.5 bg-white border border-black appearance-none relative
+                                checked:bg-white checked:border-black
+                                checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                                checked:after:flex checked:after:items-center checked:after:justify-center
+                                checked:after:text-black checked:after:font-bold checked:after:text-[10px]"
+                    />
                     <span>Barangay Certification</span>
                   </div>
                 </div>
+
                 <div>
                   <div className="flex items-center gap-1 mb-0.5">
-                    <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                    <input
+                      type="checkbox"
+                      readOnly
+                      className="w-2.5 h-2.5 bg-white border border-black appearance-none relative
+                                checked:bg-white checked:border-black
+                                checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                                checked:after:flex checked:after:items-center checked:after:justify-center
+                                checked:after:text-black checked:after:font-bold checked:after:text-[10px]"
+                    />
                     <span>Form 137/138</span>
                   </div>
+
                   <div className="flex items-center gap-1 mb-0.5">
-                    <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                    <input
+                      type="checkbox"
+                      readOnly
+                      className="w-2.5 h-2.5 bg-white border border-black appearance-none relative
+                                checked:bg-white checked:border-black
+                                checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                                checked:after:flex checked:after:items-center checked:after:justify-center
+                                checked:after:text-black checked:after:font-bold checked:after:text-[10px]"
+                    />
                     <span>Diploma</span>
                   </div>
+
                   <div className="flex items-center gap-1">
-                    <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                    <input
+                      type="checkbox"
+                      readOnly
+                      className="w-2.5 h-2.5 bg-white border border-black appearance-none relative
+                                checked:bg-white checked:border-black
+                                checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                                checked:after:flex checked:after:items-center checked:after:justify-center
+                                checked:after:text-black checked:after:font-bold checked:after:text-[10px]"
+                    />
                     <span>Certification from school or any docs equivalent hereto</span>
                   </div>
                 </div>
               </div>
+
               <div className="flex items-center gap-1 mt-1 text-[10px]">
-                <input type="checkbox" readOnly className="w-2.5 h-2.5" />
+                <input
+                  type="checkbox"
+                  readOnly
+                  className="w-2.5 h-2.5 bg-white border border-black appearance-none relative
+                            checked:bg-white checked:border-black
+                            checked:after:content-['✓'] checked:after:absolute checked:after:inset-0
+                            checked:after:flex checked:after:items-center checked:after:justify-center
+                            checked:after:text-black checked:after:font-bold checked:after:text-[10px]"
+                />
                 <span>Others:</span>
-                <input type="text" className="border border-black w-24 px-0.5 text-[10px]" readOnly />
+
+                <input
+                  type="text"
+                  readOnly
+                  className="border border-black w-24 px-0.5 text-[10px] bg-white !bg-white"
+                />
               </div>
+
               <p className="font-bold text-[10px] mt-1">DOLE REGIONAL OFFICE NO. ____</p>
             </div>
           </div>
