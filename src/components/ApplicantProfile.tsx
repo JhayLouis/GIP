@@ -10,18 +10,20 @@ interface ApplicantProfileProps {
 const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose }) => {
   const [showImageModal, setShowImageModal] = React.useState(false);
 
-const handlePrint = () => { const printContents = document.getElementById("applicant-profile-content"); if (!printContents) return; window.print(); };
+  const handlePrint = () => {
+    window.print();
+    };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 modal">
+      <div className="light-mode bg-white text-black rounded-lg shadow-2xl w-full max-w-4xl print:w-full print:max-w-full max-h-[90vh] overflow-y-auto print:max-h-none print:overflow-visible">
         <div className="bg-red-700 text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10 no-print">
           <h2 className="text-xl font-bold">GIP APPLICANT FORM</h2>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={handlePrint}
-              className="hover:bg-red-800 p-2 rounded transition-colors"
-              title="Print"
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handlePrint}
+            className="hover:bg-red-800 p-2 rounded transition-colors"
+            title="Print"
             >
               <Printer className="w-5 h-5" />
             </button>
@@ -81,15 +83,12 @@ const handlePrint = () => { const printContents = document.getElementById("appli
                   {`${(applicant.residentialAddress || '').toUpperCase()}, BRGY. ${(applicant.barangay || '').toUpperCase()}`}
                 </p>
               </div>
-
-
-                <div className="text-[10px] space-y-1">
+              <div className="text-[10px] space-y-1">
                 <div className="grid grid-cols-[140px_1fr] border-b border-black text-[10px]">
                    <p className="font-bold p-1">Telephone No.:</p>
                    <span className="p-1 ml-7"> {applicant.telephoneNumber}</span>
               </div>
-
-              <div className="grid grid-cols-[140px_1fr] border-b border-black text-[10px]">
+              <div className="grid grid-cols-[140px_1fr] border-b-2 border-black text-[10px]">
                   <p className="font-bold p-1">Mobile No.:</p>
                   <span className="p-1 ml-7"> {applicant.contactNumber}</span>
                   </div>
@@ -104,8 +103,8 @@ const handlePrint = () => { const printContents = document.getElementById("appli
                     onClick={() => setShowImageModal(true)}
                   />
                 ) : (
-                  <div className="w-[1.5in] h-[1.5in] flex flex-col items-center justify-center bg-gray-200 border border-black p-2">
-                    <p className="text-[7px] font-bold text-center leading-tight">
+                  <div className="w-[1.5in] h-[1.5in] flex flex-col items-center justify-center p-2">
+                    <p className="text-[10px] font-bold text-center leading-tight">
                       ATTACH 2x2 PHOTO WITH NAME AND SIGNATURE TAKEN WITHIN THE LAST THREE (3) MONTHS
                     </p>
                   </div>
@@ -136,11 +135,11 @@ const handlePrint = () => { const printContents = document.getElementById("appli
               <p className="font-bold p-1">5. GENDER</p>
               <div className="flex items-center gap-3 p-1 ml-9">
                 <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.gender === 'MALE'} readOnly className="w-2.5 h-2.5" />
+                  <input type="checkbox" checked={applicant.gender === 'MALE'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
                   <span>Male</span>
                 </label>
                 <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.gender === 'FEMALE'} readOnly className="w-2.5 h-2.5" />
+                  <input type="checkbox" checked={applicant.gender === 'FEMALE'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
                   <span>Female</span>
                 </label>
               </div>
@@ -149,11 +148,11 @@ const handlePrint = () => { const printContents = document.getElementById("appli
               <p className="font-bold p-1">6. CIVIL STATUS</p>
               <div className="flex items-center gap-2 p-1 ml-9">
                 <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.civilStats === 'SINGLE'} readOnly className="w-2.5 h-2.5" />
+                  <input type="checkbox" checked={applicant.civilStats === 'SINGLE'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
                   <span>Single</span>
                 </label>
                 <label className="flex items-center gap-0.5">
-                  <input type="checkbox" checked={applicant.civilStats === 'MARRIED'} readOnly className="w-2.5 h-2.5" />
+                  <input type="checkbox" checked={applicant.civilStats === 'MARRIED'} readOnly className="w-2.5 h-2.5 !bg-white !text-black !border !border-black"/>
                   <span>Married</span>
                 </label>
                 <label className="flex items-center gap-0.5">
