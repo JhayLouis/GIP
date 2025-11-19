@@ -73,7 +73,6 @@ const SummaryReport: React.FC<SummaryReportProps> = ({
             {programName} SUMMARY REPORT
           </h3>
           <div className="flex items-center space-x-2">
-            <Filter className={`w-5 h-5 ${colors.headerText}`} />
             <select
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value as 'summary' | 'barangay' | 'status' | 'gender')}

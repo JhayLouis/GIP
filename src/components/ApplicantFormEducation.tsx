@@ -527,7 +527,9 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   onChange={(e) => {
                     const value = e.target.value.toUpperCase();
                     setCustomCourse(value);
-                    onInputChange("course", value.trim());
+                    onInputChange("course", value);
+
+                    if (!value.trim()) setShowCustomCourse(false);
                   }}
                   required
                   placeholder="Enter your course"
