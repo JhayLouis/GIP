@@ -537,7 +537,6 @@ export const getGenderStatisticsByYear = (program: 'GIP' | 'TUPAD', year?: numbe
   });
 };
 
-// Get applicants by status
 export const getApplicantsByStatus = (program: 'GIP' | 'TUPAD', status: string, year?: number): Applicant[] => {
   let applicants = getApplicants(program).filter(a => !a.archived && a.status === status);
 
@@ -551,7 +550,6 @@ export const getApplicantsByStatus = (program: 'GIP' | 'TUPAD', status: string, 
   return applicants;
 };
 
-// Get applicants by barangay
 export const getApplicantsByBarangay = (program: 'GIP' | 'TUPAD', barangay: string, year?: number): Applicant[] => {
   let applicants = getApplicants(program).filter(a => !a.archived && a.barangay === barangay);
 
@@ -579,7 +577,6 @@ export const getApplicantsByGenderAndStatus = (program: 'GIP' | 'TUPAD', gender:
   return applicants;
 };
 
-// Get all applicants of a program by type (total, or status names)
 export const getApplicantsByType = (program: 'GIP' | 'TUPAD', type: string, year?: number): Applicant[] => {
   let applicants = getApplicants(program).filter(a => !a.archived);
 
