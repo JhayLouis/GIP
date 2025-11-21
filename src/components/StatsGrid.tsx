@@ -145,7 +145,6 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
                   <Icon className="w-8 h-8" />
                 </div>
               </div>
-
               <div className="flex items-center space-x-4 text-xs opacity-75">
                 <div className="flex items-center space-x-1">
                   <span>♂</span>
@@ -156,7 +155,6 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
                   <span>{stat.female}</span>
                 </div>
               </div>
-
               <div className="absolute -right-4 -bottom-4 opacity-10">
                 <Icon className="w-20 h-20" />
               </div>
