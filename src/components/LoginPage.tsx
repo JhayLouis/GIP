@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { User, Lock, Eye, EyeOff } from 'lucide-react';
+import React, { useState } from "react";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
 import Logo from "../assets/SantaRosa.png";
 import Arch from "../assets/SantaRosaArch.png";
 
@@ -8,72 +8,27 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
-  const [errors, setErrors] = useState({
-    username: '',
-    password: '',
-    general: ''
-  });
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [errors, setErrors] = useState({ username: "", password: "", general: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
-    const newErrors = {
-      username: '',
-      password: '',
-      general: ''
-    };
-
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
+    const newErrors = { username: "", password: "", general: "" };
+    if (!formData.username.trim()) newErrors.username = "Username is required";
+    if (!formData.password) newErrors.password = "Password is required";
     setErrors(newErrors);
     return !newErrors.username && !newErrors.password;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
     setIsLoading(true);
-    setErrors(prev => ({ ...prev, general: '' }));
-
-    try {
-      const success = await onLogin(formData.username, formData.password);
-      if (!success) {
-        setErrors(prev => ({
-          ...prev,
-          general: 'Invalid username or password. Please try again.'
-        }));
-      }
-    } catch (error) {
-      setErrors(prev => ({
-        ...prev,
-        general: 'An error occurred during login. Please try again.'
-      }));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
+    setErrors({ username: "", password: "", general: "" });
+    const success = await onLogin(formData.username, formData.password);
+    if (!success) setErrors((prev) => ({ ...prev, general: "Invalid username or password" }));
+    setIsLoading(false);
   };
 
   return (
@@ -81,26 +36,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
       style={{
         backgroundImage: `url(${Arch})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
-      {/* Overlay gradient with opacity */}
       <div className="absolute inset-0 bg-gradient-to-br from-red-600/80 to-orange-700/80 backdrop-blur-sm"></div>
 
-      {/* Content */}
       <div className="relative w-full max-w-md z-10">
-        <div className="bg-white/95 rounded-2xl shadow-2xl p-8 backdrop-blur-md">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 bg-white shadow-md">
-              <img
-                src={Logo}
-                alt="Santa Rosa Logo"
-                className="w-16 h-16 object-contain"
-              />
+        <div className="bg-white text-gray-900 rounded-2xl shadow-2xl p-10 backdrop-blur-md">
+
+          <div className="text-center mb-10">
+            <div className="w-20 h-20 bg-white shadow-md rounded-full mx-auto flex items-center justify-center mb-4">
+              <img src={Logo} className="w-16 h-16 object-contain" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">SOFT PROJECTS</h1>
-            <p className="text-gray-600 text-sm mb-1">Application Management System</p>
+            <h1 className="text-2xl font-bold">SOFT PROJECTS</h1>
+            <p className="text-gray-700 text-sm">Application Management System</p>
             <p className="text-gray-500 text-xs">City Government of Santa Rosa</p>
           </div>
 
@@ -111,78 +61,55 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               </div>
             )}
 
-            {/* Username Field */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                Username
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
                   <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="username"
                   type="text"
                   value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   placeholder="Enter username"
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
-                    errors.username
-                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                      : 'border-gray-300'
-                  }`}
-                  disabled={isLoading}
+                  className="w-full pl-10 pr-4 py-3 rounded-lg border bg-white text-gray-900 border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 !bg-white !text-gray-900 !border-gray-300 dark:!bg-white dark:!text-gray-900 dark:!border-gray-300"
                 />
               </div>
-              {errors.username && (
-                <p className="mt-1 text-sm text-red-600">{errors.username}</p>
-              )}
+              {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
             </div>
 
-            {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
                   <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Enter password"
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
-                    errors.password
-                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                      : 'border-gray-300'
-                  }`}
-                  disabled={isLoading}
+                  className="w-full pl-10 pr-12 py-3 rounded-lg border bg-white text-gray-900 border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 !bg-white !text-gray-900 !border-gray-300 dark:!bg-white dark:!text-gray-900 dark:!border-gray-300"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  disabled={isLoading}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 text-gray-400" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 text-gray-400" />
                   )}
                 </button>
               </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
+              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
             >
               {isLoading ? (
                 <div className="flex items-center space-x-2">
@@ -190,18 +117,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   <span>Signing In...</span>
                 </div>
               ) : (
-                'Sign In'
+                "Sign In"
               )}
             </button>
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-xs text-gray-500">
-              © 2025 City Government of Santa Rosa
-            </p>
-            <p className="text-xs text-gray-500">
-              Office of the City Mayor
-            </p>
+            <p className="text-xs text-gray-500">© 2025 City Government of Santa Rosa</p>
+            <p className="text-xs text-gray-500">Office of the City Mayor</p>
           </div>
         </div>
       </div>

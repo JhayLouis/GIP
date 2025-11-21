@@ -3,31 +3,43 @@ import React, { useState } from "react";
 interface ApplicantFormBasicProps {
   formData: any;
   editingApplicant: any;
-  activeProgram: 'GIP' | 'TUPAD';
+  activeProgram: "GIP" | "TUPAD";
   applicantCode: string;
   onInputChange: (field: string, value: any) => void;
 }
 
 const truncateFileName = (fileName: string, maxLength: number = 15) => {
+  if (!fileName) return "";
   if (fileName.length <= maxLength) return fileName;
-  const extension = fileName.split('.').pop();
-  const nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
-  const truncatedName = nameWithoutExtension.substring(0, maxLength - 3 - (extension?.length || 0));
-  return `${truncatedName}...${extension}`;
+
+  const extension = fileName.split(".").pop();
+  const base = fileName.substring(0, fileName.lastIndexOf("."));
+  const shortBase = base.substring(0, maxLength - (extension?.length || 0) - 3);
+  return `${shortBase}...${extension}`;
 };
 
 const downloadResume = (fileName: string, fileData: string) => {
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = fileData;
   link.download = fileName;
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  link.remove();
 };
 
-const validateName = (value: string) => {
-  const pattern = /^[A-Z\s'-]*$/;
-  return pattern.test(value);
+const validateName = (value: string) => /^[A-Z\s'-]*$/.test(value);
+
+const calculateAge = (birthDate: string) => {
+  if (!birthDate) return "";
+  const today = new Date();
+  const dob = new Date(birthDate);
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+    age--;
+  }
+  return age;
 };
 
 const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
@@ -35,35 +47,48 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
   editingApplicant,
   activeProgram,
   applicantCode,
-  onInputChange
+  onInputChange,
 }) => {
   const [nameErrors, setNameErrors] = useState({
-    first: '',
-    middle: '',
-    last: '',
+    first: "",
+    middle: "",
+    last: "",
   });
-  const [telephoneError, setTelephoneError] = useState('');
+
+  const [telephoneError, setTelephoneError] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showImageModal, setShowImageModal] = useState(false);
 
   return (
     <>
+      {/* Applicant Code */}
       <div>
-        <label className="block text-sm font-bold mb-1 uppercase">Applicant Code</label>
+        <label className="block text-sm font-bold mb-1 uppercase">
+          Applicant Code
+        </label>
         <input
           type="text"
           value={applicantCode}
           readOnly
-          className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+          className="w-full border rounded-lg px-3 py-2 
+            bg-gray-100 dark:bg-slate-700/60 
+            text-gray-800 dark:text-white"
         />
       </div>
 
-      {activeProgram === 'GIP' && (
+      {/* Photo Upload */}
+      {activeProgram === "GIP" && (
         <div>
-          <label className="block text-sm font-bold mb-1 uppercase">Upload 2x2 Photo *</label>
-          <div className="flex items-center gap-3 border rounded-lg px-3 py-2 bg-white">
+          <label className="block text-sm font-bold mb-1 uppercase">
+            Upload 2x2 Photo *
+          </label>
+
+          <div
+            className="flex items-center gap-3 border rounded-lg px-3 py-2 
+            bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+          >
             <label className="cursor-pointer shrink-0">
-              <span className="bg-yellow-400 px-3 py-1 rounded-md font-medium hover:bg-yellow-500 transition whitespace-nowrap">
+              <span className="bg-yellow-400 px-3 py-1 rounded-md font-medium hover:bg-yellow-500 transition">
                 Choose File
               </span>
               <input
@@ -75,32 +100,37 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
                   if (file) {
                     const reader = new FileReader();
                     reader.onloadend = () => {
-                      onInputChange('photoFile', file);
-                      onInputChange('photoFileName', file.name);
-                      onInputChange('photoFileData', reader.result as string);
+                      onInputChange("photoFile", file);
+                      onInputChange("photoFileName", file.name);
+                      onInputChange("photoFileData", reader.result as string);
                     };
                     reader.readAsDataURL(file);
                   } else {
-                    onInputChange('photoFile', null);
-                    onInputChange('photoFileName', '');
-                    onInputChange('photoFileData', '');
+                    onInputChange("photoFile", null);
+                    onInputChange("photoFileName", "");
+                    onInputChange("photoFileData", "");
                   }
                 }}
               />
             </label>
+
             {(formData.photoFileName || editingApplicant?.photoFileName) ? (
               <span
-                className="text-sm text-green-600 font-medium cursor-pointer hover:text-green-700 hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (formData.photoFileData || editingApplicant?.photoFileData) {
-                    setSelectedImage(formData.photoFileData || editingApplicant?.photoFileData || null);
+                className="text-sm text-green-600 dark:text-green-400 font-medium cursor-pointer hover:underline"
+                onClick={() => {
+                  const img =
+                    formData.photoFileData ||
+                    editingApplicant?.photoFileData ||
+                    null;
+                  if (img) {
+                    setSelectedImage(img);
                     setShowImageModal(true);
                   }
                 }}
-                title={formData.photoFileName || editingApplicant?.photoFileName}
               >
-                {truncateFileName(formData.photoFileName || editingApplicant?.photoFileName || '')}
+                {truncateFileName(
+                  formData.photoFileName || editingApplicant?.photoFileName
+                )}
               </span>
             ) : (
               <span className="text-gray-500 text-sm">No file chosen</span>
@@ -109,11 +139,17 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
         </div>
       )}
 
+      {/* Resume Upload */}
       <div>
-        <label className="block text-sm font-bold mb-1 uppercase">Upload Resume</label>
-        <div className="flex items-center gap-3 border rounded-lg px-3 py-2 bg-white">
+        <label className="block text-sm font-bold mb-1 uppercase">
+          Upload Resume
+        </label>
+        <div
+          className="flex items-center gap-3 border rounded-lg px-3 py-2 
+          bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+        >
           <label className="cursor-pointer shrink-0">
-            <span className="bg-yellow-400 px-3 py-1 rounded-md font-medium hover:bg-yellow-500 transition whitespace-nowrap">
+            <span className="bg-yellow-400 px-3 py-1 rounded-md font-medium hover:bg-yellow-500 transition">
               Choose File
             </span>
             <input
@@ -123,11 +159,11 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) {
-                  onInputChange('resumeFile', file);
-                  onInputChange('resumeFileName', file.name);
+                  onInputChange("resumeFile", file);
+                  onInputChange("resumeFileName", file.name);
                 } else {
-                  onInputChange('resumeFile', null);
-                  onInputChange('resumeFileName', '');
+                  onInputChange("resumeFile", null);
+                  onInputChange("resumeFileName", "");
                 }
               }}
             />
@@ -137,14 +173,16 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
             <button
               type="button"
               onClick={() => {
-                const fileName = formData.resumeFileName || editingApplicant?.resumeFileName;
-                const fileData = formData.resumeFileData || editingApplicant?.resumeFileData;
+                const fileName =
+                  formData.resumeFileName ||
+                  editingApplicant?.resumeFileName;
+                const fileData =
+                  formData.resumeFileData || editingApplicant?.resumeFileData;
                 if (fileName && fileData) {
                   downloadResume(fileName, fileData);
                 }
               }}
-              className="text-blue-600 hover:text-blue-800 hover:underline text-sm font-medium truncate max-w-[150px] text-left"
-              title={formData.resumeFileName || editingApplicant?.resumeFileName}
+              className="text-blue-600 dark:text-blue-300 hover:underline text-sm font-medium truncate max-w-[150px]"
             >
               {formData.resumeFileName || editingApplicant?.resumeFileName}
             </button>
@@ -154,119 +192,96 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-bold mb-1 uppercase">First Name *</label>
-        <input
-          type="text"
-          value={formData.firstName}
-          onChange={(e) => {
-            const value = e.target.value.toUpperCase();
-            if (value === '' || validateName(value)) {
-              onInputChange('firstName', value);
-              setNameErrors((prev) => ({ ...prev, first: '' }));
-            } else {
-              setNameErrors((prev) => ({ ...prev, first: 'Only letters, spaces, hyphen (-) and apostrophe (\') allowed.' }));
-            }
-          }}
-          required
-          className={`w-full border rounded-lg px-3 py-2 uppercase ${
-            nameErrors.first ? 'border-red-500' : ''
-          }`}
-          style={{ textTransform: 'uppercase' }}
-        />
-        {nameErrors.first && <p className="text-xs text-red-500 mt-1">{nameErrors.first}</p>}
-      </div>
+      {["firstName", "middleName", "lastName"].map((key, i) => {
+        const labels = ["First Name *", "Middle Name", "Last Name *"];
+        const errorKey = ["first", "middle", "last"][i];
 
-      <div>
-        <label className="block text-sm font-bold mb-1 uppercase">Middle Name</label>
-        <input
-          type="text"
-          value={formData.middleName}
-          onChange={(e) => {
-            const value = e.target.value.toUpperCase();
-            if (value === '' || validateName(value)) {
-              onInputChange('middleName', value);
-              setNameErrors((prev) => ({ ...prev, middle: '' }));
-            } else {
-              setNameErrors((prev) => ({ ...prev, middle: 'Only letters, spaces, hyphen (-) and apostrophe (\') allowed.' }));
-            }
-          }}
-          className={`w-full border rounded-lg px-3 py-2 uppercase ${
-            nameErrors.middle ? 'border-red-500' : ''
-          }`}
-          style={{ textTransform: 'uppercase' }}
-        />
-        {nameErrors.middle && <p className="text-xs text-red-500 mt-1">{nameErrors.middle}</p>}
-      </div>
+        return (
+          <div key={key}>
+            <label className="block text-sm font-bold mb-1 uppercase">
+              {labels[i]}
+            </label>
+            <input
+              type="text"
+              value={formData[key]}
+              onChange={(e) => {
+                const value = e.target.value.toUpperCase();
+                if (value === "" || validateName(value)) {
+                  onInputChange(key, value);
+                  setNameErrors((prev) => ({ ...prev, [errorKey]: "" }));
+                } else {
+                  setNameErrors((prev) => ({
+                    ...prev,
+                    [errorKey]:
+                      "Only letters, spaces, hyphens (-), apostrophes (') allowed.",
+                  }));
+                }
+              }}
+              required={key !== "middleName"}
+              className={`w-full border rounded-lg px-3 py-2 uppercase 
+                bg-white dark:bg-slate-700 text-gray-800 dark:text-white
+                ${nameErrors[errorKey] ? "border-red-500" : ""}`}
+            />
+            {nameErrors[errorKey] && (
+              <p className="text-xs text-red-500 mt-1">
+                {nameErrors[errorKey]}
+              </p>
+            )}
+          </div>
+        );
+      })}
 
-      <div>
-        <label className="block text-sm font-bold mb-1 uppercase">Last Name *</label>
-        <input
-          type="text"
-          value={formData.lastName}
-          onChange={(e) => {
-            const value = e.target.value.toUpperCase();
-            if (value === '' || validateName(value)) {
-              onInputChange('lastName', value);
-              setNameErrors((prev) => ({ ...prev, last: '' }));
-            } else {
-              setNameErrors((prev) => ({ ...prev, last: 'Only letters, spaces, hyphen (-) and apostrophe (\') allowed.' }));
-            }
-          }}
-          required
-          className={`w-full border rounded-lg px-3 py-2 uppercase ${
-            nameErrors.last ? 'border-red-500' : ''
-          }`}
-          style={{ textTransform: 'uppercase' }}
-        />
-        {nameErrors.last && <p className="text-xs text-red-500 mt-1">{nameErrors.last}</p>}
-      </div>
-
+      {/* Suffix */}
       <div>
         <label className="block text-sm font-bold mb-1 uppercase">Suffix</label>
         <input
           type="text"
           value={formData.extensionName}
-          onChange={(e) => onInputChange('extensionName', e.target.value)}
-          placeholder="JR, SR, III, etc."
-          className="w-full border rounded-lg px-3 py-2 uppercase"
-          style={{ textTransform: 'uppercase' }}
+          onChange={(e) => onInputChange("extensionName", e.target.value)}
+          className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 uppercase text-gray-900 dark:text-white"
+          placeholder="JR, SR, III, ETC."
         />
       </div>
 
+      {/* Birth Date */}
       <div>
-        <label className="block text-sm font-bold mb-1 uppercase">Birth Date</label>
+        <label className="block text-sm font-bold mb-1 uppercase">
+          Birth Date
+        </label>
         <input
           type="date"
           value={formData.birthDate}
           onChange={(e) => {
             const birthDate = e.target.value;
-            onInputChange('birthDate', birthDate);
+            onInputChange("birthDate", birthDate);
+            onInputChange("age", calculateAge(birthDate));
           }}
+          className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
           required
-          className="w-full border rounded-lg px-3 py-2"
         />
       </div>
 
+      {/* AGE — READONLY */}
       <div>
         <label className="block text-sm font-bold mb-1 uppercase">Age</label>
         <input
           type="number"
-          value={formData.age || ''}
           readOnly
-          className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+          value={formData.age || ""}
+          className="w-full border rounded-lg px-3 py-2
+            bg-gray-100 dark:bg-slate-700/60 
+            text-gray-900 dark:text-white"
         />
-        <p className="text-xs text-gray-500 mt-1">
-          {activeProgram === 'GIP' ? 'Must be 18–29 years old' : 'Must be 25-58 years old'}
-        </p>
       </div>
 
+      {/* Gender */}
       <div>
         <label className="block text-sm font-bold uppercase">Gender *</label>
         <select
           value={formData.gender}
-          onChange={(e) => onInputChange('gender', e.target.value)}
-          className="w-full border rounded-lg px-3 py-3"
+          onChange={(e) => onInputChange("gender", e.target.value)}
+          className="w-full border rounded-lg px-3 py-3 
+            bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
         >
           <option value="">SELECT GENDER</option>
           <option value="MALE">MALE</option>
@@ -274,126 +289,132 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
         </select>
       </div>
 
-      {activeProgram === 'GIP' && (
-        <div>
-          <label className="block text-sm font-bold mb-1 uppercase">Place of Birth *</label>
-          <input
-            type="text"
-            value={formData.placeOfBirth || ''}
-            onChange={(e) => onInputChange('placeOfBirth', e.target.value)}
-            required
-            placeholder="City/Province"
-            className="w-full border rounded-lg px-3 py-2 uppercase"
-            style={{ textTransform: 'uppercase' }}
-          />
-        </div>
+      {/* GIP-ONLY FIELDS */}
+      {activeProgram === "GIP" && (
+        <>
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">
+              Place of Birth *
+            </label>
+            <input
+              type="text"
+              value={formData.placeOfBirth || ""}
+              onChange={(e) => onInputChange("placeOfBirth", e.target.value)}
+              className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 uppercase text-gray-900 dark:text-white"
+              placeholder="CITY / PROVINCE"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold mb-1 uppercase">
+              Residential Address *
+            </label>
+            <input
+              type="text"
+              value={formData.residentialAddress || ""}
+              onChange={(e) =>
+                onInputChange("residentialAddress", e.target.value)
+              }
+              className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 uppercase text-gray-900 dark:text-white placeholder:text-[10px]"
+              placeholder="HOUSE NO. / STREET / SUBDIVISION"
+              required
+            />
+          </div>
+        </>
       )}
 
-      {activeProgram === 'GIP' && (
-        <div>
-          <label className="block text-sm font-bold mb-1 uppercase">Residential Address *</label>
-          <input
-            type="text"
-            value={formData.residentialAddress || ''}
-            onChange={(e) => onInputChange('residentialAddress', e.target.value)}
-            required
-            placeholder="House No. / Street / Subdivision"
-            className="w-full border rounded-lg px-3 py-2 uppercase placeholder:text-[10px]"
-            style={{ textTransform: 'uppercase' }}
-          />
-        </div>
-      )}
-
+      {/* Barangay */}
       <div>
         <label className="block text-sm font-bold uppercase">Barangay *</label>
         <select
           value={formData.barangay}
-          onChange={(e) => onInputChange('barangay', e.target.value)}
+          onChange={(e) => onInputChange("barangay", e.target.value)}
+          className="w-full border rounded-lg px-3 py-3 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
           required
-          className="w-full border rounded-lg px-3 py-3"
         >
           <option value="">SELECT BARANGAY</option>
-          <option>APLAYA</option>
-          <option>BALIBAGO</option>
-          <option>CAINGIN</option>
-          <option>DITA</option>
-          <option>DILA</option>
-          <option>DON JOSE</option>
-          <option>IBABA</option>
-          <option>KANLURAN</option>
-          <option>LABAS</option>
-          <option>MACABLING</option>
-          <option>MALITLIT</option>
-          <option>MALUSAK</option>
-          <option>MARKET AREA</option>
-          <option>POOC</option>
-          <option>PULONG SANTA CRUZ</option>
-          <option>SANTO DOMINGO</option>
-          <option>SINALHAN</option>
-          <option>TAGAPO</option>
+          {[
+            "APLAYA",
+            "BALIBAGO",
+            "CAINGIN",
+            "DITA",
+            "DILA",
+            "DON JOSE",
+            "IBABA",
+            "KANLURAN",
+            "LABAS",
+            "MACABLING",
+            "MALITLIT",
+            "MALUSAK",
+            "MARKET AREA",
+            "POOC",
+            "PULONG SANTA CRUZ",
+            "SANTO DOMINGO",
+            "SINALHAN",
+            "TAGAPO",
+          ].map((b) => (
+            <option key={b}>{b}</option>
+          ))}
         </select>
       </div>
 
+      {/* MOBILE NUMBER */}
       <div>
-        <label className="block text-sm font-bold mb-1 uppercase">Mobile Number *</label>
+        <label className="block text-sm font-bold mb-1 uppercase">
+          Mobile Number *
+        </label>
         <input
           type="text"
           value={formData.contactNumber}
           onChange={(e) => {
-            let value = e.target.value.replace(/[^0-9]/g, '');
+            let v = e.target.value.replace(/[^0-9]/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
 
-            if (value.length > 11) {
-              value = value.slice(0, 11);
-            }
+            let formatted = v;
+            if (v.length > 4) formatted = v.slice(0, 4) + "-" + v.slice(4);
+            if (v.length > 7)
+              formatted = v.slice(0, 4) + "-" + v.slice(4, 7) + "-" + v.slice(7);
 
-            if (value.length > 0) {
-              let formatted = value;
-              if (value.length > 4) {
-                formatted = value.slice(0, 4) + '-' + value.slice(4);
-              }
-              if (value.length > 7) {
-                formatted = value.slice(0, 4) + '-' + value.slice(4, 7) + '-' + value.slice(7);
-              }
-              onInputChange('contactNumber', formatted);
-            } else {
-              onInputChange('contactNumber', value);
-            }
+            onInputChange("contactNumber", formatted);
           }}
-          pattern="09[0-9]{2}-[0-9]{3}-[0-9]{4}"
-          title="Contact number must start with 09 and follow format: 09XX-XXX-XXXX"
-          required
-          maxLength={13}
           placeholder="09XX-XXX-XXXX"
-          className="w-full border rounded-lg px-3 py-2"
+          className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+          maxLength={13}
+          required
         />
-        <p className="text-xs text-gray-500 mt-1">Format: 09XX-XXX-XXXX</p>
+        <p className="text-xs text-gray-500 mt-1">
+          Format: 09XX-XXX-XXXX
+        </p>
       </div>
 
-      {activeProgram === 'GIP' && (
+      {activeProgram === "GIP" && (
         <div>
-          <label className="block text-sm font-bold mb-1 uppercase">Telephone Number</label>
+          <label className="block text-sm font-bold mb-1 uppercase">
+            Telephone Number
+          </label>
           <input
             type="text"
-            value={formData.telephoneNumber || ''}
+            value={formData.telephoneNumber || ""}
             onChange={(e) => {
-              const value = e.target.value.toUpperCase();
-              if (value.trim() === "") {
-                onInputChange('telephoneNumber', "");
-                setTelephoneError('');
+              const val = e.target.value.toUpperCase();
+              if (val === "") {
+                onInputChange("telephoneNumber", "");
+                setTelephoneError("");
                 return;
               }
-              const pattern = /^[0-9()\-\s]*$/;
-
-              if (pattern.test(value) && value.length <= 20) {
-                onInputChange('telephoneNumber', value);
-                setTelephoneError('');
+              if (/^[0-9()\-\s]*$/.test(val) && val.length <= 20) {
+                onInputChange("telephoneNumber", val);
+                setTelephoneError("");
               } else {
-                setTelephoneError('Invalid format. Use digits, parentheses, hyphen, or leave blank.');
+                setTelephoneError(
+                  "Invalid format: numbers, parentheses, hyphens only."
+                );
               }
             }}
-            placeholder="(Area code) Number"
-            className={`w-full border rounded-lg px-3 py-2 ${
-              telephoneError ? 'border-red-500' : ''
+            placeholder="(AREA CODE) NUMBER"
+            className={`w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white ${
+              telephoneError ? "border-red-500" : ""
             }`}
           />
           {telephoneError && (
@@ -405,28 +426,32 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
         </div>
       )}
 
-      {activeProgram === 'GIP' && (
+      {activeProgram === "GIP" && (
         <div>
-          <label className="block text-sm font-bold mb-1 uppercase">Email *</label>
+          <label className="block text-sm font-bold mb-1 uppercase">
+            Email *
+          </label>
           <input
             type="email"
             value={formData.email}
-            onChange={(e) => onInputChange('email', e.target.value)}
+            onChange={(e) => onInputChange("email", e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+            placeholder="Enter Email Address"
             required
-            placeholder="example@email.com"
-            className="w-full border rounded-lg px-3 py-2"
           />
         </div>
       )}
 
-      {activeProgram === 'GIP' && (
+      {activeProgram === "GIP" && (
         <div>
-          <label className="block text-sm font-bold uppercase">Civil Status *</label>
+          <label className="block text-sm font-bold uppercase">
+            Civil Status *
+          </label>
           <select
-            value={formData.civilStats || ''}
-            onChange={(e) => onInputChange('civilStats', e.target.value)}
+            value={formData.civilStats || ""}
+            onChange={(e) => onInputChange("civilStats", e.target.value)}
+            className="w-full border rounded-lg px-3 py-3 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
             required
-            className="w-full border rounded-lg px-3 py-3"
           >
             <option value="">SELECT CIVIL STATUS</option>
             <option>SINGLE</option>
@@ -435,122 +460,21 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
           </select>
         </div>
       )}
-
-      {activeProgram === 'TUPAD' && (
-        <>
-          <div>
-            <label className="block text-sm font-bold mb-2 uppercase">Type of ID Submitted *</label>
-            <select
-              value={formData.idType}
-              onChange={(e) => onInputChange('idType', e.target.value)}
-              required
-              className="w-full border rounded-lg px-3 py-3"
-            >
-              <option value="">SELECT ID TYPE</option>
-              <option>PHILSYS ID</option>
-              <option>DRIVER'S LICENSE</option>
-              <option>SSS ID</option>
-              <option>UMID</option>
-              <option>PASSPORT</option>
-              <option>VOTER'S ID</option>
-              <option>POSTAL ID</option>
-              <option>PRC ID</option>
-              <option>SENIOR CITIZEN ID</option>
-              <option>PWD ID</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-1 uppercase">ID Number</label>
-            <input
-              type="text"
-              value={formData.idNumber}
-              onChange={(e) => onInputChange('idNumber', e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 uppercase"
-              style={{ textTransform: 'uppercase' }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-1 uppercase">Occupation</label>
-            <input
-              type="text"
-              value={formData.occupation}
-              onChange={(e) => onInputChange('occupation', e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 uppercase"
-              style={{ textTransform: 'uppercase' }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-2 uppercase">Civil Status</label>
-            <select
-              value={formData.civilStatus}
-              onChange={(e) => onInputChange('civilStatus', e.target.value)}
-              className="w-full border rounded-lg px-3 py-3"
-            >
-              <option value="">SELECT CIVIL STATUS</option>
-              <option>SINGLE</option>
-              <option>MARRIED</option>
-              <option>WIDOWED</option>
-              <option>SEPARATED</option>
-              <option>DIVORCED</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-1 uppercase">Average Monthly Income</label>
-            <input
-              type="text"
-              value={formData.averageMonthlyIncome}
-              onChange={(e) => onInputChange('averageMonthlyIncome', e.target.value)}
-              placeholder="₱"
-              className="w-full border rounded-lg px-3 py-2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-1 uppercase">Dependent Name</label>
-            <input
-              type="text"
-              value={formData.dependentName}
-              onChange={(e) => onInputChange('dependentName', e.target.value.toUpperCase())}
-              className="w-full border rounded-lg px-3 py-2 uppercase"
-              style={{ textTransform: 'uppercase' }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold mb-1 uppercase">Relationship to Dependent</label>
-            <input
-              type="text"
-              value={formData.relationshipToDependent}
-              onChange={(e) => onInputChange('relationshipToDependent', e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 uppercase"
-              style={{ textTransform: 'uppercase' }}
-            />
-          </div>
-        </>
-      )}
-
       {showImageModal && selectedImage && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60]"
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60]"
           onClick={() => setShowImageModal(false)}
         >
           <div className="relative max-w-4xl max-h-[90vh] p-4">
             <button
               onClick={() => setShowImageModal(false)}
-              className="absolute top-6 right-6 bg-white rounded-full p-2 hover:bg-gray-100 transition z-10"
+              className="absolute top-4 right-4 bg-white dark:bg-slate-700 p-2 rounded-full"
             >
-              <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              ✕
             </button>
             <img
               src={selectedImage}
-              alt="Preview"
-              className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-xl"
               onClick={(e) => e.stopPropagation()}
             />
           </div>

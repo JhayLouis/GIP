@@ -6,7 +6,7 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ activeProgram }) => {
   const bgColor = activeProgram === 'GIP' ? 'bg-red-700' : 'bg-green-700';
-  
+
   const content = activeProgram === 'GIP' ? {
     title: 'GOVERNMENT INTERNSHIP PROGRAM',
     tagline: '"Empowering Tomorrow\'s Leaders Today"',
@@ -20,11 +20,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ activeProgram }) => {
   };
 
   return (
-    <div className={`${bgColor} text-white rounded-lg p-8 mb-6`}>
+    <div className={`${bgColor} text-white rounded-lg p-8 mb-6 border-2 border-yellow-400`}>
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-2">{content.title}</h1>
         <p className="text-lg opacity-90">{content.tagline}</p>
-        
+
         <div className="grid md:grid-cols-2 gap-8 mt-8 text-left">
           <div>
             <h2 className="text-xl font-bold text-yellow-300 mb-3">MISSION</h2>

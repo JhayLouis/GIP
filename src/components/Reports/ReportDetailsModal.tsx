@@ -57,7 +57,10 @@ const ReportDetailsModal: React.FC<ReportDetailsModalProps> = ({
   };
 
 const handlePrint = () => {
-  const leftLogo = program === 'TUPAD' ? 'src/assets/TupadLogo.png' : 'src/assets/GIPlogo.png';
+  const leftLogo =
+    program === "TUPAD"
+      ? "src/assets/TupadLogo.png"
+      : "src/assets/GIPlogo.png";
 
   const printContent = `
     <!DOCTYPE html>
@@ -80,7 +83,10 @@ const handlePrint = () => {
           td { font-size: 8.5pt; color: #374151; }
           tbody tr:nth-child(even) { background: #fafafa; }
           .no-data { text-align: center; padding: 40px; font-style: italic; color: #999; font-size: 11pt; }
-          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .no-print { display: none !important; } }
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+          }
         </style>
       </head>
       <body>
@@ -114,34 +120,55 @@ const handlePrint = () => {
               </tr>
             </thead>
             <tbody>
-              ${filteredData.map((p) => `
+              ${filteredData
+                .map(
+                  (p) => `
               <tr>
-                <td>${p.code || '-'}</td>
-                <td>${p.firstName || ''} ${p.middleName ? p.middleName + ' ' : ''}${p.lastName || ''}${p.extensionName ? ' ' + p.extensionName : ''}</td>
-                <td>${p.gender || '-'}</td>
-                <td>${p.age || '-'}</td>
-                <td>${p.barangay || '-'}</td>
-                <td>${p.contactNumber || '-'}</td>
+                <td>${p.code || "-"}</td>
+                <td>${p.firstName || ""} ${
+                    p.middleName ? p.middleName + " " : ""
+                  }${p.lastName || ""}${
+                    p.extensionName ? " " + p.extensionName : ""
+                  }</td>
+                <td>${p.gender || "-"}</td>
+                <td>${p.age || "-"}</td>
+                <td>${p.barangay || "-"}</td>
+                <td>${p.contactNumber || "-"}</td>
                 <td>${getHighestEducationAttainment(p)}</td>
-                <td>${p.course || '-'}</td>
-              </tr>
-              `).join('')}
+                <td>${p.course || "-"}</td>
+              </tr>`
+                )
+                .join("")}
             </tbody>
-          </table>
-          `
+          </table>`
           }
         </div>
       </body>
     </html>
   `;
 
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => printWindow.print(), 500);
-  }
+  // ---- NEW: Print via iframe (no popup) ----
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.right = "0";
+  iframe.style.bottom = "0";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentWindow?.document;
+  if (!doc) return;
+
+  doc.open();
+  doc.write(printContent);
+  doc.close();
+
+  iframe.onload = () => {
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
+    setTimeout(() => document.body.removeChild(iframe), 1000);
+  };
 };
 
   return (

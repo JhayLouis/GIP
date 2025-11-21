@@ -21,10 +21,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
   const { statistics, isLoading } = useData(activeProgram);
   const [showMore, setShowMore] = useState(false);
 
-  const primaryColor = activeProgram === 'GIP' ? 'bg-red-500' : 'bg-green-500';
+  const primaryColor = activeProgram === 'GIP' ? 'bg-red-200' : 'bg-green-200';
   const primaryDarkColor = activeProgram === 'GIP' ? 'bg-red-600' : 'bg-green-600';
-  const secondaryColor = activeProgram === 'GIP' ? 'bg-orange-500' : 'bg-blue-500';
-  const secondaryDarkColor = activeProgram === 'GIP' ? 'bg-orange-600' : 'bg-blue-600';
 
   if (isLoading) {
     return (
@@ -46,8 +44,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.maleCount?.toString() ?? '0',
       female: statistics?.femaleCount?.toString() ?? '0',
       icon: Users,
-      bgColor: primaryColor,
-      iconBg: primaryDarkColor
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     },
     {
       title: 'PENDING',
@@ -55,8 +53,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.pendingMale?.toString() ?? '0',
       female: statistics?.pendingFemale?.toString() ?? '0',
       icon: Clock,
-      bgColor: secondaryColor,
-      iconBg: secondaryDarkColor
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     },
     {
       title: 'APPROVED',
@@ -64,8 +62,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.approvedMale?.toString() ?? '0',
       female: statistics?.approvedFemale?.toString() ?? '0',
       icon: UserCheck,
-      bgColor: 'bg-blue-500',
-      iconBg: 'bg-blue-600'
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     },
     {
       title: 'DEPLOYED',
@@ -73,8 +71,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.deployedMale?.toString() ?? '0',
       female: statistics?.deployedFemale?.toString() ?? '0',
       icon: CheckCircle,
-      bgColor: 'bg-green-500',
-      iconBg: 'bg-green-600'
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     },
     {
       title: 'COMPLETED',
@@ -82,8 +80,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.completedMale?.toString() ?? '0',
       female: statistics?.completedFemale?.toString() ?? '0',
       icon: CheckCircle,
-      bgColor: 'bg-pink-400',
-      iconBg: 'bg-pink-500'
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     },
     {
       title: 'REJECTED',
@@ -91,8 +89,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.rejectedMale?.toString() ?? '0',
       female: statistics?.rejectedFemale?.toString() ?? '0',
       icon: X,
-      bgColor: 'bg-yellow-500',
-      iconBg: 'bg-yellow-600'
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     },
     {
       title: 'RESIGNED',
@@ -100,8 +98,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.resignedMale?.toString() ?? '0',
       female: statistics?.resignedFemale?.toString() ?? '0',
       icon: UserMinus,
-      bgColor: 'bg-gray-500',
-      iconBg: 'bg-gray-600'
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     },
     {
       title: 'BARANGAYS COVERED',
@@ -109,8 +107,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.maleCount?.toString() ?? '0',
       female: statistics?.femaleCount?.toString() ?? '0',
       icon: MapPin,
-      bgColor: 'bg-gray-600',
-      iconBg: 'bg-gray-700'
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     }
   ];
 
@@ -121,8 +119,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       male: statistics?.interviewedMale?.toString() ?? '0',
       female: statistics?.interviewedFemale?.toString() ?? '0',
       icon: ClipboardCheck,
-      bgColor: 'bg-teal-500',
-      iconBg: 'bg-teal-600'
+      bgColor: `${primaryColor} border-2 border-yellow-400`,
+      iconBg: `${primaryDarkColor}`
     }
   ];
 
@@ -136,14 +134,14 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
           return (
             <div
               key={index}
-              className={`${stat.bgColor} text-white rounded-lg p-6 relative overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl`}
+              className={`${stat.bgColor} text-gray-800 rounded-lg p-6 relative overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-sm font-medium opacity-90 mb-1">{stat.title}</h3>
                   <p className="text-3xl font-bold">{stat.value}</p>
                 </div>
-                <div className={`${stat.iconBg} p-3 rounded-full`}>
+                <div className={`${stat.iconBg} p-3 rounded-full text-white`}>
                   <Icon className="w-8 h-8" />
                 </div>
               </div>
@@ -169,20 +167,21 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       <div className="flex justify-center">
         <button
           onClick={() => setShowMore(!showMore)}
-          className="flex items-center space-x-2 px-6 py-3 
-                    bg-white dark:bg-slate-800 
-                    text-gray-700 dark:text-gray-200
-                    border border-gray-200 dark:border-slate-700
-                    hover:bg-gray-100 dark:hover:bg-slate-700
-                    rounded-lg shadow-sm transition-all duration-200 hover:shadow-md"
+          className="
+            flex items-center space-x-2 px-6 py-3 
+            bg-white dark:bg-slate-800 
+            text-gray-800 dark:text-gray-200 
+            border border-gray-300 dark:border-slate-700 
+            hover:bg-gray-100 dark:hover:bg-slate-700 
+            rounded-lg shadow-sm 
+            transition-all duration-200 hover:shadow-md
+          "
         >
-          <span className="font-medium">
-            {showMore ? "See Less" : "See More"}
-          </span>
+          <span className="font-medium">{showMore ? "See Less" : "See More"}</span>
           {showMore ? (
-            <ChevronUp className="w-4 h-4" />
+            <ChevronUp className="w-4 h-4 text-gray-600 dark:text-gray-300" />
           ) : (
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-300" />
           )}
         </button>
       </div>

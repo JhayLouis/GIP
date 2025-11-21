@@ -111,19 +111,27 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
 
           <div>
             <label className="block text-sm font-bold mb-1 uppercase">Encoder</label>
-            <input
-              type="text"
-              value="ADMIN"
-              readOnly
-              className="w-full border rounded-lg px-3 py-3 bg-gray-100"
-            />
+              <input
+                type="text"
+                value="ADMIN"
+                readOnly
+                className="w-full border rounded-lg px-3 py-3 
+                          bg-gray-100 dark:bg-slate-700/60
+                          text-gray-800 dark:text-white"
+              />
           </div>
-
           <div className="md:col-span-3 flex justify-end mt-6 space-x-3">
             <button
               type="button"
               onClick={handleCancel}
-              className="px-6 py-2 rounded-lg border border-gray-400 text-gray-700 hover:bg-gray-100 transition duration-200"
+              className="
+                px-6 py-2 rounded-lg 
+                border border-gray-400 dark:border-slate-600 
+                text-gray-700 dark:text-gray-200 
+                bg-white dark:bg-slate-800
+                hover:bg-gray-100 dark:hover:bg-slate-700
+                transition duration-200
+              "
             >
               Cancel
             </button>
@@ -131,9 +139,14 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`${primaryColor} text-white px-6 py-2 rounded-lg font-medium transition duration-200`}
+              className={`
+                ${primaryColor}
+                text-white px-6 py-2 rounded-lg font-medium 
+                transition duration-200
+                disabled:opacity-60 disabled:cursor-not-allowed
+              `}
             >
-              {isSubmitting ? 'Submitting...' : 'Save Applicant'}
+              {isSubmitting ? "Submitting..." : "Save Applicant"}
             </button>
           </div>
         </form>
@@ -141,5 +154,4 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
     </div>
   );
 };
-
 export default ApplicantForm;

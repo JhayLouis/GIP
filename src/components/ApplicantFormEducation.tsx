@@ -34,11 +34,9 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
     }
     return true;
   };
-
-      // Run validation only when full 4-digit year is typed
     const safeValidateYear = (value, condition, message, resetCallback) => {
       if (!value || value.toString().length < 4) {
-        return true; // Do not validate yet
+        return true;
       }
       return validateYear(condition, message, resetCallback);
     };
@@ -66,7 +64,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 }
               }}
               required
-              placeholder="Enter elementary school name"
+              placeholder="Enter Elementary School Name"
               className="w-full border rounded-lg px-3 py-3"
             />
           </div>
@@ -154,7 +152,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   }}
                   required
                   className="w-full border rounded-lg px-3 py-3"
-                  placeholder="Enter junior high school name"
+                  placeholder="Enter Junior High School Name"
                 />
               </div>
 
@@ -256,11 +254,11 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
               }}
               required
               className="w-full border rounded-lg px-3 py-3"
+              placeholder="Enter Senior High School Name"
             />
           </div>
          {formData.seniorHighSchoolName?.trim() !== "" && (
           <>
-            {/* FROM */}
             <div>
               <label className="block text-sm font-bold uppercase">From *</label>
               <input
@@ -269,7 +267,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 onChange={(e) => {
                   const value = Number(e.target.value);
 
-                  // === VALIDATION - only when 4 digits ===
                   if (
                     !safeValidateYear(
                       value,
@@ -301,7 +298,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
               />
             </div>
 
-            {/* TO */}
             <div>
               <label className="block text-sm font-bold uppercase">To *</label>
               <input
@@ -310,7 +306,6 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 onChange={(e) => {
                   const value = Number(e.target.value);
 
-                  // === VALIDATION - only when 4 digits ===
                   if (
                     !safeValidateYear(
                       value,
