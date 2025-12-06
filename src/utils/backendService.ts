@@ -1,3 +1,28 @@
+/*
+  BACKEND CONNECTION GUIDE
+  =======================
+  This file is backend-ready for connecting to your company's database.
+
+  To enable backend connection:
+  1. Update .env file with your backend API URL:
+     VITE_BACKEND_URL=https://api.yourdomain.com/api
+
+  2. Backend API should implement these endpoints:
+     - POST   /auth/login                    (Login)
+     - GET    /applicants?program=GIP        (Get applicants)
+     - POST   /applicants                    (Create applicant)
+     - PUT    /applicants/{id}               (Update applicant)
+     - DELETE /applicants/{id}               (Delete applicant)
+     - PATCH  /applicants/{id}/archive       (Archive applicant)
+     - POST   /files/upload                  (Upload file)
+     - GET    /files/download                (Download file)
+     - POST   /emails/send-applicant         (Send email)
+
+  3. Database schema should match DatabaseApplicant interface below
+
+  4. Uncomment backend sync code in useBackendSync.ts when ready
+*/
+
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
 const API_TIMEOUT = 30000;
 

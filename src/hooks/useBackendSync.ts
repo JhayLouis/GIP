@@ -8,16 +8,24 @@ export const useBackendSync = () => {
   const [syncErrors, setSyncErrors] = useState<string[]>([]);
 
   useEffect(() => {
-    const config = getBackendConfig();
-    setIsBackendEnabled(config.useBackend);
+    // const config = getBackendConfig();
+    // setIsBackendEnabled(config.useBackend);
+    setIsBackendEnabled(false); // Using localStorage by default
   }, []);
 
   const enableBackend = async () => {
     try {
       setIsSyncing(true);
-      setBackendConfig({ useBackend: true, backendType: 'supabase' });
+
+      /*
+      // BACKEND CONNECTION - Uncomment when connected to company's database
+      setBackendConfig({ useBackend: true });
       await syncService.initializeSync();
       setIsBackendEnabled(true);
+      */
+
+      // For now, continue using localStorage
+      setIsBackendEnabled(false);
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Unknown error';
       setSyncErrors([errorMsg]);
@@ -28,7 +36,7 @@ export const useBackendSync = () => {
   };
 
   const disableBackend = () => {
-    setBackendConfig({ useBackend: false, backendType: 'localstorage' });
+    // setBackendConfig({ useBackend: false });
     setIsBackendEnabled(false);
   };
 
