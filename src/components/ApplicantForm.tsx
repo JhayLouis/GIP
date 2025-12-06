@@ -98,7 +98,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
             <select
               value={formData.status}
               onChange={(e) => onInputChange('status', e.target.value)}
-              className="w-full border rounded-lg px-3 py-3"
+              className="w-full border rounded-lg px-3 py-2"
             >
               <option value="PENDING">PENDING</option>
               <option value="APPROVED">APPROVED</option>
@@ -115,7 +115,7 @@ const ApplicantForm: React.FC<ApplicantFormProps> = ({
                 type="text"
                 value="ADMIN"
                 readOnly
-                className="w-full border rounded-lg px-3 py-3 
+                className="w-full border rounded-lg px-3 py-2
                           bg-gray-100 dark:bg-slate-700/60
                           text-gray-800 dark:text-white"
               />

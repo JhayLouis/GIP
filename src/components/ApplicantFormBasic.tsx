@@ -280,7 +280,7 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
         <select
           value={formData.gender}
           onChange={(e) => onInputChange("gender", e.target.value)}
-          className="w-full border rounded-lg px-3 py-3 
+          className="w-full border rounded-lg px-3 py-2
             bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
         >
           <option value="">SELECT GENDER</option>
@@ -330,7 +330,7 @@ const ApplicantFormBasic: React.FC<ApplicantFormBasicProps> = ({
         <select
           value={formData.barangay}
           onChange={(e) => onInputChange("barangay", e.target.value)}
-          className="w-full border rounded-lg px-3 py-3 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+          className="w-full border rounded-lg px-3 py-2 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
           required
         >
           <option value="">SELECT BARANGAY</option>

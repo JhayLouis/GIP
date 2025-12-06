@@ -65,7 +65,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
               }}
               required
               placeholder="Enter Elementary School Name"
-              className="w-full border rounded-lg px-3 py-3"
+              className="w-full border rounded-lg px-3 py-2"
             />
           </div>
 
@@ -95,7 +95,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   }}
                   required
                   placeholder="FROM (Year)"
-                  className="w-full border rounded-lg px-3 py-3"
+                  className="w-full border rounded-lg px-3 py-2"
                 />
               </div>
 
@@ -123,7 +123,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   }}
                   required
                   placeholder="TO (Year)"
-                  className="w-full border rounded-lg px-3 py-3"
+                  className="w-full border rounded-lg px-3 py-2"
                 />
               </div>
             </>
@@ -151,7 +151,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                     }
                   }}
                   required
-                  className="w-full border rounded-lg px-3 py-3"
+                  className="w-full border rounded-lg px-3 py-2"
                   placeholder="Enter Junior High School Name"
                 />
               </div>
@@ -191,7 +191,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   }}
                   required
                   placeholder="FROM (Year)"
-                  className="w-full border rounded-lg px-3 py-3"
+                  className="w-full border rounded-lg px-3 py-2"
                 />
               </div>
 
@@ -228,7 +228,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   }}
                   required
                   placeholder="TO (Year)"
-                  className="w-full border rounded-lg px-3 py-3"
+                  className="w-full border rounded-lg px-3 py-2"
                 />
               </div>
             </>
@@ -253,7 +253,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 }
               }}
               required
-              className="w-full border rounded-lg px-3 py-3"
+              className="w-full border rounded-lg px-3 py-2"
               placeholder="Enter Senior High School Name"
             />
           </div>
@@ -294,7 +294,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 }}
                 required
                 placeholder="FROM (Year)"
-                className="w-full border rounded-lg px-3 py-3"
+                className="w-full border rounded-lg px-3 py-2"
               />
             </div>
 
@@ -333,7 +333,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 }}
                 required
                 placeholder="TO (Year)"
-                className="w-full border rounded-lg px-3 py-3"
+                className="w-full border rounded-lg px-3 py-2"
               />
           </div>
         </>
@@ -355,7 +355,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 setCustomCourse("");
                 setShowCustomCourse(false);
               }}
-              className="border rounded w-full p-3"
+              className="w-full border rounded-lg px-3 py-2"
             >
               <option value="">SELECT TERTIARY EDUCATION</option>
               <option value="ALS SECONDARY GRADUATE">ALS SECONDARY GRADUATE</option>
@@ -386,7 +386,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   }
                 }}
                 required
-                className="w-full border rounded-lg px-3 py-3"
+                className="w-full border rounded-lg px-3 py-2"
               />
             </div>
           )}
@@ -422,7 +422,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   onInputChange("tertiaryFrom", value);
                 }}
                 required
-                className="w-full border rounded-lg px-3 py-3"
+                className="w-full border rounded-lg px-3 py-2"
               >
                 <option value="">SELECT YEAR</option>
                 {renderYearOptions().map((year) => (
@@ -460,7 +460,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   onInputChange("tertiaryTo", value);
                 }}
                 required
-                className="w-full border rounded-lg px-3 py-3"
+                className="w-full border rounded-lg px-3 py-2"
               >
                 <option value="">SELECT YEAR</option>
                 {renderYearOptions().map((year) => (
@@ -485,7 +485,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                       onInputChange("course", value);
                     }
                   }}
-                  className="w-full border rounded-lg px-3 py-3"
+                  className="w-full border rounded-lg px-3 py-2"
                   required
                 >
                   <option value="">SELECT COURSE</option>
@@ -528,7 +528,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                   }}
                   required
                   placeholder="Enter your course"
-                  className="w-full border rounded-lg px-3 py-3 uppercase"
+                  className="w-full border rounded-lg px-3 py-2 uppercase"
                 />
               )}
             </div>
@@ -541,7 +541,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
           type="text"
           value={formData.beneficiaryName}
           onChange={(e) => onInputChange("beneficiaryName", e.target.value)}
-          className="w-full border rounded-lg px-3 py-3 uppercase"
+          className="w-full border rounded-lg px-3 py-2 uppercase"
           style={{ textTransform: "uppercase" }}
         />
       </div>
