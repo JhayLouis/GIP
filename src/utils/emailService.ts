@@ -1,5 +1,8 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
+
+const getAuthToken = (): string | null => {
+  return localStorage.getItem('soft_projects_auth_token');
+};
 
 export interface SendEmailParams {
   to: string;
@@ -11,18 +14,18 @@ export interface SendEmailParams {
 
 export const sendApplicantEmail = async (params: SendEmailParams): Promise<{ success: boolean; message: string; error?: string }> => {
   try {
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      throw new Error('Supabase configuration is missing');
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    const token = getAuthToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const apiUrl = `${SUPABASE_URL}/functions/v1/send-applicant-email`;
-
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`${BACKEND_URL}/emails/send-applicant`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(params),
     });
 
@@ -32,7 +35,7 @@ export const sendApplicantEmail = async (params: SendEmailParams): Promise<{ suc
       return {
         success: false,
         message: 'Failed to send email',
-        error: data.error || data.details || 'Unknown error occurred'
+        error: data.error || data.message || 'Unknown error occurred'
       };
     }
 

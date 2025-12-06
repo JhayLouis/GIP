@@ -1,18 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
+const API_TIMEOUT = 30000;
 
 export interface BackendConfig {
-  useBackend: boolean;
-  backendType: 'supabase' | 'localstorage';
+  backendUrl: string;
 }
 
 const backendConfig: BackendConfig = {
-  useBackend: false,
-  backendType: 'localstorage'
+  backendUrl: BACKEND_URL
 };
 
 export const setBackendConfig = (config: Partial<BackendConfig>) => {
@@ -79,157 +73,196 @@ export interface DatabaseApplicant {
   updated_at?: string;
 }
 
+const getAuthToken = (): string | null => {
+  return localStorage.getItem('soft_projects_auth_token');
+};
+
+const buildHeaders = (): HeadersInit => {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
+const handleApiError = (error: any, message: string): never => {
+  console.error(`API Error: ${message}`, error);
+  throw new Error(error?.message || message);
+};
+
 export const backendService = {
   async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}`, {
+        method: 'GET',
+        headers: buildHeaders(),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { data, error } = await supabase
-        .from('applicants')
-        .select('*')
-        .eq('program', program)
-        .eq('archived', false);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      if (error) throw error;
-      return data || [];
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      return handleApiError(error, 'Failed to fetch applicants');
     }
-
-    return [];
   },
 
   async addApplicant(applicant: Omit<DatabaseApplicant, 'id' | 'created_at' | 'updated_at'>): Promise<DatabaseApplicant> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/applicants`, {
+        method: 'POST',
+        headers: buildHeaders(),
+        body: JSON.stringify(applicant),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { data, error } = await supabase
-        .from('applicants')
-        .insert([applicant])
-        .select()
-        .single();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      if (error) throw error;
-      return data;
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      return handleApiError(error, 'Failed to add applicant');
     }
-
-    throw new Error('Backend not enabled');
   },
 
   async updateApplicant(id: string, applicant: Partial<DatabaseApplicant>): Promise<DatabaseApplicant> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
+        method: 'PUT',
+        headers: buildHeaders(),
+        body: JSON.stringify(applicant),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { data, error } = await supabase
-        .from('applicants')
-        .update(applicant)
-        .eq('id', id)
-        .select()
-        .single();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      if (error) throw error;
-      return data;
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      return handleApiError(error, 'Failed to update applicant');
     }
-
-    throw new Error('Backend not enabled');
   },
 
   async deleteApplicant(id: string): Promise<void> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
+        method: 'DELETE',
+        headers: buildHeaders(),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { error } = await supabase
-        .from('applicants')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+    } catch (error) {
+      return handleApiError(error, 'Failed to delete applicant');
     }
   },
 
   async archiveApplicant(id: string): Promise<void> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}/archive`, {
+        method: 'PATCH',
+        headers: buildHeaders(),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { error } = await supabase
-        .from('applicants')
-        .update({
-          archived: true,
-          archivedDate: new Date().toISOString().split('T')[0]
-        })
-        .eq('id', id);
-
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+    } catch (error) {
+      return handleApiError(error, 'Failed to archive applicant');
     }
   },
 
   async getApplicantByStatus(program: 'GIP' | 'TUPAD', status: string): Promise<DatabaseApplicant[]> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&status=${status}`, {
+        method: 'GET',
+        headers: buildHeaders(),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { data, error } = await supabase
-        .from('applicants')
-        .select('*')
-        .eq('program', program)
-        .eq('status', status)
-        .eq('archived', false);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      if (error) throw error;
-      return data || [];
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      return handleApiError(error, 'Failed to fetch applicants by status');
     }
-
-    return [];
   },
 
   async getApplicantByBarangay(program: 'GIP' | 'TUPAD', barangay: string): Promise<DatabaseApplicant[]> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&barangay=${barangay}`, {
+        method: 'GET',
+        headers: buildHeaders(),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { data, error } = await supabase
-        .from('applicants')
-        .select('*')
-        .eq('program', program)
-        .eq('barangay', barangay)
-        .eq('archived', false);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      if (error) throw error;
-      return data || [];
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      return handleApiError(error, 'Failed to fetch applicants by barangay');
     }
-
-    return [];
   },
 
   async uploadFile(bucket: string, path: string, file: File): Promise<string> {
-    const config = getBackendConfig();
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('bucket', bucket);
+      formData.append('path', path);
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { error } = await supabase.storage
-        .from(bucket)
-        .upload(path, file, { upsert: true });
+      const token = getAuthToken();
+      const headers: any = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
 
-      if (error) throw error;
+      const response = await fetch(`${backendConfig.backendUrl}/files/upload`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
 
-      const { data } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(path);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      return data.publicUrl;
+      const data = await response.json();
+      return data.url || data.data?.url;
+    } catch (error) {
+      return handleApiError(error, 'Failed to upload file');
     }
-
-    throw new Error('Backend not enabled');
   },
 
   async downloadFile(bucket: string, path: string): Promise<Blob> {
-    const config = getBackendConfig();
+    try {
+      const response = await fetch(`${backendConfig.backendUrl}/files/download?bucket=${bucket}&path=${path}`, {
+        method: 'GET',
+        headers: buildHeaders(),
+      });
 
-    if (config.useBackend && config.backendType === 'supabase') {
-      const { data, error } = await supabase.storage
-        .from(bucket)
-        .download(path);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      if (error) throw error;
-      return data;
+      return await response.blob();
+    } catch (error) {
+      return handleApiError(error, 'Failed to download file');
     }
-
-    throw new Error('Backend not enabled');
   }
 };
 
