@@ -65,30 +65,30 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
             <div className="grid grid-cols-[2fr_1fr] border-t-1 border-b-2 border-black">
               <div className="border-r-2 border-black p-2">
                 <p className="font-bold text-[10px] mb-1">1. NAME OF APPLICANT:</p>
-                <div className="border-b border-black mb-1.5 pb-0.5">
-                  <div className="grid grid-cols-3 text-[10px] mb-0.5 text-center">
+                <div className="border-b-2 border-black mb-1.5 pb-0.5">
+                  <div className="grid grid-cols-3 text-[11px] mb-0.5 text-center">
                     <div>{applicant.lastName.toUpperCase()}</div>
                     <div>{applicant.firstName.toUpperCase()}</div>
                     <div>{applicant.middleName ? applicant.middleName.toUpperCase() : '-'}</div>
                   </div>
-                  <div className="grid grid-cols-3 text-[9px] font-bold text-center">
+                  <div className="grid grid-cols-3 text-[10px] font-bold text-center">
                     <div>Family Name</div>
                     <div>First Name</div>
                     <div>Middle Name</div>
                   </div>
                </div>
                <p className="font-bold text-[10px] mb-1">2. RESIDENTIAL ADDRESS:</p>
-              <div className="border-b border-black mb-1 pb-1 text-[10px] text-center">
+              <div className="border-b-2 border-black mb-1 pb-1 text-[11px] text-center">
                 <p>
                   {`${(applicant.residentialAddress || '').toUpperCase()}, BRGY. ${(applicant.barangay || '').toUpperCase()}`}
                 </p>
               </div>
               <div className="text-[10px] space-y-1">
-                <div className="grid grid-cols-[140px_1fr] border-b border-black text-[10px]">
+                <div className="grid grid-cols-[140px_1fr] border-b-2 border-black text-[11px]">
                    <p className="font-bold p-1">Telephone No.:</p>
                    <span className="p-1 ml-7"> {applicant.telephoneNumber}</span>
               </div>
-              <div className="grid grid-cols-[140px_1fr] border-b-2 border-black text-[10px]">
+              <div className="grid grid-cols-[140px_1fr] border-b-2 border-black text-[11px]">
                   <p className="font-bold p-1">Mobile No.:</p>
                   <span className="p-1 ml-7"> {applicant.contactNumber}</span>
                   </div>
@@ -99,12 +99,12 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                   <img
                     src={applicant.photoFileData}
                     alt="Applicant Photo"
-                    className="w-[1.5in] h-[1.5in] object-cover border border-black cursor-pointer hover:opacity-80 transition"
+                    className="w-[1.5in] h-[1.5in] object-cover border-4 border-black cursor-pointer hover:opacity-80 transition"
                     onClick={() => setShowImageModal(true)}
                   />
                 ) : (
                   <div className="w-[1.5in] h-[1.5in] flex flex-col items-center justify-center p-2">
-                    <p className="text-[10px] font-bold text-center leading-tight">
+                    <p className="text-[11px] font-bold text-center leading-tight">
                       ATTACH 2x2 PHOTO WITH NAME AND SIGNATURE TAKEN WITHIN THE LAST THREE (3) MONTHS
                     </p>
                   </div>
@@ -407,7 +407,7 @@ const ApplicantProfile: React.FC<ApplicantProfileProps> = ({ applicant, onClose 
                   <span>Others:</span>
                   <input
                     type="text"
-                    value={typeof applicant.otherDisadvantaged === 'string' ? applicant.otherDisadvantaged : ''}
+                    value={applicant.otherDisadvantaged || ''}
                     readOnly
                     className="border border-black w-16 px-0.5 text-[10px] bg-white"
                   />
