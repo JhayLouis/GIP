@@ -154,7 +154,7 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram, onCardClick }) => 
             <div
               key={index}
               onClick={() => stat.clickable && onCardClick?.(stat.status)}
-              className={`${stat.bgColor} text-gray-800 rounded-lg p-6 relative overflow-hidden transition-all duration-300 ease-in-out transform ${stat.clickable ? 'cursor-pointer hover:scale-105 hover:shadow-xl' : 'cursor-not-allowed opacity-90'}`}
+              className={`${stat.bgColor} text-gray-800 rounded-lg p-6 relative overflow-hidden transition-all duration-300 ease-in-out transform ${stat.clickable ? 'cursor-pointer hover:scale-105 hover:shadow-xl' : 'hover:scale-105 hover:shadow-xl'}`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
