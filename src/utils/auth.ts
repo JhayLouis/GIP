@@ -69,7 +69,10 @@ const isTokenValid = (token: string): boolean => {
   return Date.now() < decoded.exp;
 };
 
-export const login = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
+// ============================================
+// MOCK LOGIN IMPLEMENTATION (DEFAULT)
+// ============================================
+const mockLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
   await new Promise(resolve => setTimeout(resolve, 1000));
 
   const user = MOCK_USERS.find(u => u.username === username && u.password === password);
@@ -92,6 +95,43 @@ export const login = async (username: string, password: string): Promise<{ succe
 
   return { success: true, user: userWithoutPassword, token };
 };
+
+// ============================================
+// API LOGIN IMPLEMENTATION (COMMENTED OUT)
+// ============================================
+/*
+const apiLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
+  try {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
+    const response = await fetch(`${backendUrl}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      return { success: false, error: error.message || 'Login failed' };
+    }
+
+    const data = await response.json();
+    const token = data.token;
+    const user = data.user;
+
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    localStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
+
+    return { success: true, user, token };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Login failed' };
+  }
+};
+*/
+
+// ============================================
+// EXPORT LOGIN (USES SELECTED IMPLEMENTATION)
+// ============================================
+export const login = mockLogin;
 
 export const logout = (): void => {
   localStorage.removeItem(AUTH_TOKEN_KEY);

@@ -1,7 +1,8 @@
 /*
   BACKEND API INTEGRATION
   =======================
-  This service is ready to connect to a custom backend API.
+  This service uses localStorage and mock data by default.
+  Uncomment the API calls below to connect to your custom backend.
 
   To enable backend connection:
   1. Update .env file with your backend API URL:
@@ -21,11 +22,15 @@
   3. See BACKEND_API_INTEGRATION.md for complete specifications
 
   Currently using localStorage for local development.
+  To switch to API backend, uncomment the API_ENABLED constant below.
 */
 
 export interface BackendConfig {
   backendUrl: string;
 }
+
+// Set to true to enable API backend calls (comment out localStorage implementation)
+const API_ENABLED = false;
 
 const backendConfig: BackendConfig = {
   backendUrl: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api'
@@ -110,7 +115,10 @@ const saveApplicants = (applicants: DatabaseApplicant[]): void => {
   localStorage.setItem(APPLICANTS_STORAGE_KEY, JSON.stringify(applicants));
 };
 
-export const backendService = {
+// ============================================
+// LOCALSTORAGE IMPLEMENTATION (DEFAULT)
+// ============================================
+const localStorageImpl = {
   async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
     const applicants = getStoredApplicants();
     return applicants.filter(a => a.program === program && !a.archived);
@@ -207,5 +215,129 @@ export const backendService = {
     return new Blob([byteArray], { type: 'application/octet-stream' });
   }
 };
+
+// ============================================
+// API BACKEND IMPLEMENTATION (COMMENTED OUT)
+// ============================================
+/*
+const apiImpl = {
+  async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
+    const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch applicants');
+    return response.json();
+  },
+
+  async addApplicant(applicant: Omit<DatabaseApplicant, 'id' | 'created_at' | 'updated_at'>): Promise<DatabaseApplicant> {
+    const response = await fetch(`${backendConfig.backendUrl}/applicants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      },
+      body: JSON.stringify(applicant)
+    });
+    if (!response.ok) throw new Error('Failed to create applicant');
+    return response.json();
+  },
+
+  async updateApplicant(id: string, applicant: Partial<DatabaseApplicant>): Promise<DatabaseApplicant> {
+    const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      },
+      body: JSON.stringify(applicant)
+    });
+    if (!response.ok) throw new Error('Failed to update applicant');
+    return response.json();
+  },
+
+  async deleteApplicant(id: string): Promise<void> {
+    const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to delete applicant');
+  },
+
+  async archiveApplicant(id: string): Promise<void> {
+    const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}/archive`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to archive applicant');
+  },
+
+  async getApplicantByStatus(program: 'GIP' | 'TUPAD', status: string): Promise<DatabaseApplicant[]> {
+    const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&status=${status}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch applicants by status');
+    return response.json();
+  },
+
+  async getApplicantByBarangay(program: 'GIP' | 'TUPAD', barangay: string): Promise<DatabaseApplicant[]> {
+    const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&barangay=${barangay}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to fetch applicants by barangay');
+    return response.json();
+  },
+
+  async uploadFile(bucket: string, path: string, file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('bucket', bucket);
+    formData.append('path', path);
+    formData.append('file', file);
+
+    const response = await fetch(`${backendConfig.backendUrl}/files/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      },
+      body: formData
+    });
+    if (!response.ok) throw new Error('Failed to upload file');
+    const data = await response.json();
+    return data.url;
+  },
+
+  async downloadFile(bucket: string, path: string): Promise<Blob> {
+    const response = await fetch(`${backendConfig.backendUrl}/files/download?bucket=${bucket}&path=${path}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+      }
+    });
+    if (!response.ok) throw new Error('Failed to download file');
+    return response.blob();
+  }
+};
+*/
+
+// ============================================
+// EXPORT SERVICE (USES SELECTED IMPLEMENTATION)
+// ============================================
+export const backendService = API_ENABLED ? null : localStorageImpl;
 
 export default backendService;
