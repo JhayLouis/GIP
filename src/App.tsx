@@ -11,15 +11,21 @@ function App() {
   const { logout, user } = useAuthContext();
   const [activeTab, setActiveTab] = React.useState('dashboard');
   const [activeProgram, setActiveProgram] = React.useState<'GIP' | 'TUPAD'>('GIP');
+  const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
+
+  const handleNavigateToApplicants = (status: string | null) => {
+    setStatusFilter(status);
+    setActiveTab('applicants');
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'applicants':
-        return <ApplicantsTab activeProgram={activeProgram} />;
+        return <ApplicantsTab activeProgram={activeProgram} initialStatusFilter={statusFilter || undefined} />;
       case 'reports':
         return <ReportsTab activeProgram={activeProgram} />;
       default:
-        return <DashboardTab activeProgram={activeProgram} />;
+        return <DashboardTab activeProgram={activeProgram} onNavigateToApplicants={handleNavigateToApplicants} />;
     }
   };
 

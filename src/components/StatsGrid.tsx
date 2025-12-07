@@ -15,9 +15,10 @@ import { useData } from '../hooks/useData';
 
 interface StatsGridProps {
   activeProgram: 'GIP' | 'TUPAD';
+  onCardClick?: (status: string | null) => void;
 }
 
-const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
+const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram, onCardClick }) => {
   const { statistics, isLoading } = useData(activeProgram);
   const [showMore, setShowMore] = useState(false);
 
@@ -45,7 +46,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.femaleCount?.toString() ?? '0',
       icon: Users,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: null,
+      clickable: true
     },
     {
       title: 'PENDING',
@@ -54,7 +57,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.pendingFemale?.toString() ?? '0',
       icon: Clock,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: 'PENDING',
+      clickable: true
     },
     {
       title: 'APPROVED',
@@ -63,7 +68,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.approvedFemale?.toString() ?? '0',
       icon: UserCheck,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: 'APPROVED',
+      clickable: true
     },
     {
       title: 'DEPLOYED',
@@ -72,7 +79,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.deployedFemale?.toString() ?? '0',
       icon: CheckCircle,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: 'DEPLOYED',
+      clickable: true
     },
     {
       title: 'COMPLETED',
@@ -81,7 +90,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.completedFemale?.toString() ?? '0',
       icon: CheckCircle,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: 'COMPLETED',
+      clickable: true
     },
     {
       title: 'REJECTED',
@@ -90,7 +101,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.rejectedFemale?.toString() ?? '0',
       icon: X,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: 'REJECTED',
+      clickable: true
     },
     {
       title: 'RESIGNED',
@@ -99,7 +112,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.resignedFemale?.toString() ?? '0',
       icon: UserMinus,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: 'RESIGNED',
+      clickable: true
     },
     {
       title: 'BARANGAYS COVERED',
@@ -108,7 +123,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.femaleCount?.toString() ?? '0',
       icon: MapPin,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: null,
+      clickable: false
     }
   ];
 
@@ -120,7 +137,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
       female: statistics?.interviewedFemale?.toString() ?? '0',
       icon: ClipboardCheck,
       bgColor: `${primaryColor} border-2 border-yellow-400`,
-      iconBg: `${primaryDarkColor}`
+      iconBg: `${primaryDarkColor}`,
+      status: null,
+      clickable: false
     }
   ];
 
@@ -134,7 +153,8 @@ const StatsGrid: React.FC<StatsGridProps> = ({ activeProgram }) => {
           return (
             <div
               key={index}
-              className={`${stat.bgColor} text-gray-800 rounded-lg p-6 relative overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl`}
+              onClick={() => stat.clickable && onCardClick?.(stat.status)}
+              className={`${stat.bgColor} text-gray-800 rounded-lg p-6 relative overflow-hidden transition-all duration-300 ease-in-out transform ${stat.clickable ? 'cursor-pointer hover:scale-105 hover:shadow-xl' : 'cursor-not-allowed opacity-90'}`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div>
