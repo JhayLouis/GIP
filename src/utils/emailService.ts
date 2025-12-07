@@ -10,7 +10,7 @@
   2. Backend should implement this endpoint:
      POST /emails/send-applicant
      {
-       "to": "email@example.com",
+       "to": "Email Address",
        "name": "Applicant Name",
        "status": "APPROVED|REJECTED",
        "program": "GIP|TUPAD",

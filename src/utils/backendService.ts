@@ -3,6 +3,7 @@
   =======================
   This service uses localStorage and mock data by default.
   Uncomment the API calls below to connect to your custom backend.
+  Remove localStorage implementation if not needed.
 
   To enable backend connection:
   1. Update .env file with your backend API URL:

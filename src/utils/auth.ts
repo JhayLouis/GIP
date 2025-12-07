@@ -69,9 +69,7 @@ const isTokenValid = (token: string): boolean => {
   return Date.now() < decoded.exp;
 };
 
-// ============================================
 // MOCK LOGIN IMPLEMENTATION (DEFAULT)
-// ============================================
 const mockLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
   await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -96,9 +94,7 @@ const mockLogin = async (username: string, password: string): Promise<{ success:
   return { success: true, user: userWithoutPassword, token };
 };
 
-// ============================================
 // API LOGIN IMPLEMENTATION (COMMENTED OUT)
-// ============================================
 /*
 const apiLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
   try {
@@ -128,9 +124,7 @@ const apiLogin = async (username: string, password: string): Promise<{ success: 
 };
 */
 
-// ============================================
 // EXPORT LOGIN (USES SELECTED IMPLEMENTATION)
-// ============================================
 export const login = mockLogin;
 
 export const logout = (): void => {
