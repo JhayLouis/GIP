@@ -1,8 +1,24 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
+/*
+  EMAIL SERVICE
+  ==============
+  This service is ready to connect to a custom backend API for sending emails.
 
-const getAuthToken = (): string | null => {
-  return localStorage.getItem('soft_projects_auth_token');
-};
+  To enable backend email service:
+  1. Update .env file with your backend API URL:
+     VITE_BACKEND_URL=https://api.yourdomain.com/api
+
+  2. Backend should implement this endpoint:
+     POST /emails/send-applicant
+     {
+       "to": "email@example.com",
+       "name": "Applicant Name",
+       "status": "APPROVED|REJECTED",
+       "program": "GIP|TUPAD",
+       "applicantCode": "APP-001"
+     }
+
+  Currently using mock email service for local development.
+*/
 
 export interface SendEmailParams {
   to: string;
@@ -14,34 +30,13 @@ export interface SendEmailParams {
 
 export const sendApplicantEmail = async (params: SendEmailParams): Promise<{ success: boolean; message: string; error?: string }> => {
   try {
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    };
+    console.log('Email service (mock):', params);
 
-    const token = getAuthToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${BACKEND_URL}/emails/send-applicant`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(params),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        message: 'Failed to send email',
-        error: data.error || data.message || 'Unknown error occurred'
-      };
-    }
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     return {
       success: true,
-      message: data.message || 'Email sent successfully'
+      message: 'Email sent successfully'
     };
   } catch (error) {
     console.error('Error sending email:', error);

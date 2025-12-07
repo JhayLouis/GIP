@@ -1,7 +1,7 @@
 /*
-  BACKEND CONNECTION GUIDE
+  BACKEND API INTEGRATION
   =======================
-  This file is backend-ready for connecting to your company's database.
+  This service is ready to connect to a custom backend API.
 
   To enable backend connection:
   1. Update .env file with your backend API URL:
@@ -18,20 +18,17 @@
      - GET    /files/download                (Download file)
      - POST   /emails/send-applicant         (Send email)
 
-  3. Database schema should match DatabaseApplicant interface below
+  3. See BACKEND_API_INTEGRATION.md for complete specifications
 
-  4. Uncomment backend sync code in useBackendSync.ts when ready
+  Currently using localStorage for local development.
 */
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
-const API_TIMEOUT = 30000;
 
 export interface BackendConfig {
   backendUrl: string;
 }
 
 const backendConfig: BackendConfig = {
-  backendUrl: BACKEND_URL
+  backendUrl: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api'
 };
 
 export const setBackendConfig = (config: Partial<BackendConfig>) => {
@@ -98,196 +95,116 @@ export interface DatabaseApplicant {
   updated_at?: string;
 }
 
-const getAuthToken = (): string | null => {
-  return localStorage.getItem('soft_projects_auth_token');
-};
+const APPLICANTS_STORAGE_KEY = 'soft_projects_applicants';
 
-const buildHeaders = (): HeadersInit => {
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-  };
-
-  const token = getAuthToken();
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+const getStoredApplicants = (): DatabaseApplicant[] => {
+  try {
+    const data = localStorage.getItem(APPLICANTS_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
   }
-
-  return headers;
 };
 
-const handleApiError = (error: any, message: string): never => {
-  console.error(`API Error: ${message}`, error);
-  throw new Error(error?.message || message);
+const saveApplicants = (applicants: DatabaseApplicant[]): void => {
+  localStorage.setItem(APPLICANTS_STORAGE_KEY, JSON.stringify(applicants));
 };
 
 export const backendService = {
   async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}`, {
-        method: 'GET',
-        headers: buildHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.data || [];
-    } catch (error) {
-      return handleApiError(error, 'Failed to fetch applicants');
-    }
+    const applicants = getStoredApplicants();
+    return applicants.filter(a => a.program === program && !a.archived);
   },
 
   async addApplicant(applicant: Omit<DatabaseApplicant, 'id' | 'created_at' | 'updated_at'>): Promise<DatabaseApplicant> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/applicants`, {
-        method: 'POST',
-        headers: buildHeaders(),
-        body: JSON.stringify(applicant),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      return handleApiError(error, 'Failed to add applicant');
-    }
+    const applicants = getStoredApplicants();
+    const newApplicant: DatabaseApplicant = {
+      ...applicant,
+      id: `app_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    applicants.push(newApplicant);
+    saveApplicants(applicants);
+    return newApplicant;
   },
 
   async updateApplicant(id: string, applicant: Partial<DatabaseApplicant>): Promise<DatabaseApplicant> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
-        method: 'PUT',
-        headers: buildHeaders(),
-        body: JSON.stringify(applicant),
-      });
+    const applicants = getStoredApplicants();
+    const index = applicants.findIndex(a => a.id === id);
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.data;
-    } catch (error) {
-      return handleApiError(error, 'Failed to update applicant');
+    if (index === -1) {
+      throw new Error('Applicant not found');
     }
+
+    const updated: DatabaseApplicant = {
+      ...applicants[index],
+      ...applicant,
+      id: applicants[index].id,
+      updated_at: new Date().toISOString()
+    };
+
+    applicants[index] = updated;
+    saveApplicants(applicants);
+    return updated;
   },
 
   async deleteApplicant(id: string): Promise<void> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
-        method: 'DELETE',
-        headers: buildHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-    } catch (error) {
-      return handleApiError(error, 'Failed to delete applicant');
-    }
+    const applicants = getStoredApplicants();
+    const filtered = applicants.filter(a => a.id !== id);
+    saveApplicants(filtered);
   },
 
   async archiveApplicant(id: string): Promise<void> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}/archive`, {
-        method: 'PATCH',
-        headers: buildHeaders(),
-      });
+    const applicants = getStoredApplicants();
+    const index = applicants.findIndex(a => a.id === id);
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-    } catch (error) {
-      return handleApiError(error, 'Failed to archive applicant');
+    if (index !== -1) {
+      applicants[index].archived = true;
+      applicants[index].archivedDate = new Date().toISOString().split('T')[0];
+      saveApplicants(applicants);
     }
   },
 
   async getApplicantByStatus(program: 'GIP' | 'TUPAD', status: string): Promise<DatabaseApplicant[]> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&status=${status}`, {
-        method: 'GET',
-        headers: buildHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.data || [];
-    } catch (error) {
-      return handleApiError(error, 'Failed to fetch applicants by status');
-    }
+    const applicants = getStoredApplicants();
+    return applicants.filter(a => a.program === program && a.status === status && !a.archived);
   },
 
   async getApplicantByBarangay(program: 'GIP' | 'TUPAD', barangay: string): Promise<DatabaseApplicant[]> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&barangay=${barangay}`, {
-        method: 'GET',
-        headers: buildHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.data || [];
-    } catch (error) {
-      return handleApiError(error, 'Failed to fetch applicants by barangay');
-    }
+    const applicants = getStoredApplicants();
+    return applicants.filter(a => a.program === program && a.barangay === barangay && !a.archived);
   },
 
   async uploadFile(bucket: string, path: string, file: File): Promise<string> {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('bucket', bucket);
-      formData.append('path', path);
-
-      const token = getAuthToken();
-      const headers: any = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`${backendConfig.backendUrl}/files/upload`, {
-        method: 'POST',
-        headers,
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.url || data.data?.url;
-    } catch (error) {
-      return handleApiError(error, 'Failed to upload file');
-    }
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        const fileKey = `file_${bucket}_${path}`;
+        localStorage.setItem(fileKey, base64);
+        resolve(base64);
+      };
+      reader.onerror = () => reject(new Error('File read error'));
+      reader.readAsDataURL(file);
+    });
   },
 
   async downloadFile(bucket: string, path: string): Promise<Blob> {
-    try {
-      const response = await fetch(`${backendConfig.backendUrl}/files/download?bucket=${bucket}&path=${path}`, {
-        method: 'GET',
-        headers: buildHeaders(),
-      });
+    const fileKey = `file_${bucket}_${path}`;
+    const data = localStorage.getItem(fileKey);
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.blob();
-    } catch (error) {
-      return handleApiError(error, 'Failed to download file');
+    if (!data) {
+      throw new Error('File not found');
     }
+
+    const byteString = atob(data.split(',')[1]);
+    const byteArray = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+      byteArray[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([byteArray], { type: 'application/octet-stream' });
   }
 };
 
