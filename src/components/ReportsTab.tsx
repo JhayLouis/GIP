@@ -93,11 +93,17 @@ const ReportsTab = ({ activeProgram }: { activeProgram: 'GIP' | 'TUPAD' }) => {
             <select
               value={selectedYear || ''}
               onChange={(e) => setSelectedYear(e.target.value ? Number(e.target.value) : undefined)}
-              className="text-sm border-0 focus:ring-0 bg-transparent cursor-pointer"
+              className="text-sm border-0 focus:ring-0 bg-transparent dark:bg-transparent text-gray-700 dark:text-gray-300 cursor-pointer"
             >
-              <option value="">All Years</option>
+              <option className="bg-white dark:bg-slate-800" value="">All Years</option>
               {availableYears.map((y) => (
-                <option key={y} value={y}>{y}</option>
+                <option
+                  key={y}
+                  value={y}
+                  className="bg-white dark:bg-slate-800"
+                >
+                  {y}
+                </option>
               ))}
             </select>
           </div>
