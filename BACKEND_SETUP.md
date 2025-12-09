@@ -47,7 +47,7 @@ The system uses these environment variables (in `.env`):
 VITE_BACKEND_URL=http://localhost:3000/api
 
 # Example for production:
-# VITE_BACKEND_URL=https://api.yourdomain.com/api
+# VITE_BACKEND_URL=https://api.sampledomain.com/api
 ```
 
 ## How to Enable Backend
@@ -57,7 +57,7 @@ VITE_BACKEND_URL=http://localhost:3000/api
 Update `.env` with your company's backend URL:
 
 ```
-VITE_BACKEND_URL=https://api.yourdomain.com/api
+VITE_BACKEND_URL=https://api.sampledomain.com/api
 ```
 
 ### Step 2: Implement Backend API Endpoints
@@ -233,12 +233,12 @@ import { getBackendConfig } from './utils/backendService';
 
 const config = getBackendConfig();
 console.log('Backend URL:', config.backendUrl);
-// Should show: https://api.yourdomain.com/api
+// Should show: https://api.sampledomain.com/api
 ```
 
 2. Test login endpoint:
 ```typescript
-const response = await fetch('https://api.yourdomain.com/api/auth/login', {
+const response = await fetch('https://api.sampledomain.com/api/auth/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ username: 'admin', password: 'password' })

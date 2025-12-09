@@ -65,7 +65,7 @@ import { getBackendConfig, setBackendConfig } from './utils/customBackendService
 
 setBackendConfig({
   enabled: true,
-  baseUrl: 'https://api.yourdomain.com/api',
+  baseUrl: 'https://api.sampledomain.com/api',
   timeout: 30000
 });
 ```
@@ -73,7 +73,7 @@ setBackendConfig({
 ### Or Use Environment Variable
 
 ```env
-VITE_BACKEND_URL=https://api.yourdomain.com/api
+VITE_BACKEND_URL=https://api.sampledomain.com/api
 ```
 
 ## How to Uncomment Backend API Calls
@@ -298,7 +298,7 @@ import { customBackendService, setBackendConfig } from './utils/customBackendSer
 
 setBackendConfig({
   enabled: true,
-  baseUrl: 'https://api.yourdomain.com/api'
+  baseUrl: 'https://api.sampledomain.com/api'
 });
 
 // This will fail until you uncomment the actual API call
@@ -438,7 +438,7 @@ If backend API call fails or is disabled:
 VITE_BACKEND_URL=http://localhost:3000/api
 
 # Production
-VITE_BACKEND_URL=https://api.yourdomain.com/api
+VITE_BACKEND_URL=https://api..com/api
 ```
 
 ## Support & Documentation

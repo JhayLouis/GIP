@@ -21,10 +21,10 @@ const MOCK_USERS = [
   },
   {
     id: '2',
-    username: 'rodi',
-    password: 'rodirodi',
+    username: 'user',
+    password: 'user321',
     role: 'admin' as const,
-    name: 'Rodi'
+    name: 'User'
   },
   {
     id: '3',
@@ -94,7 +94,7 @@ const mockLogin = async (username: string, password: string): Promise<{ success:
   return { success: true, user: userWithoutPassword, token };
 };
 
-// API LOGIN IMPLEMENTATION (COMMENTED OUT)
+// API LOGIN IMPLEMENTATION (REMOVE COMMENT TO USE)
 /*
 const apiLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
   try {

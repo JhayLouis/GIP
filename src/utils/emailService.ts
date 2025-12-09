@@ -5,7 +5,7 @@
 
   To enable backend email service:
   1. Update .env file with your backend API URL:
-     VITE_BACKEND_URL=https://api.yourdomain.com/api
+     VITE_BACKEND_URL=https://api.sampledomain.com/api
 
   2. Backend should implement this endpoint:
      POST /emails/send-applicant

@@ -1,13 +1,12 @@
 /*
   BACKEND API INTEGRATION
-  =======================
   This service uses localStorage and mock data by default.
   Uncomment the API calls below to connect to your custom backend.
   Remove localStorage implementation if not needed.
 
   To enable backend connection:
   1. Update .env file with your backend API URL:
-     VITE_BACKEND_URL=https://api.yourdomain.com/api
+     VITE_BACKEND_URL=https://api.sampledomain.com/api
 
   2. Backend API should implement these endpoints:
      - POST   /auth/login                    (Login)
