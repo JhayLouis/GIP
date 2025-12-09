@@ -536,7 +536,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
           )}
       </div>
       <div>
-        <label className="block text-sm font-bold mb-1 uppercase">Beneficiary Name</label>
+        <label className="block text-sm font-bold mb-2 uppercase">Beneficiary Name</label>
         <input
           type="text"
           value={formData.beneficiaryName}
