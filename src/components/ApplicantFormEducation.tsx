@@ -7,6 +7,7 @@ import {
   COLLEGE_UNDERGRADUATE_COURSES,
   validateCourseName
 } from "../utils/courses.ts";
+import customBackendService from "../utils/customBackendService";
 
 interface ApplicantFormEducationProps {
   formData: any;
@@ -22,9 +23,39 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
   const [customCourse, setCustomCourse] = useState("");
   const [showCustomCourse, setShowCustomCourse] = useState(false);
   const [courseValidationError, setCourseValidationError] = useState<string>("");
+  const [savingCourse, setSavingCourse] = useState(false);
 
   const renderYearOptions = () =>
     Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i);
+
+  const saveCustomCourseToBackend = async (courseName: string) => {
+    const validation = validateCourseName(courseName);
+    if (!validation.valid) {
+      setCourseValidationError(validation.error || "Invalid course name");
+      return;
+    }
+
+    setSavingCourse(true);
+    try {
+      const educationType = formData.tertiaryEducation || "COLLEGE_GRADUATE";
+      const result = await customBackendService.saveCustomCourse(courseName, educationType);
+
+      if (!result.success) {
+        if (result.error?.includes("already exists")) {
+          setCourseValidationError("This course has already been added");
+        } else {
+          setCourseValidationError(result.error || "Failed to save course");
+        }
+      } else {
+        setCourseValidationError("");
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Failed to save course";
+      setCourseValidationError(errorMsg);
+    } finally {
+      setSavingCourse(false);
+    }
+  };
 
   if (activeProgram !== "GIP") return null;
 
@@ -543,17 +574,23 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                     onBlur={() => {
                       if (customCourse.trim()) {
                         const validation = validateCourseName(customCourse);
-                        if (!validation.valid) {
+                        if (validation.valid) {
+                          saveCustomCourseToBackend(customCourse);
+                        } else {
                           setCourseValidationError(validation.error || "");
                         }
                       }
                     }}
+                    disabled={savingCourse}
                     required
                     placeholder='e.g., "Bachelor of Science in Information Technology"'
-                    className={`w-full border rounded-lg px-3 py-2 uppercase ${
+                    className={`w-full border rounded-lg px-3 py-2 uppercase transition-all ${
                       courseValidationError ? "border-red-500" : ""
-                    }`}
+                    } ${savingCourse ? "opacity-75 cursor-not-allowed" : ""}`}
                   />
+                  {savingCourse && (
+                    <p className="text-blue-500 text-xs mt-1">Saving course to database...</p>
+                  )}
                   {courseValidationError && (
                     <p className="text-red-500 text-xs mt-1">{courseValidationError}</p>
                   )}

@@ -525,6 +525,125 @@ export const customBackendService = {
       success: false,
       error: 'Backend is not enabled'
     };
+  },
+
+  async saveCustomCourse(courseName: string, educationType: string): Promise<{ success: boolean; error?: string }> {
+    /*
+    ╔═══════════════════════════════════════════════════════════════╗
+    ║  BACKEND API CALL - SAVE CUSTOM COURSE                       ║
+    ║  Uncomment when your backend API is ready for connection     ║
+    ║                                                               ║
+    ║  Backend endpoint should:                                    ║
+    ║  POST /courses/custom                                        ║
+    ║  Body: { courseName, educationType }                         ║
+    ║  Response: { success: boolean, message?: string }            ║
+    ║                                                               ║
+    ║  Note: Backend should:                                       ║
+    ║  - Validate course name format (Bachelor of, etc.)           ║
+    ║  - Check if course already exists (case-insensitive)         ║
+    ║  - Store in custom_courses table                             ║
+    ╚═══════════════════════════════════════════════════════════════╝
+
+    const response = await makeRequest<{ success: boolean }>(
+      'POST',
+      '/courses/custom',
+      { courseName, educationType }
+    );
+
+    return {
+      success: response.success,
+      error: response.error
+    };
+    */
+
+    return {
+      success: false,
+      error: 'Backend is not enabled'
+    };
+  },
+
+  async getCustomCourses(educationType?: string): Promise<{ data: string[]; error?: string }> {
+    /*
+    ╔═══════════════════════════════════════════════════════════════╗
+    ║  BACKEND API CALL - GET CUSTOM COURSES                       ║
+    ║  Uncomment when your backend API is ready for connection     ║
+    ║                                                               ║
+    ║  Backend endpoint should:                                    ║
+    ║  GET /courses/custom?type=COLLEGE_GRADUATE                   ║
+    ║  Response: { courses: string[] }                             ║
+    ║                                                               ║
+    ║  Note: Backend should:                                       ║
+    ║  - Return courses filtered by educationType (optional)       ║
+    ║  - Return empty array if no custom courses exist             ║
+    ║  - Cache results for performance                             ║
+    ╚═══════════════════════════════════════════════════════════════╝
+
+    const endpoint = educationType
+      ? `/courses/custom?type=${encodeURIComponent(educationType)}`
+      : '/courses/custom';
+
+    const response = await makeRequest<{ courses: string[] }>(
+      'GET',
+      endpoint
+    );
+
+    if (!response.success) {
+      return {
+        data: [],
+        error: response.error
+      };
+    }
+
+    return {
+      data: response.data?.courses || [],
+      error: undefined
+    };
+    */
+
+    return {
+      data: [],
+      error: 'Backend is not enabled'
+    };
+  },
+
+  async checkCourseExists(courseName: string): Promise<{ exists: boolean; error?: string }> {
+    /*
+    ╔═══════════════════════════════════════════════════════════════╗
+    ║  BACKEND API CALL - CHECK COURSE EXISTS                      ║
+    ║  Uncomment when your backend API is ready for connection     ║
+    ║                                                               ║
+    ║  Backend endpoint should:                                    ║
+    ║  GET /courses/check?name=Bachelor%20of%20Science             ║
+    ║  Response: { exists: boolean }                               ║
+    ║                                                               ║
+    ║  Note: Backend should:                                       ║
+    ║  - Check both predefined and custom courses                  ║
+    ║  - Use case-insensitive comparison                           ║
+    ║  - Return exists: true if course is found                    ║
+    ╚═══════════════════════════════════════════════════════════════╝
+
+    const response = await makeRequest<{ exists: boolean }>(
+      'GET',
+      `/courses/check?name=${encodeURIComponent(courseName)}`
+    );
+
+    if (!response.success) {
+      return {
+        exists: false,
+        error: response.error
+      };
+    }
+
+    return {
+      exists: response.data?.exists || false,
+      error: undefined
+    };
+    */
+
+    return {
+      exists: false,
+      error: 'Backend is not enabled'
+    };
   }
 };
 
