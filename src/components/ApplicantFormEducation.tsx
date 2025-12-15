@@ -4,7 +4,8 @@ import {
   COLLEGE_COURSES,
   TECHNICAL_VOCATIONAL_COURSES,
   ALS_SECONDARY_COURSES,
-  COLLEGE_UNDERGRADUATE_COURSES
+  COLLEGE_UNDERGRADUATE_COURSES,
+  validateCourseName
 } from "../utils/courses.ts";
 
 interface ApplicantFormEducationProps {
@@ -20,6 +21,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
 }) => {
   const [customCourse, setCustomCourse] = useState("");
   const [showCustomCourse, setShowCustomCourse] = useState(false);
+  const [courseValidationError, setCourseValidationError] = useState<string>("");
 
   const renderYearOptions = () =>
     Array.from({ length: new Date().getFullYear() - 1950 + 1 }, (_, i) => 1950 + i);
@@ -354,6 +356,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                 onInputChange("course", "");
                 setCustomCourse("");
                 setShowCustomCourse(false);
+                setCourseValidationError("");
               }}
               className="w-full border rounded-lg px-3 py-2"
             >
@@ -383,6 +386,7 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                     onInputChange("course", "");
                     setCustomCourse("");
                     setShowCustomCourse(false);
+                    setCourseValidationError("");
                   }
                 }}
                 required
@@ -480,8 +484,11 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                     if (value === "OTHERS") {
                       setShowCustomCourse(true);
                       setCustomCourse("");
+                      setCourseValidationError("");
                       onInputChange("course", "");
                     } else {
+                      setShowCustomCourse(false);
+                      setCourseValidationError("");
                       onInputChange("course", value);
                     }
                   }}
@@ -516,20 +523,44 @@ const ApplicantFormEducation: React.FC<ApplicantFormEducationProps> = ({
                     ))}
                 </select>
               ) : (
-                <input
-                  type="text"
-                  value={customCourse}
-                  onChange={(e) => {
-                    const value = e.target.value.toUpperCase();
-                    setCustomCourse(value);
-                    onInputChange("course", value);
+                <div>
+                  <input
+                    type="text"
+                    value={customCourse}
+                    onChange={(e) => {
+                      const value = e.target.value.toUpperCase();
+                      setCustomCourse(value);
+                      onInputChange("course", value);
 
-                    if (!value.trim()) setShowCustomCourse(false);
-                  }}
-                  required
-                  placeholder="Enter your course"
-                  className="w-full border rounded-lg px-3 py-2 uppercase"
-                />
+                      if (!value.trim()) {
+                        setShowCustomCourse(false);
+                        setCourseValidationError("");
+                      } else {
+                        const validation = validateCourseName(value);
+                        setCourseValidationError(validation.error || "");
+                      }
+                    }}
+                    onBlur={() => {
+                      if (customCourse.trim()) {
+                        const validation = validateCourseName(customCourse);
+                        if (!validation.valid) {
+                          setCourseValidationError(validation.error || "");
+                        }
+                      }
+                    }}
+                    required
+                    placeholder='e.g., "Bachelor of Science in Information Technology"'
+                    className={`w-full border rounded-lg px-3 py-2 uppercase ${
+                      courseValidationError ? "border-red-500" : ""
+                    }`}
+                  />
+                  {courseValidationError && (
+                    <p className="text-red-500 text-xs mt-1">{courseValidationError}</p>
+                  )}
+                  <p className="text-gray-500 text-xs mt-1">
+                    Must start with: Bachelor of, Associate of, Diploma of, Certificate in, Master of, Doctor of, or Professional
+                  </p>
+                </div>
               )}
             </div>
           </div>
