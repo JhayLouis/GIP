@@ -3,6 +3,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthContext } from './contexts/AuthContext';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 import DashboardTab from './components/DashboardTab';
 import ApplicantsTab from './components/ApplicantsTab';
 import ReportsTab from './components/ReportsTab';
@@ -31,7 +32,7 @@ function App() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200">
+      <div className="min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200 flex flex-col">
         <Header
           activeProgram={activeProgram}
           onProgramChange={setActiveProgram}
@@ -39,9 +40,10 @@ function App() {
           onLogout={logout}
         />
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} activeProgram={activeProgram} />
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
           {renderTabContent()}
         </div>
+        <Footer />
       </div>
     </ProtectedRoute>
   );
