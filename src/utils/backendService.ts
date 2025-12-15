@@ -115,9 +115,7 @@ const saveApplicants = (applicants: DatabaseApplicant[]): void => {
   localStorage.setItem(APPLICANTS_STORAGE_KEY, JSON.stringify(applicants));
 };
 
-// ============================================
 // LOCALSTORAGE IMPLEMENTATION (DEFAULT)
-// ============================================
 const localStorageImpl = {
   async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
     const applicants = getStoredApplicants();

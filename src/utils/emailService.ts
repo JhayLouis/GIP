@@ -88,9 +88,7 @@ const mockEmailService = {
   }
 };
 
-// ============================================
 // API EMAIL IMPLEMENTATION (COMMENTED OUT)
-// ============================================
 /*
 const apiEmailService = {
   async sendApplicantEmail(params: SendEmailParams): Promise<{ success: boolean; message: string; error?: string }> {
@@ -159,9 +157,7 @@ const apiEmailService = {
 };
 */
 
-// ============================================
 // EXPORT SERVICE (USES SELECTED IMPLEMENTATION)
-// ============================================
 export const sendApplicantEmail = async (params: SendEmailParams): Promise<{ success: boolean; message: string; error?: string }> => {
   return mockEmailService.sendApplicantEmail(params);
 };
