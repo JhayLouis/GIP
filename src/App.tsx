@@ -3,7 +3,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthContext } from './contexts/AuthContext';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
-import Footer from './components/Footer';
+// import Footer from './components/Footer'; UNCOMMENT TO DISPLAY FOOTER
 import DashboardTab from './components/DashboardTab';
 import ApplicantsTab from './components/ApplicantsTab';
 import ReportsTab from './components/ReportsTab';
@@ -43,7 +43,8 @@ function App() {
         <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
           {renderTabContent()}
         </div>
-        <Footer />
+        {/* <Footer /> -- UNCOMMENT TO DISPLAY TO SEE FOOTER */}
+
       </div>
     </ProtectedRoute>
   );
