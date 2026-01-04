@@ -94,30 +94,38 @@ const mockLogin = async (username: string, password: string): Promise<{ success:
   return { success: true, user: userWithoutPassword, token };
 };
 
-// API LOGIN IMPLEMENTATION (REMOVE COMMENT TO USE)
+// ============================================
+// SUPABASE AUTH IMPLEMENTATION (COMMENTED OUT)
+// ============================================
 /*
-const apiLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
+import { supabase } from './backendService'; // Uncomment when enabling Supabase
+
+const supabaseLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
   try {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
-    const response = await fetch(`${backendUrl}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: username,
+      password: password
     });
 
-    if (!response.ok) {
-      const error = await response.json();
+    if (error) {
       return { success: false, error: error.message || 'Login failed' };
     }
 
-    const data = await response.json();
-    const token = data.token;
-    const user = data.user;
+    if (!data.user || !data.session) {
+      return { success: false, error: 'No session created' };
+    }
 
-    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    const user: User = {
+      id: data.user.id,
+      username: data.user.email || username,
+      name: data.user.user_metadata?.name || username,
+      role: (data.user.user_metadata?.role as 'admin' | 'user') || 'user'
+    };
+
+    localStorage.setItem(AUTH_TOKEN_KEY, data.session.access_token);
     localStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
 
-    return { success: true, user, token };
+    return { success: true, user, token: data.session.access_token };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : 'Login failed' };
   }

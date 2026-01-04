@@ -1,27 +1,18 @@
 /*
-  EMAIL SERVICE
-  ==============
-  This service uses mock email by default. Uncomment the API calls to connect to backend.
+  EMAIL SERVICE - SUPABASE INTEGRATION
+  ======================================
 
-  To enable backend email service:
-  1. Update .env file with your backend API URL:
-     VITE_BACKEND_URL=https://api.sampledomain.com/api
+  Current Mode: Mock email service (DEFAULT)
+  Available: Supabase edge function (commented out, ready to use)
 
-  2. Backend should implement this endpoint:
-     POST /emails/send-applicant
-     {
-       "to": "Email Address",
-       "name": "Applicant Name",
-       "status": "APPROVED|REJECTED",
-       "program": "GIP|TUPAD",
-       "applicantCode": "APP-001"
-     }
-
-  Currently using mock email service for local development.
-  To switch to API backend, uncomment the API_ENABLED constant in backendService.ts
+  To enable Supabase email:
+  1. Set up Supabase edge function for sending emails
+  2. See SUPABASE_SETUP.md for email function setup
+  3. Uncomment the supabaseEmailService implementation below
+  4. Replace the export to use supabaseEmailService
 */
 
-const API_ENABLED = false;
+const SUPABASE_ENABLED = false;
 
 export interface SendEmailParams {
   to: string;
@@ -88,17 +79,23 @@ const mockEmailService = {
   }
 };
 
-// API EMAIL IMPLEMENTATION (COMMENTED OUT)
+// ============================================
+// SUPABASE EMAIL IMPLEMENTATION (COMMENTED OUT)
+// ============================================
 /*
-const apiEmailService = {
+import { supabase } from './backendService'; // Uncomment when enabling Supabase
+
+const supabaseEmailService = {
   async sendApplicantEmail(params: SendEmailParams): Promise<{ success: boolean; message: string; error?: string }> {
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
-      const response = await fetch(`${backendUrl}/emails/send-applicant`, {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/send-applicant-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+          'Authorization': `Bearer ${anonKey}`
         },
         body: JSON.stringify(params)
       });

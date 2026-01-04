@@ -1,48 +1,58 @@
 /*
-  BACKEND API INTEGRATION
-  This service uses localStorage and mock data by default.
-  Uncomment the API calls below to connect to your custom backend.
-  Remove localStorage implementation if not needed.
+  BACKEND SERVICE - SUPABASE INTEGRATION
+  ======================================
 
-  To enable backend connection:
-  1. Update .env file with your backend API URL:
-     VITE_BACKEND_URL=https://api.sampledomain.com/api
+  Current Mode: localStorage with mock data (DEFAULT)
+  Available: Supabase PostgreSQL database (commented out, ready to use)
 
-  2. Backend API should implement these endpoints:
-     - POST   /auth/login                    (Login)
-     - GET    /applicants?program=GIP        (Get applicants)
-     - POST   /applicants                    (Create applicant)
-     - PUT    /applicants/{id}               (Update applicant)
-     - DELETE /applicants/{id}               (Delete applicant)
-     - PATCH  /applicants/{id}/archive       (Archive applicant)
-     - POST   /files/upload                  (Upload file)
-     - GET    /files/download                (Download file)
-     - POST   /emails/send-applicant         (Send email)
+  SETUP INSTRUCTIONS TO ENABLE SUPABASE:
+  =======================================
 
-  3. See BACKEND_API_INTEGRATION.md for complete specifications
+  1. Create Supabase Project:
+     - Go to https://supabase.com
+     - Create new project (PostgreSQL database)
+     - Get your credentials from Project Settings > API
 
-  Currently using localStorage for local development.
-  To switch to API backend, uncomment the API_ENABLED constant below.
+  2. Add to .env file:
+     VITE_SUPABASE_URL=https://your-project.supabase.co
+     VITE_SUPABASE_ANON_KEY=your-anon-key
+     VITE_SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+  3. Install Supabase client:
+     npm install @supabase/supabase-js
+
+  4. In this file, uncomment the SUPABASE_ENABLED flag and the supabaseImpl object
+
+  5. Replace the export at the bottom to use supabaseImpl instead of localStorageImpl
+
+  SUPABASE TABLE SCHEMA:
+  ======================
+  The Supabase implementation expects these tables in your database:
+
+  - applicants (id, code, firstName, lastName, email, barangay, status, program, etc.)
+  - See SUPABASE_SETUP.md for full schema and migrations
 */
 
-export interface BackendConfig {
-  backendUrl: string;
+// ============================================
+// SUPABASE CONFIGURATION (COMMENTED OUT)
+// ============================================
+/*
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_ENABLED = true;
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase credentials in .env file');
 }
 
-// Set to true to enable API backend calls (comment out localStorage implementation)
-const API_ENABLED = false;
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+*/
 
-const backendConfig: BackendConfig = {
-  backendUrl: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api'
-};
-
-export const setBackendConfig = (config: Partial<BackendConfig>) => {
-  Object.assign(backendConfig, config);
-};
-
-export const getBackendConfig = (): BackendConfig => {
-  return { ...backendConfig };
-};
+// Keep localStorage as fallback when Supabase is disabled
+const SUPABASE_ENABLED = false;
 
 export interface DatabaseApplicant {
   id: string;
@@ -215,120 +225,110 @@ const localStorageImpl = {
 };
 
 // ============================================
-// API BACKEND IMPLEMENTATION (COMMENTED OUT)
+// SUPABASE BACKEND IMPLEMENTATION (COMMENTED OUT)
 // ============================================
 /*
-const apiImpl = {
+const supabaseImpl = {
   async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
-    const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      }
-    });
-    if (!response.ok) throw new Error('Failed to fetch applicants');
-    return response.json();
+    const { data, error } = await supabase
+      .from('applicants')
+      .select('*')
+      .eq('program', program)
+      .eq('archived', false);
+
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async addApplicant(applicant: Omit<DatabaseApplicant, 'id' | 'created_at' | 'updated_at'>): Promise<DatabaseApplicant> {
-    const response = await fetch(`${backendConfig.backendUrl}/applicants`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      },
-      body: JSON.stringify(applicant)
-    });
-    if (!response.ok) throw new Error('Failed to create applicant');
-    return response.json();
+    const { data, error } = await supabase
+      .from('applicants')
+      .insert([applicant])
+      .select()
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    return data || applicant as DatabaseApplicant;
   },
 
   async updateApplicant(id: string, applicant: Partial<DatabaseApplicant>): Promise<DatabaseApplicant> {
-    const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      },
-      body: JSON.stringify(applicant)
-    });
-    if (!response.ok) throw new Error('Failed to update applicant');
-    return response.json();
+    const { data, error } = await supabase
+      .from('applicants')
+      .update(applicant)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    return data || (applicant as DatabaseApplicant);
   },
 
   async deleteApplicant(id: string): Promise<void> {
-    const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      }
-    });
-    if (!response.ok) throw new Error('Failed to delete applicant');
+    const { error } = await supabase
+      .from('applicants')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw new Error(error.message);
   },
 
   async archiveApplicant(id: string): Promise<void> {
-    const response = await fetch(`${backendConfig.backendUrl}/applicants/${id}/archive`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      }
-    });
-    if (!response.ok) throw new Error('Failed to archive applicant');
+    const { error } = await supabase
+      .from('applicants')
+      .update({
+        archived: true,
+        archivedDate: new Date().toISOString().split('T')[0]
+      })
+      .eq('id', id);
+
+    if (error) throw new Error(error.message);
   },
 
   async getApplicantByStatus(program: 'GIP' | 'TUPAD', status: string): Promise<DatabaseApplicant[]> {
-    const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&status=${status}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      }
-    });
-    if (!response.ok) throw new Error('Failed to fetch applicants by status');
-    return response.json();
+    const { data, error } = await supabase
+      .from('applicants')
+      .select('*')
+      .eq('program', program)
+      .eq('status', status)
+      .eq('archived', false);
+
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async getApplicantByBarangay(program: 'GIP' | 'TUPAD', barangay: string): Promise<DatabaseApplicant[]> {
-    const response = await fetch(`${backendConfig.backendUrl}/applicants?program=${program}&barangay=${barangay}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      }
-    });
-    if (!response.ok) throw new Error('Failed to fetch applicants by barangay');
-    return response.json();
+    const { data, error } = await supabase
+      .from('applicants')
+      .select('*')
+      .eq('program', program)
+      .eq('barangay', barangay)
+      .eq('archived', false);
+
+    if (error) throw new Error(error.message);
+    return data || [];
   },
 
   async uploadFile(bucket: string, path: string, file: File): Promise<string> {
-    const formData = new FormData();
-    formData.append('bucket', bucket);
-    formData.append('path', path);
-    formData.append('file', file);
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(path, file, { upsert: true });
 
-    const response = await fetch(`${backendConfig.backendUrl}/files/upload`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      },
-      body: formData
-    });
-    if (!response.ok) throw new Error('Failed to upload file');
-    const data = await response.json();
-    return data.url;
+    if (error) throw new Error(error.message);
+
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(path);
+
+    return urlData?.publicUrl || path;
   },
 
   async downloadFile(bucket: string, path: string): Promise<Blob> {
-    const response = await fetch(`${backendConfig.backendUrl}/files/download?bucket=${bucket}&path=${path}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
-      }
-    });
-    if (!response.ok) throw new Error('Failed to download file');
-    return response.blob();
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .download(path);
+
+    if (error) throw new Error(error.message);
+    return data || new Blob();
   }
 };
 */
@@ -336,6 +336,6 @@ const apiImpl = {
 // ============================================
 // EXPORT SERVICE (USES SELECTED IMPLEMENTATION)
 // ============================================
-export const backendService = API_ENABLED ? null : localStorageImpl;
+export const backendService = SUPABASE_ENABLED ? null : localStorageImpl;
 
 export default backendService;
