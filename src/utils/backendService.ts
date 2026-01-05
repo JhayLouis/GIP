@@ -1,58 +1,43 @@
 /*
-  BACKEND SERVICE - SUPABASE INTEGRATION
-  ======================================
+  BACKEND API INTEGRATION
+  =======================
+  This service is ready to connect to a custom backend API.
 
-  Current Mode: localStorage with mock data (DEFAULT)
-  Available: Supabase PostgreSQL database (commented out, ready to use)
+  To enable backend connection:
+  1. Update .env file with your backend API URL:
+     VITE_BACKEND_URL=https://api.yourdomain.com/api
 
-  SETUP INSTRUCTIONS TO ENABLE SUPABASE:
-  =======================================
+  2. Backend API should implement these endpoints:
+     - POST   /auth/login                    (Login)
+     - GET    /applicants?program=GIP        (Get applicants)
+     - POST   /applicants                    (Create applicant)
+     - PUT    /applicants/{id}               (Update applicant)
+     - DELETE /applicants/{id}               (Delete applicant)
+     - PATCH  /applicants/{id}/archive       (Archive applicant)
+     - POST   /files/upload                  (Upload file)
+     - GET    /files/download                (Download file)
+     - POST   /emails/send-applicant         (Send email)
 
-  1. Create Supabase Project:
-     - Go to https://supabase.com
-     - Create new project (PostgreSQL database)
-     - Get your credentials from Project Settings > API
+  3. See BACKEND_API_INTEGRATION.md for complete specifications
 
-  2. Add to .env file:
-     VITE_SUPABASE_URL=https://your-project.supabase.co
-     VITE_SUPABASE_ANON_KEY=your-anon-key
-     VITE_SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-  3. Install Supabase client:
-     npm install @supabase/supabase-js
-
-  4. In this file, uncomment the SUPABASE_ENABLED flag and the supabaseImpl object
-
-  5. Replace the export at the bottom to use supabaseImpl instead of localStorageImpl
-
-  SUPABASE TABLE SCHEMA:
-  ======================
-  The Supabase implementation expects these tables in your database:
-
-  - applicants (id, code, firstName, lastName, email, barangay, status, program, etc.)
-  - See SUPABASE_SETUP.md for full schema and migrations
+  Currently using localStorage for local development.
 */
 
-// ============================================
-// SUPABASE CONFIGURATION (COMMENTED OUT)
-// ============================================
-/*
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_ENABLED = true;
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase credentials in .env file');
+export interface BackendConfig {
+  backendUrl: string;
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-*/
+const backendConfig: BackendConfig = {
+  backendUrl: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api'
+};
 
-// Keep localStorage as fallback when Supabase is disabled
-const SUPABASE_ENABLED = false;
+export const setBackendConfig = (config: Partial<BackendConfig>) => {
+  Object.assign(backendConfig, config);
+};
+
+export const getBackendConfig = (): BackendConfig => {
+  return { ...backendConfig };
+};
 
 export interface DatabaseApplicant {
   id: string;
@@ -125,8 +110,7 @@ const saveApplicants = (applicants: DatabaseApplicant[]): void => {
   localStorage.setItem(APPLICANTS_STORAGE_KEY, JSON.stringify(applicants));
 };
 
-// LOCALSTORAGE IMPLEMENTATION (DEFAULT)
-const localStorageImpl = {
+export const backendService = {
   async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
     const applicants = getStoredApplicants();
     return applicants.filter(a => a.program === program && !a.archived);
@@ -223,119 +207,5 @@ const localStorageImpl = {
     return new Blob([byteArray], { type: 'application/octet-stream' });
   }
 };
-
-// ============================================
-// SUPABASE BACKEND IMPLEMENTATION (COMMENTED OUT)
-// ============================================
-/*
-const supabaseImpl = {
-  async getApplicants(program: 'GIP' | 'TUPAD'): Promise<DatabaseApplicant[]> {
-    const { data, error } = await supabase
-      .from('applicants')
-      .select('*')
-      .eq('program', program)
-      .eq('archived', false);
-
-    if (error) throw new Error(error.message);
-    return data || [];
-  },
-
-  async addApplicant(applicant: Omit<DatabaseApplicant, 'id' | 'created_at' | 'updated_at'>): Promise<DatabaseApplicant> {
-    const { data, error } = await supabase
-      .from('applicants')
-      .insert([applicant])
-      .select()
-      .maybeSingle();
-
-    if (error) throw new Error(error.message);
-    return data || applicant as DatabaseApplicant;
-  },
-
-  async updateApplicant(id: string, applicant: Partial<DatabaseApplicant>): Promise<DatabaseApplicant> {
-    const { data, error } = await supabase
-      .from('applicants')
-      .update(applicant)
-      .eq('id', id)
-      .select()
-      .maybeSingle();
-
-    if (error) throw new Error(error.message);
-    return data || (applicant as DatabaseApplicant);
-  },
-
-  async deleteApplicant(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('applicants')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw new Error(error.message);
-  },
-
-  async archiveApplicant(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('applicants')
-      .update({
-        archived: true,
-        archivedDate: new Date().toISOString().split('T')[0]
-      })
-      .eq('id', id);
-
-    if (error) throw new Error(error.message);
-  },
-
-  async getApplicantByStatus(program: 'GIP' | 'TUPAD', status: string): Promise<DatabaseApplicant[]> {
-    const { data, error } = await supabase
-      .from('applicants')
-      .select('*')
-      .eq('program', program)
-      .eq('status', status)
-      .eq('archived', false);
-
-    if (error) throw new Error(error.message);
-    return data || [];
-  },
-
-  async getApplicantByBarangay(program: 'GIP' | 'TUPAD', barangay: string): Promise<DatabaseApplicant[]> {
-    const { data, error } = await supabase
-      .from('applicants')
-      .select('*')
-      .eq('program', program)
-      .eq('barangay', barangay)
-      .eq('archived', false);
-
-    if (error) throw new Error(error.message);
-    return data || [];
-  },
-
-  async uploadFile(bucket: string, path: string, file: File): Promise<string> {
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(path, file, { upsert: true });
-
-    if (error) throw new Error(error.message);
-
-    const { data: urlData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
-
-    return urlData?.publicUrl || path;
-  },
-
-  async downloadFile(bucket: string, path: string): Promise<Blob> {
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .download(path);
-
-    if (error) throw new Error(error.message);
-    return data || new Blob();
-  }
-};
-*/
-
-// ============================================
-// EXPORT SERVICE (USES SELECTED IMPLEMENTATION)
-// ============================================
-export const backendService = SUPABASE_ENABLED ? null : localStorageImpl;
 
 export default backendService;

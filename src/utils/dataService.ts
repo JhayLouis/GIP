@@ -318,7 +318,6 @@ export const filterApplicants = (
     const s = filters.searchTerm.toLowerCase();
     list = list.filter(a =>
       a.firstName.toLowerCase().includes(s) ||
-      (a.middleName || '').toLowerCase().includes(s) ||
       a.lastName.toLowerCase().includes(s) ||
       a.code.toLowerCase().includes(s) ||
       a.barangay.toLowerCase().includes(s)

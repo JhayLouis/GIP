@@ -3,7 +3,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthContext } from './contexts/AuthContext';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
-// import Footer from './components/Footer'; UNCOMMENT TO DISPLAY FOOTER
 import DashboardTab from './components/DashboardTab';
 import ApplicantsTab from './components/ApplicantsTab';
 import ReportsTab from './components/ReportsTab';
@@ -12,27 +11,21 @@ function App() {
   const { logout, user } = useAuthContext();
   const [activeTab, setActiveTab] = React.useState('dashboard');
   const [activeProgram, setActiveProgram] = React.useState<'GIP' | 'TUPAD'>('GIP');
-  const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
-
-  const handleNavigateToApplicants = (status: string | null) => {
-    setStatusFilter(status);
-    setActiveTab('applicants');
-  };
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'applicants':
-        return <ApplicantsTab activeProgram={activeProgram} initialStatusFilter={statusFilter || undefined} />;
+        return <ApplicantsTab activeProgram={activeProgram} />;
       case 'reports':
         return <ReportsTab activeProgram={activeProgram} />;
       default:
-        return <DashboardTab activeProgram={activeProgram} onNavigateToApplicants={handleNavigateToApplicants} />;
+        return <DashboardTab activeProgram={activeProgram} />;
     }
   };
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200 flex flex-col">
+      <div className="min-h-screen bg-gray-100 dark:bg-slate-900 transition-colors duration-200">
         <Header
           activeProgram={activeProgram}
           onProgramChange={setActiveProgram}
@@ -40,11 +33,9 @@ function App() {
           onLogout={logout}
         />
         <Navigation activeTab={activeTab} onTabChange={setActiveTab} activeProgram={activeProgram} />
-        <div className="flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
+        <div className="max-w-7xl mx-auto px-4 py-6">
           {renderTabContent()}
         </div>
-        {/* <Footer /> -- UNCOMMENT TO DISPLAY TO SEE FOOTER */}
-
       </div>
     </ProtectedRoute>
   );

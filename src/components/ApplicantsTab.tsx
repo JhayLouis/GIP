@@ -11,10 +11,9 @@ import Swal from "sweetalert2";
 
 interface ApplicantsTabProps {
   activeProgram: 'GIP' | 'TUPAD';
-  initialStatusFilter?: string;
 }
 
-const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram, initialStatusFilter }) => {
+const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram }) => {
   const {addApplicant, updateApplicant, deleteApplicant, getFilteredApplicants, refreshData } = useData(activeProgram);
   const currentUser = getCurrentUser();
   const isAdmin = currentUser?.role === 'admin';
@@ -22,7 +21,7 @@ const ApplicantsTab: React.FC<ApplicantsTabProps> = ({ activeProgram, initialSta
   const [showModal, setShowModal] = useState(false);
   const [editingApplicant, setEditingApplicant] = useState<Applicant | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState(initialStatusFilter || 'All Status');
+  const [statusFilter, setStatusFilter] = useState('All Status');
   const [barangayFilter, setBarangayFilter] = useState('All Barangays');
   const [genderFilter, setGenderFilter] = useState('All Genders');
   const [ageFilter, setAgeFilter] = useState('All Ages');

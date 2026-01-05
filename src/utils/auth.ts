@@ -21,10 +21,10 @@ const MOCK_USERS = [
   },
   {
     id: '2',
-    username: 'user',
-    password: 'user321',
+    username: 'rodi',
+    password: 'rodirodi',
     role: 'admin' as const,
-    name: 'User'
+    name: 'Rodi'
   },
   {
     id: '3',
@@ -69,8 +69,7 @@ const isTokenValid = (token: string): boolean => {
   return Date.now() < decoded.exp;
 };
 
-// MOCK LOGIN IMPLEMENTATION (DEFAULT)
-const mockLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
+export const login = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
   await new Promise(resolve => setTimeout(resolve, 1000));
 
   const user = MOCK_USERS.find(u => u.username === username && u.password === password);
@@ -93,47 +92,6 @@ const mockLogin = async (username: string, password: string): Promise<{ success:
 
   return { success: true, user: userWithoutPassword, token };
 };
-
-// ============================================
-// SUPABASE AUTH IMPLEMENTATION (COMMENTED OUT)
-// ============================================
-/*
-import { supabase } from './backendService'; // Uncomment when enabling Supabase
-
-const supabaseLogin = async (username: string, password: string): Promise<{ success: boolean; user?: User; token?: string; error?: string }> => {
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: username,
-      password: password
-    });
-
-    if (error) {
-      return { success: false, error: error.message || 'Login failed' };
-    }
-
-    if (!data.user || !data.session) {
-      return { success: false, error: 'No session created' };
-    }
-
-    const user: User = {
-      id: data.user.id,
-      username: data.user.email || username,
-      name: data.user.user_metadata?.name || username,
-      role: (data.user.user_metadata?.role as 'admin' | 'user') || 'user'
-    };
-
-    localStorage.setItem(AUTH_TOKEN_KEY, data.session.access_token);
-    localStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
-
-    return { success: true, user, token: data.session.access_token };
-  } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : 'Login failed' };
-  }
-};
-*/
-
-// EXPORT LOGIN (USES SELECTED IMPLEMENTATION)
-export const login = mockLogin;
 
 export const logout = (): void => {
   localStorage.removeItem(AUTH_TOKEN_KEY);
